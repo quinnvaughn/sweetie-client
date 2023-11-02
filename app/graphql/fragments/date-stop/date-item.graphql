@@ -1,0 +1,22 @@
+fragment DateStopItem on DateStop {
+    id
+    title
+    order
+    content
+    location {
+      id
+      name
+      website
+	  address {
+		id
+		coordinates {
+			lat
+			lng
+		}
+		city {
+			id 
+			name
+		}
+	  }
+    }
+  }

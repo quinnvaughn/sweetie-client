@@ -1,0 +1,14 @@
+fragment TastemakerInfo on Tastemaker {
+    id
+	isSetup
+	formattedPrice
+	user {
+		id
+		username
+		name
+		profile {
+			id
+			avatar
+		}
+	}
+}

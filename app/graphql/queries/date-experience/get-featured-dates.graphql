@@ -1,0 +1,6 @@
+query GetFeaturedDates {
+    featuredDateExperiences {
+        id 
+        ...DateExperienceCard
+    }
+}

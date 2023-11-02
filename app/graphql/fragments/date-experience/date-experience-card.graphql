@@ -1,0 +1,26 @@
+fragment DateExperienceCard on DateExperience {
+    id
+    title
+	retired
+    thumbnail
+	updatedAt
+	nsfw
+	featured
+	description
+	featuredAt
+	tastemaker {
+		id
+		user {
+			id
+			name
+			profile {
+				id
+				avatar
+			}
+		}
+	}
+    cities {
+      id
+	  nameAndState
+    }
+  }
