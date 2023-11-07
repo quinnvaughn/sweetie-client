@@ -1,0 +1,17 @@
+mutation Login($input: LoginInput!) {
+  login(input: $input) {
+    __typename
+    ... on AlreadyLoggedInError {
+      message
+    }
+    ... on FieldErrors {
+      fieldErrors {
+        message
+        field
+      }
+    }
+    ... on User {
+      id
+    }
+  }
+}

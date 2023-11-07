@@ -1,0 +1,358 @@
+import {
+	DataFunctionArgs,
+	LoaderFunctionArgs,
+	MetaFunction,
+	json,
+} from "@remix-run/node"
+import { match } from "ts-pattern"
+import { gqlFetch } from "~/graphql/graphql"
+import { GetDateExperienceDocument } from "~/graphql/generated"
+import { $params, $path } from "remix-routes"
+import { useMixpanel, useScrolledToBottom } from "~/hooks"
+import { Outlet, useFetcher, useLoaderData, useParams } from "@remix-run/react"
+import { showShareScreen } from "~/cookies.server"
+import {
+	CopyLinkShareButton,
+	Desktop,
+	FacebookShareButton,
+	Mobile,
+	OpenShareModalLink,
+	PageContainer,
+	Tags,
+	TwitterShareButton,
+} from "~/features/ui"
+import { css } from "~/styled-system/css"
+import { divider, flex } from "~/styled-system/patterns"
+import { FiX } from "react-icons/fi/index.js"
+import { HStack, VStack } from "~/styled-system/jsx"
+import { IoIosCheckmarkCircleOutline } from "react-icons/io/index.js"
+import {
+	EmailItineraryRightSide,
+	NSFWTag,
+	TimeOfTheDay,
+} from "~/features/free-date"
+import { FloatingAddToCalendar } from "~/features/date-itinerary"
+import { TastemakerInfo } from "~/features/tastemaker"
+import { DateStop } from "~/features/date-stop"
+
+export async function loader({ params, request }: LoaderFunctionArgs) {
+	const { id } = $params("/free-date/:id", params)
+	const { data } = await gqlFetch(request, GetDateExperienceDocument, { id })
+
+	if (!data?.dateExperience) {
+		throw new Response("Not Found", { status: 404 })
+	}
+	const cookieHeader = request.headers.get("Cookie")
+	const cookie = await showShareScreen.parse(cookieHeader)
+	return json({
+		dateExperience: data.dateExperience,
+		showShareScreen: cookie ? (cookie.showShareScreen as boolean) : false,
+	})
+}
+
+export async function action({ request }: DataFunctionArgs) {
+	const cookieHeader = request.headers.get("Cookie")
+	const cookie = await showShareScreen.parse(cookieHeader)
+	cookie.showShareScreen = false
+
+	return json(request, {
+		headers: {
+			"Set-Cookie": await showShareScreen.serialize(cookie),
+		},
+	})
+}
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	if (!data?.dateExperience) {
+		return [{ title: "Not Found" }, { status: "404" }]
+	} else {
+		return match(data.dateExperience)
+			.with(
+				{ __typename: "DateExperience" },
+				({
+					title,
+					description,
+					thumbnail,
+					tags,
+					createdAt,
+					updatedAt,
+					tastemaker,
+					stops,
+					id,
+				}) => [
+					{ title: `${title} - Sweetie date idea` },
+					{ name: "description", content: description.slice(0, 200) },
+					{ name: "og:title", content: title },
+					{ name: "og:description", content: description.slice(0, 200) },
+					{ name: "og:image", content: thumbnail },
+					{
+						name: "og:url",
+						content: `https://trysweetie.com/experience/${id}`,
+					},
+					{
+						name: "og:site_name",
+						content: "Sweetie",
+					},
+					{
+						name: "og:type",
+						content: "article",
+					},
+					{
+						name: "article:published_time",
+						content: createdAt,
+					},
+					{
+						name: "article:modified_time",
+						content: updatedAt,
+					},
+					{
+						name: "article:author",
+						content: `https://trysweetie.com/user/${tastemaker.user.id}`,
+					},
+					{
+						name: "article:tag",
+						content: [
+							...tags.map((t) => t.name),
+							"dating",
+							"date ideas",
+							...Array.from(
+								new Set(
+									stops.map((s) => s.location.address.city.name.toLowerCase()),
+								),
+							),
+						],
+					},
+					{
+						name: "article:section",
+						content: "Dating",
+					},
+					{
+						name: "twitter:card",
+						content: "summary_large_image",
+					},
+					{
+						name: "twitter:site",
+						content: "@sweetie_dates",
+					},
+					// TODO: twitter:creator
+					// we don't currently know the twitter handle of the tastemaker
+				],
+			)
+			.otherwise(() => [{ title: "Not Found" }, { status: "404" }])
+	}
+}
+
+const campaign = "tastemaker share date"
+
+export default function FreeDateIdeaRoute() {
+	const { dateExperience, showShareScreen } = useLoaderData<typeof loader>()
+	const mixpanel = useMixpanel()
+	const params = useParams()
+	const { id } = $params("/free-date/:id", params)
+	const fetcher = useFetcher()
+	useScrolledToBottom(() =>
+		mixpanel.track("User Scrolled To Bottom", {
+			of: "Free Date Page",
+			free_date_id: id,
+		}),
+	)
+
+	return showShareScreen ? (
+		<div className={css({ width: "100%" })}>
+			<div
+				className={flex({
+					justifyContent: "space-between",
+					alignItems: "center",
+					borderBottom: "1px solid",
+					borderBottomColor: "gray",
+					padding: {
+						base: "20px 8px",
+						md: "8px",
+					},
+				})}
+			>
+				<fetcher.Form>
+					<button
+						type="submit"
+						className={css({
+							background: "none",
+							border: "none",
+							cursor: "pointer",
+							_hover: {
+								opacity: 0.7,
+							},
+						})}
+					>
+						<FiX size={"24px"} className={css({ color: "black" })} />
+					</button>
+				</fetcher.Form>
+				<p
+					className={css({
+						fontWeight: "bold",
+						fontSize: { base: "18px", md: "24px" },
+					})}
+				>
+					Share your date:
+				</p>
+				<div aria-hidden={true} className={css({ opacity: "0" })}>
+					Back
+				</div>
+			</div>
+			<div className={css({ justifyContent: "center" })}>
+				<VStack
+					alignItems="flex-start"
+					justifyContent={"flex-start"}
+					gap={4}
+					paddingY={"20px"}
+					width={"300px"}
+				>
+					<div className={css({ justifyContent: "center" })}>
+						<IoIosCheckmarkCircleOutline
+							className={css({ color: "primary" })}
+							size={30}
+						/>
+					</div>
+					<p
+						className={css({
+							textStyle: "paragraph",
+							fontWeight: "bold",
+							textAlign: "center",
+						})}
+					>
+						You successfully created your date! Make sure to share it.
+					</p>
+					<CopyLinkShareButton campaign={campaign} />
+					<FacebookShareButton campaign={campaign} />
+					<TwitterShareButton campaign={campaign} />
+				</VStack>
+			</div>
+		</div>
+	) : (
+		<PageContainer
+			width={{ sm: "100%", md: 750, lg: 900, xl: 1100 }}
+			padding={{
+				base: "0px 20px 80px",
+				md: "0px 20px 40px",
+				lg: "0px 0px 40px",
+			}}
+		>
+			<Outlet />
+			{match(dateExperience)
+				.with({ __typename: "EntityNotFoundError" }, () => (
+					<p className={css({ textStyle: "paragraph" })}>Not Found</p>
+				))
+				.with({ __typename: "DateExperience" }, (experience) => (
+					<VStack gap={4} alignItems={"flex-start"}>
+						<img
+							src={experience.thumbnail}
+							alt={experience.title}
+							className={css({ aspectRatio: "16/9" })}
+						/>
+						<HStack
+							gap={6}
+							alignItems="flex-start"
+							justifyContent={"flex-start"}
+						>
+							<VStack
+								gap={4}
+								alignItems="flex-start"
+								width={{ base: "100%", md: "66%" }}
+							>
+								<HStack
+									gap={4}
+									justifyContent={"space-between"}
+									alignItems="center"
+								>
+									<h1 className={css({ textStyle: "h1", fontSize: 32 })}>
+										{experience.title}
+									</h1>
+								</HStack>
+								<VStack
+									gap={4}
+									justifyContent="flex-start"
+									alignItems="flex-start"
+									width={"100%"}
+								>
+									<OpenShareModalLink
+										to={$path("/free-date/:id/share", { id: experience.id })}
+									/>
+									{experience.tags.length > 0 && (
+										<Tags tags={experience.tags} />
+									)}
+									<div
+										className={divider({
+											color: "gray",
+											thickness: "1px",
+											orientation: "horizontal",
+											width: "100%",
+										})}
+									/>
+								</VStack>
+								<VStack gap={4} width="100%" alignItems={"flex-start"}>
+									<TastemakerInfo tastemaker={experience.tastemaker} />
+									{experience.nsfw && <NSFWTag size="lg" />}
+									<div
+										className={divider({
+											color: "gray",
+											thickness: "1px",
+											orientation: "horizontal",
+											width: "100%",
+										})}
+									/>
+								</VStack>
+								<em
+									className={css({
+										textStyle: "paragraph",
+										fontStyle: "italic",
+										wordBreak: "break-word",
+										fontFamily: "spectral",
+									})}
+								>
+									{experience.description}
+								</em>
+								<VStack gap={4} alignItems="flex-start">
+									<h3
+										className={css({
+											fontSize: 20,
+											textStyle: "paragraph",
+											fontWeight: "bold",
+										})}
+									>
+										{`Recommended time${
+											experience.timesOfDay.length > 1 ? "s" : ""
+										} of the day`}
+									</h3>
+									<HStack gap={2} justifyContent="flex-start">
+										{experience.timesOfDay.map((time) => (
+											<TimeOfTheDay name={time.name} key={time.id} />
+										))}
+									</HStack>
+								</VStack>
+								<VStack gap={4}>
+									{experience.stops.map((stop) => (
+										<DateStop stop={stop} key={stop.id} />
+									))}
+								</VStack>
+							</VStack>
+							<div
+								className={flex({
+									width: `${100 / 3}%`,
+									position: "sticky",
+									top: "20px",
+									display: { base: "none", md: "flex" },
+								})}
+							>
+								<Desktop css={{ width: "100%" }}>
+									<EmailItineraryRightSide />
+								</Desktop>
+							</div>
+						</HStack>
+						<Mobile>
+							<FloatingAddToCalendar />
+						</Mobile>
+					</VStack>
+				))
+				.otherwise(() => null)}
+		</PageContainer>
+	)
+}

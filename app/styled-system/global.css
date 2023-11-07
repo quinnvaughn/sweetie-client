@@ -33,4 +33,18 @@
     --scale-x: 1;
     --scale-y: 1
     }
+
+  html,body {
+    height: 100%
+    }
+
+  body {
+    --fonts-roboto: Roboto, sans-serif;
+    --fonts-spectral: Spectral, serif;
+    font-family: var(--fonts-roboto);
+    line-height: 1.5;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column
+    }
 }

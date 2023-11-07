@@ -1,5 +1,10 @@
 query ViewerIsLoggedIn {
   viewer {
     id
+    username 
+    role {
+      id 
+      name
+    }
   }
 }

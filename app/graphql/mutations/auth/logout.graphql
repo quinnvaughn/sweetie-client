@@ -1,0 +1,13 @@
+mutation Logout {
+  logout {
+    ... on AuthError {
+      message
+    }
+    ... on Error {
+      message
+    }
+    ... on LogoutResult {
+      data
+    }
+  }
+}
