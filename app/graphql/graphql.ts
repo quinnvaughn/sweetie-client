@@ -3,10 +3,9 @@ import {
 	DocumentNode,
 	ExecutableDefinitionNode,
 	GraphQLError,
-	Kind,
-	OperationTypeNode,
 	print,
 } from "graphql"
+import { getEnv } from "~/lib"
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 type GqlFetchResult<TData = any> = {
@@ -14,6 +13,8 @@ type GqlFetchResult<TData = any> = {
 	errors?: Error[]
 	response?: Response
 }
+
+const env = getEnv()
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export async function gqlFetch<TData = any, TVariables = Record<string, any>>(
@@ -37,7 +38,7 @@ export async function gqlFetch<TData = any, TVariables = Record<string, any>>(
 
 	try {
 		const response = await fetch(
-			`http://localhost:4000?operation=${props.name?.value}}`,
+			`${env.GRAPHQL_ENDPOINT}?operation=${props.name?.value}}`,
 			{
 				credentials: "include",
 				body: JSON.stringify(requestBody),
