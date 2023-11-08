@@ -13,9 +13,11 @@ app.all("*", createRequestHandler({ build }))
 
 const port = process.env.PORT || 3000
 
-app.listen(port, () => {
+const host = process.env.HOST || "localhost"
+
+app.listen(port, host, () => {
 	if (process.env.NODE_ENV === "development") {
 		broadcastDevReady(build)
 	}
-	console.log(`App listening on http://localhost:${port}`)
+	console.log(`App listening on http://${host}:${port}`)
 })
