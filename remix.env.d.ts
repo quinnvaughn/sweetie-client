@@ -8,6 +8,6 @@ interface Window {
 		MIXPANEL_TOKEN: string
 		MIXPANEL_PROXY: string
 		FRONTEND_URL: string
-		ENVIRONMENT: string
+		NODE_ENV: "development" | "production" | "test"
 	}
 }

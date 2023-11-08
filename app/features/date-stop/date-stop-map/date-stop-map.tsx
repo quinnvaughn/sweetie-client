@@ -1,15 +1,18 @@
 import { GoogleMap, MarkerF, useJsApiLoader } from "@react-google-maps/api"
 import { ClientOnly } from "remix-utils/client-only"
 import { Coordinates } from "~/graphql/generated"
+import { getEnv } from "~/lib"
 import { css } from "~/styled-system/css"
 
 type Props = {
 	coordinates: Coordinates
 }
 
+const env = getEnv()
+
 export function DateStopMap({ coordinates }: Props) {
 	const { isLoaded } = useJsApiLoader({
-		googleMapsApiKey: window.ENV.GOOGLE_MAPS_API_KEY,
+		googleMapsApiKey: env.GOOGLE_MAPS_API_KEY,
 	})
 	return isLoaded ? (
 		<GoogleMap

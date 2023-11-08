@@ -1,22 +1,13 @@
-import { config } from "config.server"
 import mixpanel from "mixpanel-browser"
+import { getEnv } from "~/lib"
 
-const windowOrConfig = typeof window !== "undefined" ? "window" : "config"
+const env = getEnv()
 
-const token =
-	windowOrConfig === "window"
-		? window.ENV.MIXPANEL_TOKEN
-		: config.MIXPANEL_TOKEN
+const token = env.MIXPANEL_TOKEN
 
-const proxy =
-	windowOrConfig === "window"
-		? window.ENV.MIXPANEL_PROXY
-		: config.MIXPANEL_PROXY
+const proxy = env.MIXPANEL_PROXY
 
-const debug =
-	windowOrConfig === "window"
-		? window.ENV.ENVIRONMENT === "development"
-		: config.ENVIRONMENT === "development"
+const debug = env.NODE_ENV === "production" ? false : true
 
 mixpanel.init(token, {
 	debug,

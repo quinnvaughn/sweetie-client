@@ -1,7 +1,6 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node"
 import { useActionData, useLoaderData } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
-import { config } from "config.server"
 import { DateTime } from "luxon"
 import { $params, $path } from "remix-routes"
 import {
@@ -30,7 +29,7 @@ import {
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { useOpenedModal, useViewer } from "~/hooks"
-import { formatTime } from "~/lib"
+import { formatTime, getEnv } from "~/lib"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
@@ -80,6 +79,8 @@ const validator = withZod(
 	}),
 )
 
+const env = getEnv()
+
 export async function loader({ request, params }: LoaderFunctionArgs) {
 	const { id } = $params("/free-date/:id/add-to-calendar", params)
 	const { data } = await gqlFetch(request, GetDateExperienceDocument, { id })
@@ -90,7 +91,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 	if (!(data.dateExperience.__typename === "DateExperience")) {
 		throw new Response("Not Found", { status: 404 })
 	}
-	const link = `${config.FRONTEND_URL}${$path("/free-date/:id", {
+	const link = `${env.FRONTEND_URL}${$path("/free-date/:id", {
 		id: data.dateExperience.id,
 	})}`
 	return json({

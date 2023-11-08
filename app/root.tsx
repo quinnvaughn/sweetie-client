@@ -11,7 +11,6 @@ import styles from "./index.css"
 import { DataFunctionArgs, LinksFunction, json } from "@remix-run/node"
 import { gqlFetch } from "./graphql/graphql"
 import { ViewerIsLoggedInDocument } from "./graphql/generated"
-import { config } from "config.server"
 import { createPortal } from "react-dom"
 import { ToastContainer } from "./features/ui"
 import { ClientOnly } from "remix-utils/client-only"
@@ -39,15 +38,16 @@ export const links: LinksFunction = () => [
 
 export async function loader({ request }: DataFunctionArgs) {
 	const { data } = await gqlFetch(request, ViewerIsLoggedInDocument)
+	const env = process.env
 	return json({
 		data,
 		ENV: {
-			GOOGLE_MAPS_API_KEY: config.GOOGLE_MAPS_API_KEY,
-			GRAPHQL_ENDPOINT: config.GRAPHQL_ENDPOINT,
-			MIXPANEL_TOKEN: config.MIXPANEL_TOKEN,
-			MIXPANEL_PROXY: config.MIXPANEL_PROXY,
-			FRONTEND_URL: config.FRONTEND_URL,
-			ENVIRONMENT: config.ENVIRONMENT,
+			GOOGLE_MAPS_API_KEY: env.GOOGLE_MAPS_API_KEY,
+			MIXPANEL_TOKEN: env.MIXPANEL_TOKEN,
+			MIXPANEL_PROXY: env.MIXPANEL_PROXY,
+			GRAPHQL_ENDPOINT: env.GRAPHQL_ENDPOINT,
+			FRONTEND_URL: env.FRONTEND_URL,
+			NODE_ENV: env.NODE_ENV,
 		},
 	})
 }

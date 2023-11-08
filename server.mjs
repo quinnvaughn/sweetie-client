@@ -11,9 +11,11 @@ app.use(express.static("public"))
 // and your app is "just a request handler"
 app.all("*", createRequestHandler({ build }))
 
-app.listen(process.env.PORT || 3000, () => {
+const port = process.env.PORT || 3000
+
+app.listen(port, () => {
 	if (process.env.NODE_ENV === "development") {
 		broadcastDevReady(build)
 	}
-	console.log("App listening on http://localhost:3000")
+	console.log(`App listening on http://localhost:${port}`)
 })
