@@ -100,7 +100,6 @@ export function SearchBar() {
 						<button
 							type="button"
 							className={css({
-								// backgroundColor: "transparent",s
 								outline: "0",
 								cursor: "pointer",
 								padding: "8px",
@@ -108,10 +107,9 @@ export function SearchBar() {
 								borderColor: "gray",
 								borderRadius: { base: "50%", md: "8px" },
 							})}
-							onClick={() => {
-								console.log("is clicked.")
+							onClick={() =>
 								setIsVisible((prev) => (prev === "yes" ? "no" : "yes"))
-							}}
+							}
 						>
 							<HStack gap={1} alignItems="center">
 								<FaSlidersH size={20} className={css({ color: "black" })} />

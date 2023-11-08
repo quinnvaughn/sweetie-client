@@ -2,16 +2,23 @@ import { ShareButton } from "./share-button"
 import { generateUTMLink } from "~/lib"
 import { FaSquareFacebook } from "react-icons/fa6/index.js"
 import { useMixpanel } from "~/hooks"
+import { SystemStyleObject } from "@pandacss/dev"
 
 type Props = {
 	campaign: string
 	link?: string
+	css?: SystemStyleObject
 }
 
-export function FacebookShareButton({ campaign, link }: Props) {
+export function FacebookShareButton({
+	campaign,
+	link,
+	css: cssProp = {},
+}: Props) {
 	const mixpanel = useMixpanel()
 	return (
 		<ShareButton
+			css={cssProp}
 			text="Facebook"
 			icon={<FaSquareFacebook size={32} color={"#4267B2"} />}
 			onClick={() => {

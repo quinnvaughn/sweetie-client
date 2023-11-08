@@ -80,9 +80,12 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 					stops,
 					id,
 				}) => [
-					{ title: `${title} - Sweetie date idea` },
+					{ title: `${title} by ${tastemaker.user.name} - Sweetie date idea` },
 					{ name: "description", content: description.slice(0, 200) },
-					{ name: "og:title", content: title },
+					{
+						name: "og:title",
+						content: `${title} by ${tastemaker.user.name} - Sweetie date idea`,
+					},
 					{ name: "og:description", content: description.slice(0, 200) },
 					{ name: "og:image", content: thumbnail },
 					{

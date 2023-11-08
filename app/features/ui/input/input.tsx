@@ -2,12 +2,13 @@ import { useField } from "remix-validated-form"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
-type MyInputProps = {
+type Props = {
 	name: string
 	label: string
 	required?: boolean
 	placeholder?: string
 	type?: string
+	value?: string
 }
 
 export function Input({
@@ -16,23 +17,28 @@ export function Input({
 	required,
 	placeholder,
 	type,
-}: MyInputProps) {
+	value,
+}: Props) {
 	const { error, getInputProps } = useField(name)
 	return (
 		<VStack gap={2} alignItems="flex-start" width={"100%"}>
 			<label htmlFor={name}>
-				{label} {required && <span>*</span>}
+				{label}{" "}
+				{required && <span className={css({ textStyle: "error" })}>*</span>}
 			</label>
 			<input
-				{...getInputProps({ id: name })}
+				{...getInputProps()}
 				placeholder={placeholder}
 				className={css({
 					width: "100%",
-					borderRadius: "4px",
-					border: "1px solid #ccc",
+					borderRadius: "8px",
+					border: "1px solid",
+					borderColor: "gray",
 					padding: "8px",
 				})}
 				type={type}
+				name={name}
+				value={value}
 			/>
 			{error && (
 				<span className={css({ color: "red", fontSize: "12px" })}>{error}</span>

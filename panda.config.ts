@@ -1,4 +1,5 @@
 import { defineConfig } from "@pandacss/dev"
+import { buttonRecipe } from "~/recipes"
 import { textStyles } from "~/theme"
 
 export default defineConfig({
@@ -35,6 +36,9 @@ export default defineConfig({
 	// Useful for theme customization
 	theme: {
 		extend: {
+			recipes: {
+				button: buttonRecipe,
+			},
 			keyframes: {
 				slideUp: {
 					"0%": {

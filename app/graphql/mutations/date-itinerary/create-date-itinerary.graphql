@@ -1,0 +1,23 @@
+mutation CreateDateItinerary($input: CreateDateItineraryInput!) {
+  createDateItinerary(input: $input) {
+    __typename
+    ... on AuthError {
+      message
+    }
+    ... on EntityCreationError {
+      message
+    }
+    ... on EntityNotFoundError {
+      message
+    }
+    ... on FieldErrors {
+      fieldErrors {
+        message
+        field
+      }
+    }
+    ... on PlannedDate {
+      id
+    }
+  }
+}

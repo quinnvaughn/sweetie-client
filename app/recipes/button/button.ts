@@ -1,12 +1,15 @@
-import { cva } from "~/styled-system/css"
+import { defineRecipe } from "@pandacss/dev"
 
-export const button = cva({
+export const buttonRecipe = defineRecipe({
+	className: "button",
+	description: "A button",
 	base: {
 		color: "white",
 		fontWeight: "bold",
 		fontFamily: "roboto",
 		cursor: "pointer",
 		borderRadius: "8px",
+		fontSize: "16px",
 		_disabled: {
 			opacity: 0.5,
 			cursor: "not-allowed",
@@ -23,9 +26,9 @@ export const button = cva({
 			black: { backgroundColor: "black" },
 		},
 		size: {
-			sm: { padding: "8px", fontSize: "12px" },
-			md: { padding: "8px 16px", fontSize: "18px" },
-			lg: { padding: "16px 24px", fontSize: "24px" },
+			sm: { padding: "8px" },
+			md: { padding: "8px 32px" },
+			lg: { padding: "12px 64px" },
 		},
 	},
 	compoundVariants: [

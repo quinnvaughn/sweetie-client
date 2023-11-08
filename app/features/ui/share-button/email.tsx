@@ -3,16 +3,19 @@ import { generateUTMLink } from "~/lib"
 import { FiMail } from "react-icons/fi/index.js"
 import { css } from "~/styled-system/css"
 import { useMixpanel } from "~/hooks"
+import { SystemStyleObject } from "@pandacss/dev"
 
 type Props = {
 	campaign: string
 	link?: string
+	css?: SystemStyleObject
 }
 
-export function EmailShareButton({ campaign, link }: Props) {
+export function EmailShareButton({ campaign, link, css: cssProp = {} }: Props) {
 	const mixpanel = useMixpanel()
 	return (
 		<ShareButton
+			css={cssProp}
 			text="Email"
 			icon={<FiMail size={32} className={css({ color: "black" })} />}
 			onClick={() => {

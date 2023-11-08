@@ -3,17 +3,24 @@ import { useMixpanel, useToast } from "~/hooks"
 import { generateUTMLink } from "~/lib"
 import { FiCopy } from "react-icons/fi/index.js"
 import { css } from "~/styled-system/css"
+import { SystemStyleObject } from "@pandacss/dev"
 
 type Props = {
 	campaign: string
 	link?: string
+	css?: SystemStyleObject
 }
 
-export function CopyLinkShareButton({ campaign, link }: Props) {
+export function CopyLinkShareButton({
+	campaign,
+	link,
+	css: cssProp = {},
+}: Props) {
 	const { success } = useToast()
 	const mixpanel = useMixpanel()
 	return (
 		<ShareButton
+			css={cssProp}
 			text="Copy Link"
 			icon={<FiCopy size={32} className={css({ color: "black" })} />}
 			onClick={() => {

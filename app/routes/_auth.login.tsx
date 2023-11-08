@@ -19,7 +19,8 @@ const validator = withZod(
 )
 
 export async function action({ request }: DataFunctionArgs) {
-	const result = await validator.validate(await request.formData())
+	const formData = await request.formData()
+	const result = await validator.validate(formData)
 
 	if (result.error) return validationError(result.error)
 	const { data, response } = await gqlFetch(request, LoginDocument, {
@@ -43,11 +44,19 @@ export async function action({ request }: DataFunctionArgs) {
 			})
 		})
 		.with({ __typename: "User" }, () => {
-			return redirect("/", {
-				headers: {
-					"Set-Cookie": response?.headers.get("Set-Cookie") ?? "",
-				},
-			})
+			if (formData.get("redirectTo")) {
+				return redirect(formData.get("redirectTo") as string, {
+					headers: {
+						"Set-Cookie": response?.headers.get("Set-Cookie") ?? "",
+					},
+				})
+			} else {
+				return redirect("/", {
+					headers: {
+						"Set-Cookie": response?.headers.get("Set-Cookie") ?? "",
+					},
+				})
+			}
 		})
 		.otherwise(() => null)
 }

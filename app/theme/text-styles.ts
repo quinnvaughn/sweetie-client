@@ -47,7 +47,7 @@ export const textStyles = defineTextStyles({
 		value: {
 			fontFamily: "roboto",
 			fontWeight: "400",
-			fontSize: "16px",
+			fontSize: "14px",
 			lineHeight: "24px",
 			letterSpacing: "0",
 			textDecoration: "None",

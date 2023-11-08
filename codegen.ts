@@ -15,7 +15,7 @@ const config: CodegenConfig = {
 		"app/graphql/generated.ts": {
 			plugins: ["typescript", "typescript-operations", "typed-document-node"],
 			config: {
-				avoidOptionals: true,
+				// avoidOptionals: true,
 				nonOptionalTypename: true,
 			},
 		},

@@ -3,16 +3,23 @@ import { generateUTMLink } from "~/lib"
 import { FiMessageSquare } from "react-icons/fi/index.js"
 import { css } from "~/styled-system/css"
 import { useMixpanel } from "~/hooks"
+import { SystemStyleObject } from "@pandacss/dev"
 
 type Props = {
 	campaign: string
 	link?: string
+	css?: SystemStyleObject
 }
 
-export function MessagesShareButton({ campaign, link }: Props) {
+export function MessagesShareButton({
+	campaign,
+	link,
+	css: cssProp = {},
+}: Props) {
 	const mixpanel = useMixpanel()
 	return (
 		<ShareButton
+			css={cssProp}
 			text="Messages"
 			icon={<FiMessageSquare size={32} className={css({ color: "black" })} />}
 			onClick={() => {

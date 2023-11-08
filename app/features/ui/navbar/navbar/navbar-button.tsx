@@ -9,7 +9,11 @@ type Props = {
 export function NavbarButtonAsLink({ action, text }: Props) {
 	const fetcher = useFetcher()
 	return (
-		<fetcher.Form method="post" action={action}>
+		<fetcher.Form
+			method="post"
+			action={action}
+			className={css({ width: "100%" })}
+		>
 			<button
 				type="submit"
 				className={css({

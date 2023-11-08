@@ -2,16 +2,23 @@ import { ShareButton } from "./share-button"
 import { generateUTMLink } from "~/lib"
 import { IoLogoWhatsapp } from "react-icons/io5/index.js"
 import { useMixpanel } from "~/hooks"
+import { SystemStyleObject } from "@pandacss/dev"
 
 type Props = {
 	campaign: string
 	link?: string
+	css?: SystemStyleObject
 }
 
-export function WhatsAppShareButton({ campaign, link }: Props) {
+export function WhatsAppShareButton({
+	campaign,
+	link,
+	css: cssProp = {},
+}: Props) {
 	const mixpanel = useMixpanel()
 	return (
 		<ShareButton
+			css={cssProp}
 			text="WhatsApp"
 			icon={<IoLogoWhatsapp size={32} fill={"#25d366"} />}
 			onClick={() => {

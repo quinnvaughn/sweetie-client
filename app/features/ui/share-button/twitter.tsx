@@ -2,16 +2,23 @@ import { ShareButton } from "./share-button"
 import { generateUTMLink } from "~/lib"
 import { FaTwitter } from "react-icons/fa/index.js"
 import { useMixpanel } from "~/hooks"
+import { SystemStyleObject } from "@pandacss/dev"
 
 type Props = {
 	campaign: string
 	link?: string
+	css?: SystemStyleObject
 }
 
-export function TwitterShareButton({ campaign, link }: Props) {
+export function TwitterShareButton({
+	campaign,
+	link,
+	css: cssProp = {},
+}: Props) {
 	const mixpanel = useMixpanel()
 	return (
 		<ShareButton
+			css={cssProp}
 			text="Twitter"
 			icon={<FaTwitter size={32} color={"#1DA1F2"} />}
 			onClick={() => {

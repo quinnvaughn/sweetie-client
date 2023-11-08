@@ -1,9 +1,9 @@
 import { Link } from "@remix-run/react"
-import { button } from "~/recipes"
 import { HStack } from "~/styled-system/jsx"
+import { Button } from ".."
 
 type Props = {
-	button: {
+	button?: {
 		text: string
 	}
 	cancel?: {
@@ -23,12 +23,11 @@ export function ModalFooter({ button: buttonProps, cancel }: Props) {
 			borderTopColor={"gray"}
 		>
 			{cancel ? <Link to={cancel.to}>{cancel.text}</Link> : <div />}
-			<button
-				type="submit"
-				className={button({ variant: "primary", size: "md" })}
-			>
-				{buttonProps.text}
-			</button>
+			{buttonProps && (
+				<Button type="submit" variant={"secondary"} size={"lg"}>
+					{buttonProps?.text}
+				</Button>
+			)}
 		</HStack>
 	)
 }
