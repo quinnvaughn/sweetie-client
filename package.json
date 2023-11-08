@@ -6,7 +6,7 @@
 		"dev": "concurrently \"remix-routes -w\" \"yarn dev:node\"",
 		"prepare": "panda codegen",
 		"dev:node": "remix dev",
-		"start": "remix-serve ./build/index.js",
+		"start": "remix-serve build/index.js",
 		"typecheck": "tsc",
 		"codegen": "graphql-codegen --config codegen.ts",
 		"codegen:watch": "yarn codegen --watch"
