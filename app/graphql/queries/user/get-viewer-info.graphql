@@ -1,0 +1,14 @@
+query GetViewerInfo {
+      viewer {
+        id
+        username
+		name
+		email
+        profile {
+            id
+            bio
+			avatar
+			link
+        }
+      }
+  }

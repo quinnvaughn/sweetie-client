@@ -8,7 +8,7 @@ type Props = {
 	required?: boolean
 	placeholder?: string
 	type?: string
-	value?: string
+	defaultValue?: string
 }
 
 export function Input({
@@ -17,11 +17,11 @@ export function Input({
 	required,
 	placeholder,
 	type,
-	value,
+	defaultValue,
 }: Props) {
 	const { error, getInputProps } = useField(name)
 	return (
-		<VStack gap={2} alignItems="flex-start" width={"100%"}>
+		<VStack gap={1} alignItems="flex-start" width={"100%"}>
 			<label htmlFor={name}>
 				{label}{" "}
 				{required && <span className={css({ textStyle: "error" })}>*</span>}
@@ -36,9 +36,9 @@ export function Input({
 					borderColor: "gray",
 					padding: "8px",
 				})}
-				type={type}
 				name={name}
-				value={value}
+				type={type}
+				defaultValue={defaultValue}
 			/>
 			{error && (
 				<span className={css({ color: "red", fontSize: "12px" })}>{error}</span>

@@ -1,4 +1,4 @@
-import { AddToCalendarButton } from "../add-to-calendar-button"
+import { GoOnThisDateButton } from "../go-on-this-date-button"
 import { css } from "~/styled-system/css"
 
 export function FloatingAddToCalendar() {
@@ -21,7 +21,7 @@ export function FloatingAddToCalendar() {
 			<p className={css({ textStyle: "paragraph", fontWeight: "bold" })}>
 				Free
 			</p>
-			<AddToCalendarButton />
+			<GoOnThisDateButton />
 		</div>
 	)
 }

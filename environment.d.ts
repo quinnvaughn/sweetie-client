@@ -7,6 +7,10 @@ declare global {
 			MIXPANEL_TOKEN: string
 			MIXPANEL_PROXY: string
 			FRONTEND_URL: string
+			GOOGLE_CREDENTIALS_PRIVATE_KEY: string
+			GOOGLE_CREDENTIALS_CLIENT_EMAIL: string
+			GOOGLE_CLOUD_PROJECT_ID: string
+			IMAGE_BUCKET: string
 		}
 	}
 }

@@ -24,7 +24,7 @@ export function RadioGroup({
 }: Props) {
 	const group = css(cssProp)
 	return (
-		<VStack gap={2} alignItems={"flex-start"} className={group}>
+		<VStack gap={1} alignItems={"flex-start"} className={group}>
 			<label htmlFor={name}>{label}</label>
 			<div
 				className={css({
@@ -39,7 +39,7 @@ export function RadioGroup({
 					.with("column", () => (
 						<VStack gap={4}>
 							{options.map((option) => (
-								<HStack gap={2} key={option.value}>
+								<HStack gap={1} key={option.value}>
 									<input
 										type="radio"
 										id={option.label}
@@ -55,7 +55,7 @@ export function RadioGroup({
 					.with("row", () => (
 						<HStack gap={4}>
 							{options.map((option) => (
-								<HStack gap={2} key={option.value}>
+								<HStack gap={1} key={option.value}>
 									<input
 										type="radio"
 										id={option.label}

@@ -15,6 +15,7 @@ import { ExploreDateIdeas, SearchBar } from "~/features/search"
 import { PageContainer } from "~/features/ui"
 import { DateExperiencesDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
+import { getEnv } from "~/lib"
 
 const SearchParamsSchema = z.object({
 	query: z.string().optional(),
@@ -28,8 +29,9 @@ const SearchParamsSchema = z.object({
 export type SearchParams = z.infer<typeof SearchParamsSchema>
 
 export async function loader({ request }: DataFunctionArgs) {
+	const urlParams = request.url.split("?")[1]
 	const { city, nsfw, query, timesOfDay } = queryString.parse(
-		request.url.split("?")[1],
+		urlParams,
 	) as SearchParams
 	const order = ["query", "city", "nsfw", "timesOfDay"]
 	const parsedParams = {
@@ -64,15 +66,17 @@ export async function loader({ request }: DataFunctionArgs) {
 		},
 		{ skipNull: true, sort: (a, b) => order.indexOf(a) - order.indexOf(b) },
 	)
-	const newURL = request.url
-		.replace("http://localhost:3000", "")
-		.replace("+", "%20")
-	if (cleaned !== newURL) {
-		// if after cleaning the url is the same as the current url, then redirect to the homepage
-		if (cleaned === $path("/search")) {
-			return redirect($path("/"))
-		}
+	const env = getEnv()
+	const cleanedURL = request.url
+		// remove the protocol and domain
+		.replace(env.FRONTEND_URL, "")
+		// remove all the + and replace them with %20 aka space
+		.replaceAll("+", "%20")
+	if (cleaned !== cleanedURL) {
 		return redirect(cleaned)
+	}
+	if (cleaned === $path("/search")) {
+		return redirect($path("/"))
 	}
 	const { data } = await gqlFetch(request, DateExperiencesDocument, {
 		nsfw: parsedParams.nsfw,
@@ -158,7 +162,7 @@ export default function SearchRoute() {
 			<ExploreDateIdeas />
 			<SearchBar />
 			<FreeDateList
-				dateExperiences={data.dateExperiences.edges.map(({ node }) => ({
+				freeDates={data.dateExperiences.edges.map(({ node }) => ({
 					...node,
 				}))}
 			/>

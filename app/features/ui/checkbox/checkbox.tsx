@@ -6,7 +6,7 @@ type Props = Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> & {
 
 export function Checkbox({ label, ...props }: Props) {
 	return (
-		<HStack gap={2} alignItems="center">
+		<HStack gap={1} alignItems="center">
 			<input {...props} type="checkbox" />
 			<label>{label}</label>
 		</HStack>

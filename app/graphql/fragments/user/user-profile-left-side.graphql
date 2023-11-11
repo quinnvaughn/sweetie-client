@@ -1,0 +1,5 @@
+fragment UserProfileLeftSide on User {
+  id 
+  ...UserProfileHeading
+  ...UserBio
+}

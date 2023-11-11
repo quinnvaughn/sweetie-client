@@ -29,7 +29,7 @@ import {
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { useOpenedModal, useViewer } from "~/hooks"
-import { formatTime, getEnv } from "~/lib"
+import { formatTime, getEnv, mapFieldErrorToValidationError } from "~/lib"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
@@ -132,10 +132,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 			return json({ success: true, errors: null, formData: result.data })
 		})
 		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) => {
-			const reduceToValidatorError = fieldErrors.reduce((acc, curr) => {
-				acc.fieldErrors[curr.field] = curr.message
-				return acc
-			}, {} as ValidatorError)
+			const reduceToValidatorError = mapFieldErrorToValidationError(fieldErrors)
 			return json(
 				{ success: false, errors: reduceToValidatorError, formData: null },
 				{ status: 400 },
@@ -214,16 +211,28 @@ export default function AddToCalendarPage() {
 						</VStack>
 					) : (
 						<VStack gap={2} justifyContent="center">
+							<p
+								className={css({ textStyle: "paragraph", textAlign: "center" })}
+							>
+								Adding the date to your calendar from here is free, makes it
+								easy to remember, and saves you time.
+							</p>
 							<DatePicker name="date" label="Date" required />
 							<TimePicker name="time" label="Start time" required />
+							<p
+								className={css({ textStyle: "paragraph", textAlign: "center" })}
+							>
+								You can also send this itinerary to your date so they can add it
+								to their calendar too. This is completely optional.
+							</p>
 							<Input
 								name="guest.name"
-								label="Date's name"
+								label="Date's name (optional)"
 								placeholder={"Your date's name"}
 							/>
 							<Input
 								name="guest.email"
-								label="Date's email"
+								label="Date's email (optional)"
 								placeholder={"Your date's email"}
 							/>
 							<input

@@ -1,43 +1,54 @@
-import { DateExperienceCardFragment } from "~/graphql/generated"
+import { FreeDateCardFragment } from "~/graphql/generated"
 import { FreeDateCard } from "../free-date-card"
 import { match } from "ts-pattern"
 import { css } from "~/styled-system/css"
 
 type Props = {
-	dateExperiences: DateExperienceCardFragment[]
+	noDatesText?: string
+	freeDates: FreeDateCardFragment[]
+	base?: {
+		gap?: number
+		gridTemplateColumns?: string
+	}
+	md?: {
+		gap?: number
+		gridTemplateColumns?: string
+	}
+	xl?: {
+		gap?: number
+		gridTemplateColumns?: string
+	}
 }
 
-export function FreeDateList({ dateExperiences }: Props) {
-	return match(dateExperiences)
+export function FreeDateList({ freeDates, base, md, xl, noDatesText }: Props) {
+	return match(freeDates)
 		.when(
-			(dateExperiences) => dateExperiences.length === 0,
+			(freeDates) => freeDates.length === 0,
 			() => (
 				<p className={css({ textStyle: "paragraph" })}>
-					No dates found. Maybe try a different search?
+					{noDatesText ?? "No dates found. Maybe try a different search?"}
 				</p>
 			),
 		)
 		.when(
-			(dateExperiences) => dateExperiences.length > 0,
-			(dateExperiences) => (
+			(freeDates) => freeDates.length > 0,
+			(freeDates) => (
 				<div
 					className={css({
-						base: {
+						base: base ?? {
 							display: "grid",
-						},
-						sm: {
 							gap: 2,
 							gridTemplateColumns: "1fr",
 						},
-						md: {
+						md: md ?? {
 							gridTemplateColumns: "repeat(2, 1fr)",
 						},
-						xl: {
+						xl: xl ?? {
 							gridTemplateColumns: "repeat(3, 1fr)",
 						},
 					})}
 				>
-					{dateExperiences.map((node) => (
+					{freeDates.map((node) => (
 						<FreeDateCard key={node.id} dateExperience={node} />
 					))}
 				</div>

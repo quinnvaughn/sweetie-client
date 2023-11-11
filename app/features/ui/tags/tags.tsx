@@ -17,7 +17,6 @@ const tagStyles = css.raw({
 	letterSpacing: "0.04em",
 	fontStyle: "italic",
 	fontWeight: "bold",
-	fontSize: "15px",
 	textDecoration: "none",
 })
 

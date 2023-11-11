@@ -28,7 +28,6 @@ export function TastemakerInfo({ tastemaker }: Props) {
 						}}
 					/>
 					<Link
-						target="_blank"
 						to={$path("/user/:username", {
 							username: tastemaker.user.username,
 						})}

@@ -6,6 +6,7 @@ import {
 	Scripts,
 	ScrollRestoration,
 	useLoaderData,
+	useRouteError,
 } from "@remix-run/react"
 import styles from "./index.css"
 import { DataFunctionArgs, LinksFunction, json } from "@remix-run/node"
@@ -50,6 +51,24 @@ export async function loader({ request }: DataFunctionArgs) {
 			NODE_ENV: env.NODE_ENV,
 		},
 	})
+}
+
+export function ErrorBoundary() {
+	const error = useRouteError()
+	console.error({ error })
+	return (
+		<html lang="en">
+			<head>
+				<title>Oh no!</title>
+				<Meta />
+				<Links />
+			</head>
+			<body>
+				{/* add the UI you want your users to see */}
+				<Scripts />
+			</body>
+		</html>
+	)
 }
 
 export default function App() {

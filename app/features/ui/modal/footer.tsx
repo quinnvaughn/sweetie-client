@@ -24,7 +24,7 @@ export function ModalFooter({ button: buttonProps, cancel }: Props) {
 		>
 			{cancel ? <Link to={cancel.to}>{cancel.text}</Link> : <div />}
 			{buttonProps && (
-				<Button type="submit" variant={"secondary"} size={"lg"}>
+				<Button type="submit" variant={"black"} size={"lg"}>
 					{buttonProps?.text}
 				</Button>
 			)}

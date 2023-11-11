@@ -22,10 +22,9 @@ export function ShareButton({
 					border: "1px solid",
 					borderColor: "gray",
 					borderRadius: "8px",
-					height: "76px",
 					outline: "none",
 					backgroundColor: "white",
-					padding: "0 24px",
+					padding: "16px",
 					_hover: {
 						backgroundColor: "rgb(247, 247, 247)",
 						cursor: "pointer",

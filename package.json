@@ -12,6 +12,7 @@
 		"codegen:watch": "yarn codegen --watch"
 	},
 	"dependencies": {
+		"@google-cloud/storage": "^7.6.0",
 		"@graphql-codegen/client-preset": "^4.1.0",
 		"@react-google-maps/api": "^2.19.2",
 		"@remix-run/express": "^2.2.0",

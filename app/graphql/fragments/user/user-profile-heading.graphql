@@ -1,0 +1,15 @@
+fragment UserProfileHeading on User {
+  id 
+  isUsersProfile
+  name 
+  username
+  profile {
+    id 
+    avatar
+    link
+  }
+  # tastemaker {
+  #   id 
+  #   formattedPrice
+  # }
+}

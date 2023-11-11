@@ -1,0 +1,12 @@
+query GetProfile($username: String!) {
+  user(username: $username) {
+    __typename
+    ... on User {
+      id
+      ...UserProfile
+    }
+    ... on EntityNotFoundError {
+      message
+    }
+  }
+}

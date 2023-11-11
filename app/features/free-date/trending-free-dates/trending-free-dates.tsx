@@ -1,19 +1,24 @@
 import { ListHeading } from "~/features/ui"
-import { match } from "ts-pattern"
-import { DateExperienceCardFragment } from "~/graphql/generated"
+import { P, match } from "ts-pattern"
+import { FreeDateCardFragment } from "~/graphql/generated"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 import { FreeDateList } from ".."
 
 type Props = {
-	dateExperiences: DateExperienceCardFragment[]
+	freeDates: FreeDateCardFragment[]
 }
 
-export function TrendingFreeDates({ dateExperiences }: Props) {
+export function TrendingFreeDates({ freeDates }: Props) {
 	return (
-		<VStack gap={4} alignItems={"flex-start"}>
+		<VStack gap={4} alignItems={"flex-start"} width={"100%"}>
 			<ListHeading title="Trending Dates" />
-			{match(dateExperiences)
+			{match(freeDates)
+				.with(P.nullish, () => (
+					<p className={css({ textStyle: "paragraph" })}>
+						No trending dates at this time.
+					</p>
+				))
 				.when(
 					(dates) => dates.length === 0,
 					() => (
@@ -24,7 +29,7 @@ export function TrendingFreeDates({ dateExperiences }: Props) {
 				)
 				.when(
 					(dates) => dates.length > 0,
-					(dates) => <FreeDateList dateExperiences={dates} />,
+					(dates) => <FreeDateList freeDates={dates} />,
 				)
 				.otherwise(() => null)}
 		</VStack>

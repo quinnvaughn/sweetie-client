@@ -1,0 +1,7 @@
+fragment UserBio on User {
+  id 
+  profile {
+    id 
+    bio
+  }
+}

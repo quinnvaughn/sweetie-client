@@ -30,6 +30,7 @@ export function FreeDateCard({ dateExperience }: Props) {
 						aspectRatio: "20/19",
 						objectFit: "cover",
 						borderRadius: "8px",
+						backgroundColor: "gray",
 					})}
 				/>
 				<VStack gap="2" alignItems={"flex-start"}>

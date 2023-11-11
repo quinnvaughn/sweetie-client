@@ -1,4 +1,4 @@
-import { AddToCalendarButton } from "~/features/date-itinerary"
+import { GoOnThisDateButton } from "~/features/date-itinerary"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 import { flex } from "~/styled-system/patterns"
@@ -17,7 +17,7 @@ export function EmailItineraryRightSide() {
 				width: "100%",
 			})}
 		>
-			<AddToCalendarButton />
+			<GoOnThisDateButton />
 			<div className={flex({ justifyContent: "space-between", width: "100%" })}>
 				<p className={css({ fontWeight: "bold", textStyle: "paragraph" })}>
 					Total

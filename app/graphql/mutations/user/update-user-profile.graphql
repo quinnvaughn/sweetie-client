@@ -1,0 +1,29 @@
+mutation UpdateUserProfile($input: UpdateUserProfileInput!) {
+  updateUserProfile(input: $input) {
+    __typename
+    ... on User {
+        id
+        username
+        name
+        email
+        profile {
+            id
+            bio
+            avatar
+            link
+        }
+    }
+	... on AuthError {
+		message
+	}
+	... on EntityUpdateError {
+		message
+	}
+	... on FieldErrors {
+		fieldErrors {
+			message
+			field
+		}
+	}
+  }
+}

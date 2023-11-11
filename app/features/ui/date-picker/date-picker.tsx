@@ -50,7 +50,7 @@ export default function DateTimePicker({
 			justifyContent="flex-start"
 			width="100%"
 		>
-			<label className={css({ textStyle: "paragraph", fontSize: "14px" })}>
+			<label className={css({ textStyle: "paragraph" })}>
 				{label}{" "}
 				{required && <span className={css({ textStyle: "error" })}>*</span>}
 			</label>

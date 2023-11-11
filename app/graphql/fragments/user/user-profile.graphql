@@ -1,0 +1,10 @@
+fragment UserProfile on User {
+  ...UserProfileLeftSide
+  tastemaker {
+    id
+    experiences {
+      id
+      ...FreeDateCard
+    }
+  }
+}

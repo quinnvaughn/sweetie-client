@@ -122,12 +122,12 @@ export default function TimePicker({ label, required, time, name }: Props) {
 
 	return (
 		<VStack
-			gap={2}
+			gap={1}
 			alignItems="flex-start"
 			justifyContent={"flex-start"}
 			width="100%"
 		>
-			<label className={css({ fontSize: "14px", color: "black" })}>
+			<label className={css({ textStyle: "paragraph" })}>
 				{label}{" "}
 				{required && <span className={css({ textStyle: "error" })}>*</span>}
 			</label>

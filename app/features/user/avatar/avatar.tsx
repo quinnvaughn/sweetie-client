@@ -21,6 +21,14 @@ const image = cva({
 				width: "56px",
 				height: "56px",
 			},
+			xl: {
+				width: "72px",
+				height: "72px",
+			},
+			"2xl": {
+				width: "96px",
+				height: "96px",
+			},
 		},
 	},
 	defaultVariants: {
@@ -28,8 +36,34 @@ const image = cva({
 	},
 })
 
+const placeholder = cva({
+	base: {
+		fontWeight: "bold",
+		color: "white",
+	},
+	variants: {
+		size: {
+			sm: {
+				fontSize: `${(16 * 24) / 30}px`,
+			},
+			md: {
+				fontSize: `${(16 * 40) / 30}px`,
+			},
+			lg: {
+				fontSize: `${(16 * 56) / 30}px`,
+			},
+			xl: {
+				fontSize: `${(16 * 72) / 30}px`,
+			},
+			"2xl": {
+				fontSize: `${(16 * 96) / 30}px`,
+			},
+		},
+	},
+})
+
 type Props = {
-	size?: "sm" | "md" | "lg"
+	size?: "sm" | "md" | "lg" | "xl" | "2xl"
 	user: {
 		name: string
 		avatar?: string | null
@@ -49,16 +83,7 @@ export function UserAvatar({ user, size = "md" }: Props) {
 					justifyContent: "center",
 				})}
 			>
-				<p
-					className={css({
-						fontSize:
-							(16 * (size === "sm" ? 24 : size === "md" ? 40 : 56)) / 40,
-						fontWeight: "bold",
-						color: "white",
-					})}
-				>
-					{user.name[0]}
-				</p>
+				<p className={placeholder({ size })}>{user.name[0]}</p>
 			</div>
 		))
 		.exhaustive()

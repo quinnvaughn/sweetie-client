@@ -17,7 +17,7 @@ export function CheckboxGroup({
 	css: cssProp = {},
 }: Props) {
 	const group = css(
-		{ display: "flex", flexDirection: "column", gap: 2 },
+		{ display: "flex", flexDirection: "column", gap: 1 },
 		cssProp,
 	)
 	return (
