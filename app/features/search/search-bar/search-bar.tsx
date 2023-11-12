@@ -1,22 +1,12 @@
 import { Form, useLocation, useSearchParams } from "@remix-run/react"
-import { withZod } from "@remix-validated-form/with-zod"
 import { useEffect, useRef, useState } from "react"
 import { FaSlidersH } from "react-icons/fa/index.js"
 import { FiSearch } from "react-icons/fi/index.js"
 import { $path } from "remix-routes"
-import { z } from "zod"
+import { CityCombobox } from "~/features/city"
 import { CheckboxGroup, RadioGroup } from "~/features/ui"
 import { css, cva } from "~/styled-system/css"
 import { HStack } from "~/styled-system/jsx"
-
-export const validator = withZod(
-	z.object({
-		text: z.string().optional(),
-		city: z.string().optional(),
-		timesOfDay: z.array(z.string()).optional(),
-		nsfw: z.boolean().optional(),
-	}),
-)
 
 const visible = cva({
 	base: {
@@ -48,6 +38,7 @@ export function SearchBar() {
 	const [searchParams] = useSearchParams()
 	const timesOfDay = searchParams.getAll("timesOfDay")
 	const nsfw = searchParams.get("nsfw")
+	const cities = searchParams.getAll("cities")
 	// we reuse this component on the search page so we want
 	// to keep the value of the search bar if we are on the search page
 	useEffect(() => {
@@ -151,7 +142,7 @@ export function SearchBar() {
 					alignItems={"flex-start"}
 					className={visible({ visible: isVisible })}
 				>
-					<input name="city" placeholder="City" />
+					<CityCombobox label="Cities" defaultCities={cities ?? []} />
 					<RadioGroup
 						label="NSFW Filter"
 						name="nsfw"

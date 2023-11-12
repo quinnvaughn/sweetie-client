@@ -16,6 +16,7 @@ fragment DateStopItem on DateStop {
 		city {
 			id 
 			name
+			nameAndState
 		}
 	  }
     }

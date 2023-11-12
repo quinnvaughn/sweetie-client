@@ -5,7 +5,7 @@ import { DateStopMap } from ".."
 import { ClientOnly } from "remix-utils/client-only"
 import { Link } from "@remix-run/react"
 import { $path } from "remix-routes"
-import { FaCity, FaLocationDot } from "react-icons/fa6/index.js"
+import { FaCity } from "react-icons/fa6/index.js"
 import { FaExternalLinkAlt } from "react-icons/fa/index.js"
 
 type Props = {
@@ -29,11 +29,11 @@ export function DateStop({ stop }: Props) {
 					textStyle: "paragraph",
 					fontWeight: "bold",
 				})}
-				to={$path("/search", { city: stop.location.address.city.name })}
+				to={$path("/search", { city: stop.location.address.city.nameAndState })}
 			>
 				<div className={css({ display: "flex", gap: 1, alignItems: "center" })}>
 					<FaCity className={css({ color: "black" })} />
-					<span>{stop.location.address.city.name}</span>
+					<span>{stop.location.address.city.nameAndState}</span>
 				</div>
 			</Link>
 			<ClientOnly>

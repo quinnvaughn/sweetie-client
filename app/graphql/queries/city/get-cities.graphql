@@ -1,0 +1,15 @@
+query GetCities($text: String!, $first: Int, $after: String, $selected: [String!]) {
+    cities(text: $text, first: $first, after: $after, selected: $selected) {
+      edges {
+        cursor
+        node {
+          nameAndState
+          id
+        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }

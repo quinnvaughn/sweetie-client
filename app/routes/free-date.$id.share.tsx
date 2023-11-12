@@ -11,6 +11,7 @@ import {
 	WhatsAppShareButton,
 } from "~/features/ui"
 import { css } from "~/styled-system/css"
+import { VStack } from "~/styled-system/jsx"
 
 const campaign = "free date share modal"
 
@@ -21,27 +22,33 @@ export default function ShareFreeDateRoute() {
 		<Modal>
 			<Modal.Header to={$path("/free-date/:id", { id })} title="Share" />
 			<Modal.Body>
-				<div
-					className={css({
-						base: {
-							display: "grid",
-							gap: 2,
-						},
-						sm: {
-							gridTemplateColumns: "repeat(1, 1fr)",
-						},
-						md: {
-							gridTemplateColumns: "repeat(2, 1fr)",
-						},
-					})}
-				>
-					<CopyLinkShareButton campaign={campaign} />
-					<FacebookShareButton campaign={campaign} />
-					<TwitterShareButton campaign={campaign} />
-					<EmailShareButton campaign={campaign} />
-					<MessagesShareButton campaign={campaign} />
-					<WhatsAppShareButton campaign={campaign} />
-				</div>
+				<VStack gap={4} width={"100%"} alignItems="center">
+					<p className={css({ textStyle: "paragraph" })}>
+						Share this free date with your friends or followers!
+					</p>
+					<div
+						className={css({
+							base: {
+								display: "grid",
+								gap: 2,
+								width: "100%",
+							},
+							sm: {
+								gridTemplateColumns: "repeat(1, 1fr)",
+							},
+							md: {
+								gridTemplateColumns: "repeat(2, 1fr)",
+							},
+						})}
+					>
+						<CopyLinkShareButton campaign={campaign} />
+						<FacebookShareButton campaign={campaign} />
+						<TwitterShareButton campaign={campaign} />
+						<EmailShareButton campaign={campaign} />
+						<MessagesShareButton campaign={campaign} />
+						<WhatsAppShareButton campaign={campaign} />
+					</div>
+				</VStack>
 			</Modal.Body>
 		</Modal>
 	)

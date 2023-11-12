@@ -1,5 +1,5 @@
-query DateExperiences($query: String, $timesOfDay: [String!], $nsfw: String) {
-  dateExperiences(query: $query, timesOfDay: $timesOfDay, nsfw: $nsfw) {
+query DateExperiences($query: String, $timesOfDay: [String!], $nsfw: String, $cities: [String!]) {
+  dateExperiences(query: $query, timesOfDay: $timesOfDay, nsfw: $nsfw, cities: $cities) {
     edges {
       node {
         ...FreeDateCard

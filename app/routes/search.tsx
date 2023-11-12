@@ -19,7 +19,7 @@ import { getEnv } from "~/lib"
 
 const SearchParamsSchema = z.object({
 	query: z.string().optional(),
-	city: z.string().optional(),
+	cities: z.array(z.string()).optional(),
 	nsfw: z.enum(["on", "off"]).optional(),
 	timesOfDay: z
 		.array(z.enum(["morning", "afternoon", "evening", "late night"]))
@@ -30,10 +30,10 @@ export type SearchParams = z.infer<typeof SearchParamsSchema>
 
 export async function loader({ request }: DataFunctionArgs) {
 	const urlParams = request.url.split("?")[1]
-	const { city, nsfw, query, timesOfDay } = queryString.parse(
+	const { cities, nsfw, query, timesOfDay } = queryString.parse(
 		urlParams,
 	) as SearchParams
-	const order = ["query", "city", "nsfw", "timesOfDay"]
+	const order = ["query", "cities", "nsfw", "timesOfDay"]
 	const parsedParams = {
 		query:
 			query === defaults.query
@@ -41,7 +41,12 @@ export async function loader({ request }: DataFunctionArgs) {
 				: query
 				? removeDateAndDateIdeas(query)
 				: null,
-		city: city === defaults.city ? null : city ? city : null,
+		cities: cities
+			? // if time of day only has one value, then it will be a string, so we need to convert it to an array
+			  Array.isArray(cities)
+				? cities
+				: [cities]
+			: null,
 		nsfw:
 			nsfw === undefined
 				? null
@@ -81,7 +86,7 @@ export async function loader({ request }: DataFunctionArgs) {
 	const { data } = await gqlFetch(request, DateExperiencesDocument, {
 		nsfw: parsedParams.nsfw,
 		query: parsedParams.query,
-		city: parsedParams.city,
+		cities: parsedParams.cities,
 		timesOfDay: parsedParams.timesOfDay,
 	})
 	return json(data)
@@ -89,7 +94,7 @@ export async function loader({ request }: DataFunctionArgs) {
 
 const defaults = {
 	query: "",
-	city: "",
+	cities: [],
 	timesOfDay: ["morning", "afternoon", "evening"],
 	nsfw: "off",
 }
@@ -109,26 +114,47 @@ function capitalize(str: string) {
 		.join(" ")
 }
 
+function formatCities(cities: string[]) {
+	return cities
+		.map((city, i) =>
+			i === cities.length - 1 && i !== 0
+				? `or ${capitalize(city)}`
+				: capitalize(city),
+		)
+		.join(", ")
+}
+
 export const meta: MetaFunction = ({ location }: MetaArgs) => {
 	const params = new URLSearchParams(location.search)
 	const search = params.get("query")
-	const city = params.get("city")
+	const cities = params.getAll("cities")
 	const title = match(search)
 		.with(P.nullish, () =>
-			match(city)
+			match(cities)
 				.with(
 					P.nullish,
 					() => "Date ideas - Get the best date ideas on Sweetie",
 				)
-				.otherwise(
-					(city) =>
+				.when(
+					(cities) => cities.length === 0,
+					() => "Date ideas - Get the best date ideas on Sweetie",
+				)
+				.when(
+					(cities) => cities.length === 1,
+					(cities) =>
 						`Date ideas in ${capitalize(
-							city,
+							cities[0],
+						)} - Get the best date ideas on Sweetie`,
+				)
+				.otherwise(
+					(cities) =>
+						`Date ideas in ${formatCities(
+							cities,
 						)} - Get the best date ideas on Sweetie`,
 				),
 		)
 		.otherwise((search) =>
-			match(city)
+			match(cities)
 				.with(
 					P.nullish,
 					() =>
@@ -136,12 +162,28 @@ export const meta: MetaFunction = ({ location }: MetaArgs) => {
 							removeDateAndDateIdeas(search),
 						)} date ideas - Get the best date ideas on Sweetie`,
 				)
-				.otherwise(
-					(city) =>
+				.when(
+					(cities) => cities.length === 0,
+					() =>
+						`${capitalizeFirstWord(
+							removeDateAndDateIdeas(search),
+						)} date ideas - Get the best date ideas on Sweetie`,
+				)
+				.when(
+					(cities) => cities.length === 1,
+					(cities) =>
 						`${capitalizeFirstWord(
 							removeDateAndDateIdeas(search),
 						)} date ideas in ${capitalize(
-							city,
+							cities[0],
+						)} - Get the best date ideas on Sweetie`,
+				)
+				.otherwise(
+					(cities) =>
+						`${capitalizeFirstWord(
+							removeDateAndDateIdeas(search),
+						)} date ideas in ${formatCities(
+							cities,
 						)} - Get the best date ideas on Sweetie`,
 				),
 		)
