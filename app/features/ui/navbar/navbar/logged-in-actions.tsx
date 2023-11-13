@@ -10,7 +10,10 @@ export function LoggedInActions() {
 				to={ROUTES.DATES_DASHBOARD.CUSTOM_DATES.REQUESTS.path}
 				text="Dates"
 			/> */}
-			<Navbar.Link to={"/tastemaker/free-dates/created"} text="Create dates" />
+			<Navbar.Link
+				to={$path("/tastemaker/free-dates/created")}
+				text="Create dates"
+			/>
 			{isLoggedIn("admin") && (
 				<Navbar.Link to={"/admin/dashboard/free-dates"} text="Admin" />
 			)}

@@ -124,7 +124,7 @@ export async function action({ request }: DataFunctionArgs) {
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { data } = await gqlFetch(request, GetViewerInfoDocument)
 	if (!data?.viewer) {
-		throw new Response(null, { status: 401 })
+		return redirect($path("/login"), { status: 401 })
 	}
 
 	return json({ viewer: data.viewer })

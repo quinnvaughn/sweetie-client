@@ -68,8 +68,8 @@ export default function HomeRoute() {
 	const data = useLoaderData<typeof loader>()
 	return (
 		<PageContainer
-			width={{ sm: "100%", lg: 1024 }}
-			padding={{ sm: "40px 20px", lg: "40px 0" }}
+			width={{ base: "100%", lg: 1024 }}
+			padding={{ base: "40px 20px", lg: "40px 0" }}
 		>
 			<VStack gap={8}>
 				<VStack gap={4} alignItems="center">

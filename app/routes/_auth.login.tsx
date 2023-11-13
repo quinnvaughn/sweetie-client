@@ -13,8 +13,8 @@ import { VStack } from "~/styled-system/jsx"
 
 const validator = withZod(
 	z.object({
-		email: z.string().email("Please enter a valid email"),
-		password: z.string().min(6, "Password must be at least 6 characters"),
+		email: z.string().email("Must be a valid email"),
+		password: z.string().min(6, "Must be at least 6 characters"),
 	}),
 )
 
@@ -61,12 +61,13 @@ export async function action({ request }: DataFunctionArgs) {
 		.otherwise(() => null)
 }
 
-export default function LoginPage() {
+export default function LoginRoute() {
 	return (
 		<ValidatedForm validator={validator} method="post">
 			<VStack gap="4" alignItems={"center"}>
-				<p className={css({ fontSize: 32 })}>Login</p>
+				<h1 className={css({ textStyle: "h1" })}>Login</h1>
 				<Input
+					type="email"
 					label="Email"
 					required
 					name="email"
@@ -79,9 +80,31 @@ export default function LoginPage() {
 					placeholder="Please enter your password"
 					type={"password"}
 				/>
-				<SubmitButton />
-				<Link to={$path("/forgot-password")}>Forgot password?</Link>
-				<Link to={$path("/register")}>Register</Link>
+				<SubmitButton label="Login" />
+				<Link
+					to={$path("/forgot-password")}
+					className={css({
+						color: "secondary",
+						fontWeight: "400",
+						fontSize: "14px",
+						_hover: {
+							textDecoration: "underline",
+						},
+					})}
+				>
+					Forgot password?
+				</Link>
+				<Link
+					className={css({
+						cursor: "pointer",
+						textDecoration: "underline",
+						fontWeight: "bold",
+					})}
+					type="button"
+					to={$path("/register")}
+				>
+					Register
+				</Link>
 			</VStack>
 		</ValidatedForm>
 	)

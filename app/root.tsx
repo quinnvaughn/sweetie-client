@@ -5,6 +5,7 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
+	isRouteErrorResponse,
 	useLoaderData,
 	useRouteError,
 } from "@remix-run/react"
@@ -13,8 +14,10 @@ import { DataFunctionArgs, LinksFunction, json } from "@remix-run/node"
 import { gqlFetch } from "./graphql/graphql"
 import { ViewerIsLoggedInDocument } from "./graphql/generated"
 import { createPortal } from "react-dom"
-import { ToastContainer } from "./features/ui"
+import { PageContainer, ToastContainer } from "./features/ui"
 import { ClientOnly } from "remix-utils/client-only"
+import { css } from "./styled-system/css"
+import { VStack } from "./styled-system/jsx"
 
 export const links: LinksFunction = () => [
 	{ rel: "stylesheet", href: styles },
@@ -63,7 +66,19 @@ export function ErrorBoundary() {
 				<Links />
 			</head>
 			<body>
-				{/* add the UI you want your users to see */}
+				<PageContainer
+					width={{ base: "100%", md: "500px" }}
+					padding={{ base: "20px" }}
+				>
+					<VStack gap={4} width={"100%"}>
+						<h1 className={css({ textStyle: "h1" })}>Oh no!</h1>
+						<p className={css({ textStyle: "paragraph" })}>
+							{isRouteErrorResponse(error)
+								? error.statusText
+								: "Something went wrong"}
+						</p>
+					</VStack>
+				</PageContainer>
 				<Scripts />
 			</body>
 		</html>

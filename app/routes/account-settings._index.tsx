@@ -1,12 +1,24 @@
+import { LoaderFunctionArgs, redirect } from "@remix-run/node"
 import { Link } from "@remix-run/react"
 import { AiOutlineIdcard } from "react-icons/ai/index.js"
 import { MdSecurity } from "react-icons/md/index.js"
 import { $path } from "remix-routes"
 import { PageContainer } from "~/features/ui"
 import { AccountSettingsLink } from "~/features/user"
+import { ViewerIsLoggedInDocument } from "~/graphql/generated"
+import { gqlFetch } from "~/graphql/graphql"
 import { useViewer } from "~/hooks"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
+
+export async function loader({ request }: LoaderFunctionArgs) {
+	// is user logged in?
+	const { data } = await gqlFetch(request, ViewerIsLoggedInDocument)
+
+	if (!data?.viewer) {
+		return redirect($path("/login"))
+	}
+}
 
 export default function AccountSettingsRoute() {
 	const { getViewerUsername } = useViewer()

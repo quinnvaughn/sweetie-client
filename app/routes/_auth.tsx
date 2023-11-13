@@ -4,8 +4,8 @@ import { PageContainer } from "~/features/ui/page-container"
 export default function Auth() {
 	return (
 		<PageContainer
-			width={{ sm: "100%", md: 400 }}
-			padding={{ sm: 20, md: "40px 0" }}
+			width={{ base: "100%", md: "400px" }}
+			padding={{ base: "20px", md: "40px 0" }}
 		>
 			<Outlet />
 		</PageContainer>

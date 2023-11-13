@@ -28,6 +28,7 @@ const container = cva({
 		color: "secondary",
 		fontWeight: 600,
 		textAlign: "left",
+		whiteSpace: "nowrap",
 	},
 	variants: {
 		active: {
@@ -77,7 +78,8 @@ export function NavbarDropdown({ links, text }: Props) {
 						minWidth: "100%",
 						padding: 4,
 						backgroundColor: "white",
-						border: "1px solid gray",
+						border: "1px solid",
+						borderColor: "gray",
 						zIndex: 100,
 						display: "flex",
 						flexDirection: "column",

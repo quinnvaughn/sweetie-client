@@ -1,0 +1,12 @@
+query GetViewerFreeDates($retired: Boolean!) {
+    viewer {
+	  id
+    tastemaker {
+        id
+        experiences (retired: $retired) {
+          id
+          ...FreeDateCard
+        }
+      }
+    }
+  }

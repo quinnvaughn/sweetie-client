@@ -16,11 +16,12 @@ export function HamburgerDropdown({ children }: Props) {
 				backgroundColor: "white",
 				border: "1px solid var(--colors-gray)",
 				zIndex: 100,
+				width: "190px",
 				display: "flex",
 				flexDirection: "column",
 				alignItems: "flex-start",
 				borderRadius: 4,
-				gap: 8,
+				gap: 4,
 			})}
 		>
 			{children}

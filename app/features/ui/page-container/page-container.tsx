@@ -1,7 +1,7 @@
 import { css } from "~/styled-system/css"
 // import { Footer } from "../footer"
 import { UserNavbar } from "../navbar"
-import { Footer } from ".."
+import { Footer, TastemakerNavbar } from ".."
 // import { AdminNavbar } from "@/features/admin"
 
 type BreakpointOptions = {
@@ -36,7 +36,7 @@ export function PageContainer(props: Props) {
 			) : (
 				<UserNavbar />
 			)} */}
-			<UserNavbar />
+			{props.tastemaker ? <TastemakerNavbar /> : <UserNavbar />}
 			{props.ignorePadding}
 			<div
 				className={css({

@@ -14,6 +14,7 @@ const container = cva({
 		color: "secondary",
 		fontWeight: 600,
 		textAlign: "left",
+		whiteSpace: "nowrap",
 	},
 	variants: {
 		active: {
@@ -68,7 +69,7 @@ export function MobileDropdown({ text, links }: Props) {
 				</HStack>
 			</button>
 			{show && (
-				<VStack gap="1" paddingLeft={4}>
+				<VStack gap={2} paddingLeft={4}>
 					{links.map((link) => (
 						<NavbarLink key={link.to} {...link} />
 					))}

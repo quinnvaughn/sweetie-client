@@ -1,4 +1,9 @@
-import { DataFunctionArgs, json } from "@remix-run/node"
+import {
+	DataFunctionArgs,
+	LoaderFunctionArgs,
+	json,
+	redirect,
+} from "@remix-run/node"
 import { useFetcher } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
 import { $path } from "remix-routes"
@@ -7,7 +12,10 @@ import { match } from "ts-pattern"
 import { z } from "zod"
 import { Breadcrumbs, Input, PageContainer } from "~/features/ui"
 import { PersonalInfoEdit } from "~/features/user"
-import { UpdatePasswordDocument } from "~/graphql/generated"
+import {
+	UpdatePasswordDocument,
+	ViewerIsLoggedInDocument,
+} from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { isTypeofFieldError, mapFieldErrorToValidationError } from "~/lib"
 import { css } from "~/styled-system/css"
@@ -67,6 +75,17 @@ export async function action({ request }: DataFunctionArgs) {
 				{ status: 500 },
 			),
 		)
+}
+
+export async function loader({ request }: LoaderFunctionArgs) {
+	// is user logged in?
+	const { data } = await gqlFetch(request, ViewerIsLoggedInDocument)
+
+	if (!data?.viewer) {
+		return redirect($path("/login"), {
+			status: 401,
+		})
+	}
 }
 
 export default function LoginAndSecurityRoute() {
