@@ -11,6 +11,7 @@ const input = cva({
 		padding: "8px",
 		width: "75px",
 		textAlign: "right",
+		shadow: 'sm',
 		"&[type=number]": {
 			appearance: "textfield",
 		},

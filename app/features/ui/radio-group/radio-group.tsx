@@ -33,6 +33,7 @@ export function RadioGroup({
 					borderRadius: "8px",
 					borderStyle: "solid",
 					padding: 2,
+					shadow: "sm",
 				})}
 			>
 				{match(direction)

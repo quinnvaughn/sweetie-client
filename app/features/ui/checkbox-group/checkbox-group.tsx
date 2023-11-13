@@ -31,6 +31,7 @@ export function CheckboxGroup({
 					borderRadius: "8px",
 					borderStyle: "solid",
 					padding: 2,
+					shadow: "sm",
 				})}
 			>
 				{options.map((option) => (

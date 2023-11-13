@@ -48,7 +48,7 @@ export default function Calendar({
 			<HStack
 				gap={4}
 				justifyContent="space-around"
-				paddingY={8}
+				paddingY={'8px'}
 				alignItems="center"
 			>
 				<ForwardAndBackButton

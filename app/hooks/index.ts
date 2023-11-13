@@ -7,3 +7,4 @@ export * from "./use-mixpanel"
 export * from "./use-scrolled-to-bottom"
 export * from "./use-opened-modal"
 export * from "./use-page-view"
+export * from './use-custom-fetcher'

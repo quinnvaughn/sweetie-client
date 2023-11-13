@@ -55,7 +55,6 @@ export async function loader({ request }: DataFunctionArgs) {
 
 export function ErrorBoundary() {
 	const error = useRouteError()
-	console.error({ error })
 	return (
 		<html lang="en">
 			<head>

@@ -1,11 +1,12 @@
-import { useFetcher } from "@remix-run/react"
 import { useCombobox, useMultipleSelection } from "downshift"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { $path } from "remix-routes"
 import { match } from "ts-pattern"
 import { City } from "~/graphql/generated"
+import { useCustomFetcher } from "~/hooks"
 import { loader } from "~/routes/api.cities"
 import { css, cva } from "~/styled-system/css"
+import {IoCloseOutline} from 'react-icons/io5/index.js'
 
 const menu = cva({
 	base: {
@@ -47,7 +48,7 @@ type Props = {
 
 export function CityCombobox({ label, defaultCities }: Props) {
 	const [inputValue, setInputValue] = useState("")
-	const fetcher = useFetcher<typeof loader>()
+	const fetcher = useCustomFetcher<typeof loader>()
 	const [selectedCities, setSelectedCities] = useState<string[]>(
 		defaultCities ?? [],
 	)
@@ -91,7 +92,6 @@ export function CityCombobox({ label, defaultCities }: Props) {
 		getInputProps,
 		getMenuProps,
 		getItemProps,
-		getToggleButtonProps,
 	} = useCombobox<NewCity>({
 		id: "city-combobox",
 		items: cities,
@@ -114,34 +114,58 @@ export function CityCombobox({ label, defaultCities }: Props) {
 								...selectedCities,
 								newSelectedItem.nameAndState,
 							])
+							fetcher.reset()
 							setInputValue("")
 						}
 					},
 				)
 				.with(useCombobox.stateChangeTypes.InputChange, () => {
 					setInputValue(newInputValue ?? "")
+					if (newInputValue?.length === 0) {
+						fetcher.reset()
+					}
 				})
 				.otherwise(() => {})
 		},
 	})
 
-	const busy = fetcher.state !== "idle"
-
 	return (
 		<div
 			className={css({
-				gap: 1,
-				display: "flex",
-				flexDirection: "column",
-				width: { base: "100%", md: "300px" },
+				width: { base: "100%", md: "400px" },
+				position: "relative",
 			})}
 		>
-			<label {...getLabelProps()}>{label}</label>
-			<div className={css({ position: "relative" })}>
-				<div>
+			<div
+				className={css({ display: "flex", flexDirection: "column", gap: 1 })}
+			>
+				<label className={css({ width: "fit-content" })} {...getLabelProps()}>
+					{label}
+				</label>
+				<div
+					className={css({
+						shadow: "sm",
+						bg: "white",
+						display: "inline-flex",
+						gap: 2,
+						alignItems: "center",
+						flexWrap: "wrap",
+						padding: "8px",
+						borderRadius: "8px",
+						border: "1px solid",
+						borderColor: "gray",
+					})}
+				>
 					{selectedCities.map((selectedCity, index) => (
 						<span
-							//  className="bg-gray-100 rounded-md px-1 focus:bg-red-400"
+							className={css({
+								bg: "secondary",
+								borderRadius: "8px",
+								paddingX: 1,
+								color: "white",
+								display: "flex",
+								alignItems: "center",
+							})}
 							key={`selected-item-${index}`}
 							{...getSelectedItemProps({
 								selectedItem: selectedCity,
@@ -151,60 +175,54 @@ export function CityCombobox({ label, defaultCities }: Props) {
 							{selectedCity}
 							<button
 								type="button"
+								className={css({ paddingX: 1, cursor: "pointer" })}
 								onClick={(e) => {
 									e.stopPropagation()
 									removeSelectedItem(selectedCity)
 								}}
 							>
-								&#10005;
+								<IoCloseOutline size={20} className={css({ color: 'white' })} />
 							</button>
 						</span>
 					))}
-					<div>
+					<div className={css({ display: "flex", gap: 0.5, flexGrow: 1 })}>
 						<input
-							className={css({
-								width: "100%",
-								border: "1px solid",
-								borderColor: "gray",
-								borderRadius: "8px",
-								padding: "8px",
-							})}
+							placeholder="Enter a city"
+							className={css({ width: "100%", outline: "none" })}
 							{...getInputProps(getDropdownProps({ preventKeyAction: isOpen }))}
+							value={inputValue}
 						/>
-						{selectedCities.map((c) => (
-							<input type="hidden" name="cities" value={c} key={c} />
+						{selectedCities.length > 0 && selectedCities.map((c) => (
+							<input
+								key={c}
+								type="hidden"
+								name="cities"
+								value={c}
+							/>
 						))}
-						<button
-							aria-label="toggle menu"
-							className="px-2"
-							type="button"
-							{...getToggleButtonProps()}
-						>
-							&#8595;
-						</button>
-						{/* <Spinner showSpinner={showSpinner} /> */}
 					</div>
 				</div>
-				<ul
-					className={menu({ hidden: !(isOpen && cities.length) })}
-					{...getMenuProps()}
-				>
-					{isOpen &&
-						cities.map((city, index) => (
-							<li
-								className={css({
-									paddingY: 1,
-									paddingX: 2,
-									cursor: "pointer",
-								})}
-								key={city.id}
-								{...getItemProps({ item: city, index })}
-							>
-								{city.nameAndState}
-							</li>
-						))}
-				</ul>
 			</div>
+			<ul
+				className={menu({ hidden: !(isOpen && cities.length) })}
+				{...getMenuProps()}
+			>
+				{isOpen &&
+					cities.map((city, index) => (
+						<li
+							className={css({
+								paddingY: 2,
+								paddingX: 3,
+								cursor: "pointer",
+								"&:hover": { bg: "gray" },
+							})}
+							key={`${city}${index}`}
+							{...getItemProps({ item: city, index })}
+						>
+							<span>{city.nameAndState}</span>
+						</li>
+					))}
+			</ul>
 		</div>
 	)
 }

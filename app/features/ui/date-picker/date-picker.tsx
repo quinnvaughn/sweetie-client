@@ -62,6 +62,7 @@ export default function DateTimePicker({
 					padding: "8px",
 					position: "relative",
 					width: "100%",
+					shadow: 'sm',
 				})}
 				ref={containerRef}
 			>

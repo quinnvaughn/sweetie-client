@@ -35,6 +35,7 @@ export function Input({
 					border: "1px solid",
 					borderColor: "gray",
 					padding: "8px",
+					shadow: "sm",
 				})}
 				name={name}
 				type={type}

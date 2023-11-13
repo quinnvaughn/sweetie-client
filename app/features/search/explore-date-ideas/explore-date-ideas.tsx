@@ -37,7 +37,7 @@ export function ExploreDateIdeas() {
 			<h1 className={css({ fontSize: "36px", fontWeight: "bold" })}>
 				Explore
 				{query ? <span className={spanStyles}>{` ${query} `}</span> : " "}
-				date ideas {cities ? "in " : ""}
+				date ideas {cities.length > 0 ? "in " : ""}
 				{cities
 					? formatCities(cities)
 							// this is a hack to make sure the "or" is not highlighted

@@ -65,6 +65,7 @@ export function SearchBar() {
 						borderRadius: "50px",
 						padding: "8px 12px",
 						width: "100%",
+						shadow: "sm",
 					})}
 				>
 					<HStack gap={4} flex={1} alignItems="center">
@@ -142,7 +143,7 @@ export function SearchBar() {
 					alignItems={"flex-start"}
 					className={visible({ visible: isVisible })}
 				>
-					<CityCombobox label="Cities" defaultCities={cities ?? []} />
+					<CityCombobox label="Find dates in" defaultCities={cities ?? []} />
 					<RadioGroup
 						label="NSFW Filter"
 						name="nsfw"
