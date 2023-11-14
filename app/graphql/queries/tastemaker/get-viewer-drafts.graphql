@@ -1,0 +1,9 @@
+query Drafts {
+    viewer {
+	  id
+      drafts {
+        id
+        ...DraftCard
+      }
+    }
+  }

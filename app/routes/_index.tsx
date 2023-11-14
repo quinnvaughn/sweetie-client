@@ -8,50 +8,6 @@ import { VStack } from "~/styled-system/jsx"
 import { css } from "~/styled-system/css"
 import { SearchBar } from "~/features/search"
 
-export const meta: MetaFunction = () => {
-	return [
-		{ title: "Sweetie - Find the best date ideas in Los Angeles" },
-		{
-			name: "description",
-			content:
-				"Whether you're single or in a relationship, we have all the dates you want in Los Angeles, all for free.",
-		},
-		{
-			name: "keywords",
-			content:
-				"dating, los angeles, dates, fun, love, romance, couples, single",
-		},
-		{ name: "author", content: "Sweetie" },
-		{
-			name: "og:description",
-			content:
-				"Whether you're single or in a relationship, we have all the dates you want in Los Angeles, all for free.",
-		},
-		{
-			name: "og:title",
-			content: "Sweetie - Find the best dates to go on in Los Angeles",
-		},
-		{
-			name: "og:type",
-			content: "website",
-		},
-		{
-			name: "og:url",
-			content: "https://trysweetie.com",
-		},
-		{
-			name: "og:image",
-			content:
-				"https://www.eharmony.com/wp-content/uploads/2020/08/los-angeles-singles-1024x576.jpg",
-		},
-		{
-			name: "og:image:secure_url",
-			content:
-				"https://www.eharmony.com/wp-content/uploads/2020/08/los-angeles-singles-1024x576.jpg",
-		},
-	]
-}
-
 export async function loader({ request }: DataFunctionArgs) {
 	const { data } = await gqlFetch(request, GetFeaturedDatesDocument)
 	return json(data)

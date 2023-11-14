@@ -1,0 +1,10 @@
+fragment DateAnalyticsCard on DateExperience {
+          id
+          title
+          thumbnail
+          numPlannedDates
+          views {
+            id
+            viewCount
+          }
+    }

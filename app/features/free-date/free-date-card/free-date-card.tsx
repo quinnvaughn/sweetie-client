@@ -1,4 +1,4 @@
-import { DateExperienceCardFragment } from "~/graphql/generated"
+import { FreeDateCardFragment } from "~/graphql/generated"
 import { Link } from "@remix-run/react"
 import { css } from "~/styled-system/css"
 import { $path } from "remix-routes"
@@ -8,10 +8,10 @@ import { UserAvatar } from "~/features/user"
 import { NSFWTag } from ".."
 
 type Props = {
-	dateExperience: DateExperienceCardFragment
+	date: FreeDateCardFragment
 }
 
-export function FreeDateCard({ dateExperience }: Props) {
+export function FreeDateCard({ date }: Props) {
 	return (
 		<Link
 			className={css({
@@ -19,13 +19,13 @@ export function FreeDateCard({ dateExperience }: Props) {
 				textDecoration: "none",
 				_visited: { color: "inherit" },
 			})}
-			to={$path("/free-date/:id", { id: dateExperience.id })}
+			to={$path("/free-date/:id", { id: date.id })}
 			target="_blank"
 		>
 			<VStack gap="4">
 				<img
-					src={dateExperience.thumbnail}
-					alt={`${dateExperience.title} thumbnail`}
+					src={date.thumbnail}
+					alt={`${date.title} thumbnail`}
 					className={css({
 						aspectRatio: "20/19",
 						objectFit: "cover",
@@ -35,22 +35,22 @@ export function FreeDateCard({ dateExperience }: Props) {
 				/>
 				<VStack gap="2" alignItems={"flex-start"}>
 					<p className={css({ lineHeight: 1, fontWeight: "600" })}>
-						{dateExperience.title}
+						{date.title}
 					</p>
-					{dateExperience.nsfw && <NSFWTag />}
+					{date.nsfw && <NSFWTag />}
 					<p className={numLines({ color: "grayText", lines: 2 })}>
-						{dateExperience.description}
+						{date.description}
 					</p>
 					<HStack gap={1} alignItems="center">
 						<UserAvatar
 							size={"sm"}
 							user={{
-								name: dateExperience.tastemaker.user.name,
-								avatar: dateExperience.tastemaker.user.profile?.avatar,
+								name: date.tastemaker.user.name,
+								avatar: date.tastemaker.user.profile?.avatar,
 							}}
 						/>
 						<p className={css({ color: "grayText" })}>
-							{dateExperience.tastemaker.user.name}
+							{date.tastemaker.user.name}
 						</p>
 					</HStack>
 					<p
@@ -61,7 +61,7 @@ export function FreeDateCard({ dateExperience }: Props) {
 							color: "grayText",
 						})}
 					>
-						{dateExperience.cities.map((city) => city.nameAndState).join("\n")}
+						{date.cities.map((city) => city.nameAndState).join("\n")}
 					</p>
 				</VStack>
 			</VStack>

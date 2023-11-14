@@ -1,11 +1,13 @@
 import { DataFunctionArgs, json, redirect } from "@remix-run/node"
-import { Link, Outlet, useFetcher } from "@remix-run/react"
+import { Link, Outlet, useLoaderData } from "@remix-run/react"
 import { $path } from "remix-routes"
+import { FreeDatesInformation } from "~/features/tastemaker"
 import { PageContainer } from "~/features/ui"
 import { GetViewerFreeDatesDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
+import { button } from "~/styled-system/recipes"
 
 export async function loader({ request }: DataFunctionArgs) {
 	const { data } = await gqlFetch(request, GetViewerFreeDatesDocument, {
@@ -17,7 +19,7 @@ export async function loader({ request }: DataFunctionArgs) {
 	}
 
 	return json({
-		data,
+		viewer: data.viewer,
 		hasCreatedADate:
 			data?.viewer?.tastemaker?.experiences &&
 			data?.viewer.tastemaker.experiences.length > 0,
@@ -25,17 +27,18 @@ export async function loader({ request }: DataFunctionArgs) {
 }
 
 export default function FreeDatesRoute() {
-	const fetcher = useFetcher<typeof loader>()
+	const data = useLoaderData<typeof loader>()
 	return (
 		<PageContainer
 			tastemaker
 			width={{ base: "100%", md: 780, lg: 1024 }}
-			padding={{ base: "16px", md: "16px 0px" }}
+			padding={{ base: "20px", md: "40px 0px" }}
 		>
 			<Outlet />
-			<VStack gap={8}>
-				{fetcher.data?.hasCreatedADate && (
+			<VStack gap={8} alignItems="flex-start" width={"100%"}>
+				{data.hasCreatedADate && (
 					<VStack
+						width={"100%"}
 						gap={4}
 						alignItems="center"
 						padding={"16px"}
@@ -47,12 +50,18 @@ export default function FreeDatesRoute() {
 							Now that you've created some dates, make sure to share your
 							profile to let everyone know about them!
 						</p>
-						<Link to={$path("/tastemaker/free-dates/created/share")}>
+						<Link
+							className={button({ variant: "black", size: "lg" })}
+							to={$path("/tastemaker/free-dates/created/share")}
+						>
 							Share
 						</Link>
 					</VStack>
 				)}
-				{/* <CreatedDatesTab /> */}
+				<FreeDatesInformation
+					retired={false}
+					dates={data.viewer.tastemaker?.experiences ?? []}
+				/>
 			</VStack>
 		</PageContainer>
 	)

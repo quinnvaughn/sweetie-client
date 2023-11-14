@@ -1,0 +1,8 @@
+fragment DateSuggestionCard on DateSuggestion {
+        id 
+        text 
+        cities {
+            id 
+            nameAndState
+        }
+    }

@@ -1,0 +1,11 @@
+fragment DraftCard on DateExperienceDraft {
+        id
+        title
+        thumbnail
+		updatedAt
+		author {
+			id
+			name
+			email
+		}
+    }

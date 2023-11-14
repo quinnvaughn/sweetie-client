@@ -1,0 +1,12 @@
+query GetViewerFreeDateAnalytics {
+    viewer {
+	  id
+      tastemaker {
+        id
+        experiences {
+          id
+          ...DateAnalyticsCard
+        }
+      }
+    }
+  }

@@ -1,0 +1,6 @@
+query DateSuggestions {
+  dateSuggestions {
+    id
+    ...DateSuggestionCard
+  }
+}

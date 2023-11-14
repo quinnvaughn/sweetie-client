@@ -1,0 +1,14 @@
+mutation DeleteFreeDateDraft($input: DeleteFreeDateDraftInput!) {
+  deleteFreeDateDraft(input: $input) {
+    __typename
+    ... on AuthError {
+      message
+    }
+    ... on DateExperienceDraft {
+      ...DraftCard
+    }
+    ... on Error {
+      message
+    }
+  }
+}

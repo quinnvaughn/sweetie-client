@@ -49,7 +49,7 @@ export function FreeDateList({ freeDates, base, md, xl, noDatesText }: Props) {
 					})}
 				>
 					{freeDates.map((node) => (
-						<FreeDateCard key={node.id} dateExperience={node} />
+						<FreeDateCard key={node.id} date={node} />
 					))}
 				</div>
 			),
