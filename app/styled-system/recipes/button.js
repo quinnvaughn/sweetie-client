@@ -10,21 +10,24 @@ const buttonFn = /* @__PURE__ */ createRecipe('button', {
     "visual": "outlined",
     "variant": "primary",
     "css": {
-      "border": "1px solid var(--colors-primary)"
+      "border": "1px solid var(--colors-primary)",
+      "backgroundColor": "white"
     }
   },
   {
     "visual": "outlined",
     "variant": "secondary",
     "css": {
-      "border": "1px solid var(--colors-secondary)"
+      "border": "1px solid var(--colors-secondary)",
+      "backgroundColor": "white"
     }
   },
   {
     "visual": "outlined",
     "variant": "black",
     "css": {
-      "border": "1px solid var(--colors-black)"
+      "border": "1px solid var(--colors-black)",
+      "backgroundColor": "white"
     }
   }
 ])

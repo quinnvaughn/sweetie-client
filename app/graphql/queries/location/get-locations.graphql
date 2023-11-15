@@ -1,0 +1,14 @@
+query Locations($text: String!) {
+  locations(text: $text) {
+    edges {
+      node {
+        id
+        name
+        address {
+          formattedAddress
+          id
+        }
+      }
+    }
+  }
+}

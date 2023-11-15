@@ -1,8 +1,11 @@
 import { Form, useLocation, useSearchParams } from "@remix-run/react"
+import { withZod } from "@remix-validated-form/with-zod"
 import { useEffect, useRef, useState } from "react"
 import { FaSlidersH } from "react-icons/fa/index.js"
 import { FiSearch } from "react-icons/fi/index.js"
 import { $path } from "remix-routes"
+import { ValidatedForm } from "remix-validated-form"
+import { z } from "zod"
 import { CityCombobox } from "~/features/city"
 import { CheckboxGroup, RadioGroup } from "~/features/ui"
 import { css, cva } from "~/styled-system/css"
@@ -31,25 +34,30 @@ const visible = cva({
 	},
 })
 
+const validator = withZod(
+	z.object({
+		query: z.string().optional(),
+		timesOfDay: z
+			.array(z.string().min(1, "Must select at least one time of day."))
+			.min(1, "Must select at least one time of day.")
+			.or(z.string().min(1, "Must select at least one time of day.")),
+		cities: z.array(z.string()).optional().or(z.string().optional()),
+		nsfw: z.union([z.literal("on"), z.literal("off")], {
+			required_error: "NSFW is required.",
+		}),
+	}),
+)
+
 export function SearchBar() {
 	const [isVisible, setIsVisible] = useState<"yes" | "no">("no")
-	const formRef = useRef<HTMLFormElement>(null)
-	const { pathname } = useLocation()
 	const [searchParams] = useSearchParams()
 	const timesOfDay = searchParams.getAll("timesOfDay")
 	const nsfw = searchParams.get("nsfw")
 	const cities = searchParams.getAll("cities")
-	// we reuse this component on the search page so we want
-	// to keep the value of the search bar if we are on the search page
-	useEffect(() => {
-		if (!pathname.includes("/search")) {
-			formRef.current?.reset()
-		}
-	}, [pathname])
 
 	return (
-		<Form
-			ref={formRef}
+		<ValidatedForm
+			validator={validator}
 			method="get"
 			action={$path("/search")}
 			className={css({
@@ -199,6 +207,6 @@ export function SearchBar() {
 					/>
 				</HStack>
 			</div>
-		</Form>
+		</ValidatedForm>
 	)
 }

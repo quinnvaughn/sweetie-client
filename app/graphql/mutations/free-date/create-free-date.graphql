@@ -1,0 +1,17 @@
+mutation CreateFreeDate($input: CreateDateExperienceInput!) {
+    createDateExperience(input: $input) {
+      ... on AuthError {
+        message
+      }
+      ... on DateExperience {
+		id
+        ...FreeDateCard
+      }
+      ... on FieldErrors {
+        fieldErrors {
+          message
+          field
+        }
+      }
+    }
+  }

@@ -18,7 +18,8 @@ const mobileContainer = cva({
 
 export function MobileFooter() {
 	const { pathname } = useLocation()
-	const isDatePage = pathname.includes("/free-date/")
+	const isDatePage =
+		pathname.includes("/free-date/") && !pathname.includes("create")
 	return (
 		<div className={mobileContainer({ isDatePage: isDatePage ? "yes" : "no" })}>
 			<div

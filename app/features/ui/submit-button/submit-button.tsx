@@ -1,26 +1,20 @@
 import { useIsSubmitting } from "remix-validated-form"
-import { ButtonVariantProps, button } from "~/styled-system/recipes"
+import { ButtonVariant, button } from "~/styled-system/recipes"
 
-type Props = {
-	label?: string
-	variant?: ButtonVariantProps["variant"]
-	size?: ButtonVariantProps["size"]
+type Props = Partial<ButtonVariant> & {
+	label: string
 }
 
-export function SubmitButton({
-	label = "Submit",
-	variant = "primary",
-	size = "lg",
-}: Props) {
+export function SubmitButton(props: Props) {
 	const isSubmitting = useIsSubmitting()
 
 	return (
 		<button
-			className={button({ variant, size })}
+			className={button({ ...props })}
 			type="submit"
 			disabled={isSubmitting}
 		>
-			{label}
+			{props.label}
 		</button>
 	)
 }

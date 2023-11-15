@@ -58,12 +58,17 @@ export async function loader({ request }: DataFunctionArgs) {
 		timesOfDay: timesOfDay
 			? // if time of day only has one value, then it will be a string, so we need to convert it to an array
 			  Array.isArray(timesOfDay)
-				? timesOfDay.every((val, idx) => val === defaults.timesOfDay[idx])
+				? defaults.timesOfDay.every((val, idx) => val === timesOfDay[idx])
 					? null
 					: timesOfDay
 				: [timesOfDay]
 			: null,
 	}
+	// can only search if there is at least one city or a query
+	if (!parsedParams.cities && !parsedParams.query) {
+		return redirect($path("/"))
+	}
+
 	const cleaned = queryString.stringifyUrl(
 		{
 			url: $path("/search"),

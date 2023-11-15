@@ -29,10 +29,7 @@ export function Textarea({
 			aria-live="polite"
 			width={"100%"}
 		>
-			<label
-				htmlFor={name}
-				className={css({ textStyle: "paragraph", fontSize: "14px" })}
-			>
+			<label htmlFor={name} className={css({ textStyle: "paragraph" })}>
 				{label}{" "}
 				{required && <span className={css({ textStyle: "error" })}>*</span>}
 			</label>
@@ -47,6 +44,7 @@ export function Textarea({
 					borderColor: "gray",
 					padding: "8px",
 					backgroundColor: "white",
+					boxShadow: "sm",
 				})}
 				rows={rows}
 				aria-invalid={!!error}

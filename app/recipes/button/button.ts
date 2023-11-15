@@ -35,17 +35,26 @@ export const buttonRecipe = defineRecipe({
 		{
 			visual: "outlined",
 			variant: "primary",
-			css: { border: "1px solid var(--colors-primary)" },
+			css: {
+				border: "1px solid var(--colors-primary)",
+				backgroundColor: "white",
+			},
 		},
 		{
 			visual: "outlined",
 			variant: "secondary",
-			css: { border: "1px solid var(--colors-secondary)" },
+			css: {
+				border: "1px solid var(--colors-secondary)",
+				backgroundColor: "white",
+			},
 		},
 		{
 			visual: "outlined",
 			variant: "black",
-			css: { border: "1px solid var(--colors-black)" },
+			css: {
+				border: "1px solid var(--colors-black)",
+				backgroundColor: "white",
+			},
 		},
 	],
 	defaultVariants: {
@@ -53,4 +62,5 @@ export const buttonRecipe = defineRecipe({
 		variant: "primary",
 		size: "md",
 	},
+	jsx: ["Button", "SubmitButton"],
 })

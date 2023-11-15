@@ -2,7 +2,6 @@ import { Link } from "@remix-run/react"
 import { useState } from "react"
 import { $path } from "remix-routes"
 import { TagsFragment } from "~/graphql/generated"
-import { replacePlusWithSpace } from "~/lib"
 import { css } from "~/styled-system/css"
 import { HStack } from "~/styled-system/jsx"
 
