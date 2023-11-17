@@ -25,7 +25,7 @@ query GetDateExperience($id: String!) {
           ...DateStopItem
         }
       }
-      ... on EntityNotFoundError {
+      ... on Error {
         message
       }
     }

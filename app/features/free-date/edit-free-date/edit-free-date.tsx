@@ -18,7 +18,7 @@ export function EditFreeDate({ date }: Props) {
 					_hover: { textDecoration: "underline" },
 					textStyle: "paragraph",
 				})}
-				to={$path("/free-date/:id/edit", { id: date.id })}
+				to={$path("/free-date/edit/:id", { id: date.id })}
 			>
 				Edit
 			</Link>

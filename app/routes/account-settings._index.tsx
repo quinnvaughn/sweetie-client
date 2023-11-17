@@ -18,6 +18,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	if (!data?.viewer) {
 		return redirect($path("/login"))
 	}
+	return null
 }
 
 export default function AccountSettingsRoute() {

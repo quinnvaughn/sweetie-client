@@ -1,0 +1,29 @@
+query GetEditDateExperience($id: String!) {
+    getEditDateExperience(id: $id) {
+      __typename
+      ... on DateExperience {
+        id
+        title
+        description
+        thumbnail
+        nsfw
+        tags {
+          ...Tags
+        }
+        timesOfDay {
+          id
+          name
+        }
+        tastemaker {
+          ...TastemakerInfo
+        }
+        stops {
+          id
+          ...DateStopItem
+        }
+      }
+      ... on Error {
+        message
+      }
+    }
+  }

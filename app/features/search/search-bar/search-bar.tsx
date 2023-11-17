@@ -1,11 +1,12 @@
-import { Form, useLocation, useSearchParams } from "@remix-run/react"
+import { useSearchParams } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import { FaSlidersH } from "react-icons/fa/index.js"
 import { FiSearch } from "react-icons/fi/index.js"
 import { $path } from "remix-routes"
 import { ValidatedForm } from "remix-validated-form"
 import { z } from "zod"
+import { zfd } from "zod-form-data"
 import { CityCombobox } from "~/features/city"
 import { CheckboxGroup, RadioGroup } from "~/features/ui"
 import { css, cva } from "~/styled-system/css"
@@ -37,10 +38,9 @@ const visible = cva({
 const validator = withZod(
 	z.object({
 		query: z.string().optional(),
-		timesOfDay: z
-			.array(z.string().min(1, "Must select at least one time of day."))
-			.min(1, "Must select at least one time of day.")
-			.or(z.string().min(1, "Must select at least one time of day.")),
+		timesOfDay: zfd.repeatable(
+			z.array(zfd.text()).min(1, "Must select at least one time of day."),
+		),
 		cities: z.array(z.string()).optional().or(z.string().optional()),
 		nsfw: z.union([z.literal("on"), z.literal("off")], {
 			required_error: "NSFW is required.",

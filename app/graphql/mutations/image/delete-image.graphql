@@ -1,0 +1,11 @@
+mutation DeleteImage($input: DeleteImageInput!) {
+		deleteImage(input: $input) {
+			__typename
+			... on AuthError {
+				message
+			}
+			... on DeleteImageResult {
+				data
+			}
+		}
+	}

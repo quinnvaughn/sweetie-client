@@ -1,7 +1,11 @@
-import { useFetcher } from "@remix-run/react"
-import { useRef } from "react"
+import { useActionData, useFetcher } from "@remix-run/react"
+import { useEffect, useRef, useState } from "react"
 import { $path } from "remix-routes"
+import { useControlField } from "remix-validated-form"
+import { P, match } from "ts-pattern"
 import { useViewer } from "~/hooks"
+import { isTypeofFieldError } from "~/lib"
+import { action } from "~/routes/api.upload-photo"
 import { css } from "~/styled-system/css"
 
 const defaultStyles = css.raw({
@@ -14,86 +18,70 @@ const defaultStyles = css.raw({
 })
 
 type Props = {
-	value?: string | null
-	userName: string
 	name: string
-	onUploadComplete: (url: string) => void
+	onImageUpload: (url: string) => void
 }
 
-export default function AvatarUpload({
-	value,
-	userName,
-	name,
-	onUploadComplete,
-}: Props) {
+export default function AvatarUpload({ name, onImageUpload }: Props) {
 	const fileRef = useRef<HTMLInputElement>(null)
-	const fetcher = useFetcher()
-	const { getViewerId } = useViewer()
+	const fetcher = useFetcher<typeof action>()
+	const { getViewerUsername } = useViewer()
+	const [error, setError] = useState("")
+	const [img, setImg] = useControlField<string>(name)
+	const [uploadedFile, setUploadedFile] = useState<File | null>(null)
 
 	function onClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
 		e.preventDefault()
 		fileRef.current?.click()
-		// fetcher.submit(e.currentTarget.form, {
-		// 	method: "POST",
-		// 	action: $path("/api/upload-photo"),
-		// })
 	}
 
 	function handleSelectedFile(e: React.ChangeEvent<HTMLInputElement>) {
 		const files = Array.from(e.target.files || [])
 		const imageFile = files[0]
 
-		// TODO: Fix this.
 		if (!imageFile) return
+		setUploadedFile(imageFile)
 		const contentType = "image/jpg"
 		const formData = new FormData()
-		formData.append("filename", imageFile)
+		formData.append("filename", imageFile.name)
 		formData.append("contentType", contentType)
 		formData.append("folder", "profile-picture")
-		formData.append("userId", getViewerId())
 		fetcher.submit(formData, {
-			method: "POST",
+			method: "post",
 			action: $path("/api/upload-photo"),
 		})
 	}
 
-	// const [generate] = useMutation(GeneratePresignedUrlDocument)
+	async function uploadImage(url: string, file: File, contentType: string) {
+		await fetch(url, {
+			body: file,
+			method: "PUT",
+			headers: { "Content-Type": contentType },
+		})
+		const img = url.split("?")[0]
+		setImg(img)
+		onImageUpload(img)
+	}
 
-	// const handleFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
-	// 	const files = Array.from(e.target.files || [])
-	// 	const imageFile = files[0]
-
-	// 	if (!imageFile) return
-	// 	const contentType = "image/jpg"
-	// 	setLoading(true)
-	// 	await generate({
-	// 		variables: {
-	// 			input: {
-	// 				filename: imageFile.name,
-	// 				folder: "profile-picture",
-	// 				contentType,
-	// 			},
-	// 		},
-	// 		async onCompleted(data) {
-	// 			match(data.generatePresignedUrl)
-	// 				.with({ __typename: "AuthError" }, () => logout())
-	// 				.with({ __typename: "Error" }, ({ message }) => setFormError(message))
-	// 				.with(
-	// 					{ __typename: "GeneratePresignedUrlResult" },
-	// 					async ({ data }) => {
-	// 						await axios.put(data, imageFile, {
-	// 							headers: {
-	// 								"Content-Type": contentType,
-	// 							},
-	// 						})
-	// 						onUploadComplete(data.split("?")[0])
-	// 						setLoading(false)
-	// 					},
-	// 				)
-	// 				.otherwise(() => null)
-	// 		},
-	// 	})
-	// }
+	useEffect(() => {
+		if (
+			fetcher.data &&
+			!isTypeofFieldError(fetcher.data) &&
+			fetcher.data.presignedURL?.__typename === "GeneratePresignedUrlResult"
+		) {
+			uploadImage(
+				fetcher.data.presignedURL.data,
+				uploadedFile as File,
+				fetcher.data.contentType,
+			)
+		} else if (
+			fetcher.data &&
+			!isTypeofFieldError(fetcher.data) &&
+			fetcher.data.presignedURL?.__typename === "Error"
+		) {
+			setError(fetcher.data.presignedURL.message)
+		}
+	}, [fetcher.data, uploadedFile])
 
 	return (
 		<fetcher.Form>
@@ -107,8 +95,8 @@ export default function AvatarUpload({
 				onChange={handleSelectedFile}
 			/>
 			<div className={css({ position: "relative", width: "120px" })}>
-				{value ? (
-					<img className={css(defaultStyles)} alt="user avatar" src={value} />
+				{img ? (
+					<img className={css(defaultStyles)} alt="user avatar" src={img} />
 				) : (
 					<div
 						className={css(
@@ -128,7 +116,7 @@ export default function AvatarUpload({
 								color: "white",
 							})}
 						>
-							{userName[0]}
+							{getViewerUsername()[0].toUpperCase()}
 						</p>
 					</div>
 				)}
@@ -151,11 +139,9 @@ export default function AvatarUpload({
 					})}
 					onClick={onClick}
 				>
-					{value ? "Edit" : "Add"}
+					{img ? "Edit" : "Add"}
 				</button>
-				{/* {formError && (
-				<span className={css({ textStyle: "error" })}>{formError}</span>
-			)} */}
+				{error && <span className={css({ textStyle: "error" })}>{error}</span>}
 			</div>
 		</fetcher.Form>
 	)

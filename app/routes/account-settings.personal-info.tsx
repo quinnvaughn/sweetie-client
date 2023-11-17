@@ -4,15 +4,16 @@ import {
 	json,
 	redirect,
 } from "@remix-run/node"
-import { useFetcher, useLoaderData } from "@remix-run/react"
+import { useFetcher, useLoaderData, useLocation } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
 import { $path } from "remix-routes"
 import {
 	ValidatedForm,
 	ValidationErrorResponseData,
+	setFormDefaults,
 	validationError,
 } from "remix-validated-form"
-import { match } from "ts-pattern"
+import { P, match } from "ts-pattern"
 import { z } from "zod"
 import { Breadcrumbs, Input, PageContainer, Textarea } from "~/features/ui"
 import { AvatarUpload, PersonalInfoEdit } from "~/features/user"
@@ -25,47 +26,49 @@ import { isTypeofFieldError } from "~/lib"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
-export const validator = withZod(
-	z.object({
-		avatar: z.string().optional(),
-		link: z
-			.string()
-			.refine(
-				(url) => {
-					if (url === "" || url === undefined || url === null) {
-						return true
-					}
-					const regex = new RegExp(
-						"^(http://www.|https://www.|http://|https://)?[a-z0-9]+([-.]{1}[a-z0-9]+)*.[a-z]{2,5}(:[0-9]{1,5})?(/.*)?$",
-					)
-					return regex.test(url)
-				},
-				{ message: "Must be a valid URL" },
-			)
-			.optional()
-			.or(z.literal("")),
-		bio: z
-			.string()
-			.max(280, "Bio must be at most 280 characters long")
-			.optional(),
-		username: z
-			.string()
-			.min(3, "Username must be at least 3 characters long")
-			.max(15, "Username must be at most 15 characters long")
-			.regex(
-				new RegExp("^[a-zA-Z0-9_]+$"),
-				"Username must only contain letters, numbers, and underscores",
-			)
-			.optional(),
-		name: z
-			.string()
-			.min(1, "Name must be at least 1 character long")
-			.max(32, "Name must be at most 32 characters long")
-			.optional(),
-		email: z.string().email("Must be a valid email").optional(),
-		fieldUpdated: z.enum(["name", "email", "username", "bio", "link"]),
-	}),
-)
+const schema = z.object({
+	avatar: z.string().optional(),
+	link: z
+		.string()
+		.refine(
+			(url) => {
+				if (url === "" || url === undefined || url === null) {
+					return true
+				}
+				const regex = new RegExp(
+					"^(http://www.|https://www.|http://|https://)?[a-z0-9]+([-.]{1}[a-z0-9]+)*.[a-z]{2,5}(:[0-9]{1,5})?(/.*)?$",
+				)
+				return regex.test(url)
+			},
+			{ message: "Must be a valid URL" },
+		)
+		.optional()
+		.or(z.literal("")),
+	bio: z
+		.string()
+		.max(280, "Bio must be at most 280 characters long")
+		.optional(),
+	username: z
+		.string()
+		.min(3, "Username must be at least 3 characters long")
+		.max(15, "Username must be at most 15 characters long")
+		.regex(
+			new RegExp("^[a-zA-Z0-9_]+$"),
+			"Username must only contain letters, numbers, and underscores",
+		)
+		.optional(),
+	name: z
+		.string()
+		.min(1, "Name must be at least 1 character long")
+		.max(32, "Name must be at most 32 characters long")
+		.optional(),
+	email: z.string().email("Must be a valid email").optional(),
+	fieldUpdated: z.enum(["name", "email", "username", "bio", "link", "avatar"]),
+})
+
+export const validator = withZod(schema)
+
+type DefaultValues = z.infer<typeof schema>
 
 export async function action({ request }: DataFunctionArgs) {
 	const result = await validator.validate(await request.formData())
@@ -83,21 +86,7 @@ export async function action({ request }: DataFunctionArgs) {
 	}
 
 	const success = await match(fieldUpdated)
-		.with("name", async () => {
-			return await updater()
-		})
-		.with("email", async () => {
-			return await updater()
-		})
-		.with("username", async () => {
-			return await updater()
-		})
-		.with("bio", async () => {
-			return await updater()
-		})
-		.with("link", async () => {
-			return await updater()
-		})
+		.with(P.any, () => updater())
 		.exhaustive()
 
 	return match(success.data?.updateUserProfile)
@@ -124,10 +113,20 @@ export async function action({ request }: DataFunctionArgs) {
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { data } = await gqlFetch(request, GetViewerInfoDocument)
 	if (!data?.viewer) {
-		return redirect($path("/login"), { status: 401 })
+		return redirect($path("/login"))
 	}
-
-	return json({ viewer: data.viewer })
+	return json({
+		viewer: data.viewer,
+		...setFormDefaults<DefaultValues>("edit-personal-info", {
+			avatar: data.viewer.profile?.avatar ?? "",
+			bio: data.viewer.profile?.bio ?? "No bio yet",
+			email: data.viewer.email,
+			fieldUpdated: undefined,
+			link: data.viewer.profile?.link ?? "No link yet",
+			name: data.viewer.name,
+			username: data.viewer.username,
+		}),
+	})
 }
 
 export default function PersonalInfoRoute() {
@@ -153,7 +152,12 @@ export default function PersonalInfoRoute() {
 						Personal Info
 					</h1>
 				</VStack>
-				<ValidatedForm fetcher={fetcher} validator={validator} method="post">
+				<ValidatedForm
+					id="edit-personal-info"
+					fetcher={fetcher}
+					validator={validator}
+					method="post"
+				>
 					<div className={css({ display: "flex", flexDirection: "column" })}>
 						<div
 							className={css({
@@ -166,9 +170,14 @@ export default function PersonalInfoRoute() {
 							<VStack gap={4} alignItems="flex-start" width={"100%"}>
 								<AvatarUpload
 									name="avatar"
-									userName={data.viewer.name}
-									value={data.viewer.profile?.avatar ?? ""}
-									onUploadComplete={async (url) => {}}
+									onImageUpload={(url) => {
+										const formData = new FormData()
+										formData.set("fieldUpdated", "avatar")
+										formData.set("avatar", url)
+										fetcher.submit(formData, {
+											method: "post",
+										})
+									}}
 								/>
 								<PersonalInfoEdit
 									close={
@@ -181,7 +190,7 @@ export default function PersonalInfoRoute() {
 									editDescription="Your legal name that might appear on a license or passport."
 									input={
 										<Input
-											defaultValue={data.viewer.name}
+											// defaultValue={data.viewer.name}
 											label="Name"
 											name="name"
 											placeholder="Enter your legal name"
@@ -200,7 +209,6 @@ export default function PersonalInfoRoute() {
 								editDescription="Your email"
 								input={
 									<Input
-										defaultValue={data.viewer.email}
 										label="Email"
 										name="email"
 										placeholder="Enter your new email"
@@ -218,7 +226,6 @@ export default function PersonalInfoRoute() {
 								editDescription="Set your username"
 								input={
 									<Input
-										defaultValue={data.viewer.username}
 										label="Username"
 										name="username"
 										placeholder="Enter your new username"
@@ -234,14 +241,7 @@ export default function PersonalInfoRoute() {
 								label="Bio"
 								value={data.viewer.profile?.bio || "No bio yet"}
 								editDescription="Add your bio. This is especially useful if you are a tastemaker as it lets people know who they're getting dates from."
-								input={
-									<Textarea
-										defaultValue={data.viewer.profile?.bio ?? ""}
-										label="Bio"
-										name="bio"
-										placeholder="Bio"
-									/>
-								}
+								input={<Textarea label="Bio" name="bio" placeholder="Bio" />}
 							/>
 							<PersonalInfoEdit
 								close={
@@ -254,7 +254,6 @@ export default function PersonalInfoRoute() {
 								editDescription="Add your link. This is useful if you want to promote anything when people check out your profile."
 								input={
 									<Input
-										defaultValue={data.viewer.profile?.link ?? ""}
 										label="Link"
 										name="link"
 										placeholder="Enter your new link"

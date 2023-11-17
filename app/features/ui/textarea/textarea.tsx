@@ -8,7 +8,6 @@ type Props = {
 	label: string
 	placeholder: string
 	rows?: number
-	defaultValue?: string
 }
 
 export function Textarea({
@@ -16,7 +15,6 @@ export function Textarea({
 	name,
 	required,
 	placeholder,
-	defaultValue,
 	rows = 6,
 }: Props) {
 	const { error, getInputProps } = useField(name)
@@ -34,9 +32,7 @@ export function Textarea({
 				{required && <span className={css({ textStyle: "error" })}>*</span>}
 			</label>
 			<textarea
-				defaultValue={defaultValue}
-				{...getInputProps()}
-				placeholder={placeholder}
+				{...getInputProps({ id: name, placeholder })}
 				className={css({
 					width: "100%",
 					borderRadius: "8px",

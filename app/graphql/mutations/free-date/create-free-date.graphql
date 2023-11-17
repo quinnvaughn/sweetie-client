@@ -1,10 +1,14 @@
 mutation CreateFreeDate($input: CreateDateExperienceInput!) {
     createDateExperience(input: $input) {
+      __typename
       ... on AuthError {
         message
       }
+      ... on Error {
+        message
+      }
       ... on DateExperience {
-		id
+		    id
         ...FreeDateCard
       }
       ... on FieldErrors {

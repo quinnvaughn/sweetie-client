@@ -11,14 +11,7 @@ type Props = {
 	defaultValue?: string
 }
 
-export function Input({
-	name,
-	label,
-	required,
-	placeholder,
-	type,
-	defaultValue,
-}: Props) {
+export function Input({ name, label, required, placeholder, type }: Props) {
 	const { error, getInputProps } = useField(name)
 	return (
 		<VStack gap={1} alignItems="flex-start" width={"100%"}>
@@ -27,7 +20,7 @@ export function Input({
 				{required && <span className={css({ textStyle: "error" })}>*</span>}
 			</label>
 			<input
-				{...getInputProps()}
+				{...getInputProps({ id: name })}
 				placeholder={placeholder}
 				className={css({
 					width: "100%",
@@ -39,11 +32,8 @@ export function Input({
 				})}
 				name={name}
 				type={type}
-				defaultValue={defaultValue}
 			/>
-			{error && (
-				<span className={css({ color: "red", fontSize: "12px" })}>{error}</span>
-			)}
+			{error && <p className={css({ textStyle: "error" })}>{error}</p>}
 		</VStack>
 	)
 }

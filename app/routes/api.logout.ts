@@ -17,8 +17,8 @@ export async function action({ request }: ActionFunctionArgs) {
 		.with({ __typename: "LogoutResult" }, async () => {
 			return redirect($path("/"), {
 				headers: {
-					"Set-Cookie": `token=; Path=/; HttpOnly; SameSite=Lax; Expires=${new Date(
-						0,
+					"Set-Cookie": `qid=; Path=/; HttpOnly; SameSite=Lax; Max-Age=1; Expires=${new Date(
+						"01/01/2000",
 					).toUTCString()};`,
 				},
 			})

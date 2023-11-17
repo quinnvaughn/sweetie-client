@@ -7,7 +7,11 @@ import {
 import { useFetcher } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
 import { $path } from "remix-routes"
-import { ValidatedForm, validationError } from "remix-validated-form"
+import {
+	ValidatedForm,
+	setFormDefaults,
+	validationError,
+} from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
 import { Breadcrumbs, Input, PageContainer } from "~/features/ui"
@@ -82,10 +86,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	const { data } = await gqlFetch(request, ViewerIsLoggedInDocument)
 
 	if (!data?.viewer) {
-		return redirect($path("/login"), {
-			status: 401,
-		})
+		return redirect($path("/login"))
 	}
+
+	return json(
+		setFormDefaults("login-and-security-form", {
+			currentPassword: "",
+			newPassword: "",
+		}),
+	)
 }
 
 export default function LoginAndSecurityRoute() {
@@ -134,6 +143,7 @@ export default function LoginAndSecurityRoute() {
 							</p>
 						</VStack>
 						<ValidatedForm
+							id="login-and-security-form"
 							fetcher={fetcher}
 							validator={validator}
 							method="post"
@@ -144,8 +154,8 @@ export default function LoginAndSecurityRoute() {
 									close={!isTypeofFieldError(fetcher.data)}
 									fieldName="password"
 									label="Password"
-									value={"********"}
 									editDescription="Update your password."
+									value={"********"}
 									input={
 										<VStack gap={2} width={"100%"}>
 											<Input

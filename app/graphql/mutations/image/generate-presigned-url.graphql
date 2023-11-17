@@ -1,0 +1,14 @@
+mutation GeneratePresignedUrl($input: GeneratePresignedUrlInput!) {
+    generatePresignedUrl(input: $input) {
+      __typename
+      ... on AuthError {
+        message
+      }
+	  ... on Error {
+		message
+	  }
+      ... on GeneratePresignedUrlResult {
+        data
+      }
+    }
+  }

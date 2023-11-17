@@ -1,7 +1,7 @@
 import { useCombobox } from "downshift"
 import { useState } from "react"
 import { $path } from "remix-routes"
-import { useField } from "remix-validated-form"
+import { useControlField, useField } from "remix-validated-form"
 import { useCustomFetcher } from "~/hooks"
 import { loader } from "~/routes/api.locations"
 import { css, cva } from "~/styled-system/css"
@@ -44,9 +44,10 @@ type Props = {
 		name: string
 		id: string
 	}
+	required?: boolean
 }
 
-export function LocationCombobox({ label, fields }: Props) {
+export function LocationCombobox({ label, fields, required }: Props) {
 	const fetcher = useCustomFetcher<typeof loader>()
 	const [selectedLocation, setSelectedLocation] = useState<
 		Location | undefined | null
@@ -56,6 +57,7 @@ export function LocationCombobox({ label, fields }: Props) {
 		getInputProps: getFieldProps,
 		clearError,
 	} = useField(fields.name)
+	const [value] = useControlField<string>(fields.name)
 	const locations = fetcher.data?.locations ?? []
 	type Location = typeof locations[number]
 
@@ -63,12 +65,16 @@ export function LocationCombobox({ label, fields }: Props) {
 		useCombobox<Location>({
 			id: "location-combobox",
 			items: locations,
+			defaultInputValue: value,
 			itemToString: (location) => location?.name ?? "",
 			onSelectedItemChange({ selectedItem }) {
 				setSelectedLocation(selectedItem)
 				clearError()
 			},
 			onInputValueChange({ inputValue }) {
+				if (inputValue?.length === 0) {
+					fetcher.reset()
+				}
 				if (inputValue && inputValue.length > 0) {
 					fetcher.submit(
 						{
@@ -92,7 +98,8 @@ export function LocationCombobox({ label, fields }: Props) {
 				className={css({ display: "flex", flexDirection: "column", gap: 1 })}
 			>
 				<label className={css({ width: "fit-content" })} {...getLabelProps()}>
-					{label}
+					{label}{" "}
+					{required && <span className={css({ textStyle: "error" })}>*</span>}
 				</label>
 				<div
 					className={css({

@@ -21,7 +21,13 @@ export function TagsInput({ tagsName, textName, label }: Props) {
 				>
 					{label}
 				</label>
-				<div className={css({ display: "flex" })}>
+				<div
+					className={css({
+						display: "flex",
+						shadow: "sm",
+						borderRadius: "8px",
+					})}
+				>
 					<input
 						{...getInputProps({
 							value: text,
@@ -40,7 +46,6 @@ export function TagsInput({ tagsName, textName, label }: Props) {
 							borderTopColor: "gray",
 							borderLeftColor: "gray",
 							borderBottomColor: "gray",
-							shadow: "sm",
 						})}
 						onKeyDown={(e) => {
 							if (e.key === "Enter") {

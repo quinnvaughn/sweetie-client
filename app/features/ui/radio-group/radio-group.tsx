@@ -13,6 +13,7 @@ type Props = {
 	label: string
 	direction?: "row" | "column"
 	css?: SystemStyleObject
+	required?: boolean
 }
 
 export function RadioGroup({
@@ -20,12 +21,16 @@ export function RadioGroup({
 	options,
 	direction = "row",
 	label,
+	required = false,
 	css: cssProp = {},
 }: Props) {
 	const group = css(cssProp)
 	return (
 		<VStack gap={1} alignItems={"flex-start"} className={group}>
-			<label htmlFor={name}>{label}</label>
+			<label htmlFor={name}>
+				{label}{" "}
+				{required && <span className={css({ textStyle: "error" })}>*</span>}
+			</label>
 			<div
 				className={css({
 					borderWidth: "1px",

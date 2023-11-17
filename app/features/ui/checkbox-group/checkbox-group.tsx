@@ -2,19 +2,21 @@ import { HStack } from "~/styled-system/jsx"
 import { Checkbox } from "../checkbox"
 import { css } from "~/styled-system/css"
 import { SystemStyleObject } from "@pandacss/dev"
-import { useField } from "remix-validated-form"
+import { useControlField, useField } from "remix-validated-form"
 
 type Props = {
 	name: string
 	options: { label: string; value: string; defaultChecked?: boolean }[]
 	label: string
 	css?: SystemStyleObject
+	required?: boolean
 }
 
 export function CheckboxGroup({
 	options,
 	label,
 	name,
+	required = false,
 	css: cssProp = {},
 }: Props) {
 	const group = css(
@@ -22,10 +24,12 @@ export function CheckboxGroup({
 		cssProp,
 	)
 	const { error, getInputProps } = useField(name)
-
 	return (
 		<div role="group" className={group}>
-			<legend>{label}</legend>
+			<legend>
+				{label}{" "}
+				{required && <span className={css({ textStyle: "error" })}>*</span>}
+			</legend>
 			<HStack
 				gap={2}
 				className={css({
@@ -38,12 +42,12 @@ export function CheckboxGroup({
 					flexWrap: "wrap",
 				})}
 			>
-				{options.map((option) => (
+				{options.map((option, i) => (
 					<Checkbox
 						key={option.value}
 						defaultChecked={option.defaultChecked}
-						name={name}
 						{...getInputProps({
+							id: name,
 							label: option.label,
 							value: option.value,
 						})}

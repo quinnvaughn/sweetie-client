@@ -90,7 +90,11 @@ export function DateStopForm({
 					label="Title"
 					placeholder="Enter a title that is short and sweet"
 				/>
-				<LocationCombobox label="Select a location" fields={location} />
+				<LocationCombobox
+					required
+					label="Select a location"
+					fields={location}
+				/>
 				<Textarea
 					required
 					name={content}
