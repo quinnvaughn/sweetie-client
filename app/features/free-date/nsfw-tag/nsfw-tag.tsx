@@ -16,8 +16,8 @@ const nsfw = cva({
 				padding: "4px",
 			},
 			lg: {
-				fontSize: "18px",
-				padding: "8px",
+				fontSize: "16px",
+				padding: "6px",
 			},
 		},
 	},

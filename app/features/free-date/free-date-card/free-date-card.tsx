@@ -22,7 +22,7 @@ export function FreeDateCard({ date }: Props) {
 			to={$path("/free-date/:id", { id: date.id })}
 			target="_blank"
 		>
-			<VStack gap="4">
+			<VStack gap="4" width={"100%"} alignItems="flex-start">
 				<img
 					src={date.thumbnail}
 					alt={`${date.title} thumbnail`}
@@ -33,7 +33,7 @@ export function FreeDateCard({ date }: Props) {
 						backgroundColor: "gray",
 					})}
 				/>
-				<VStack gap="2" alignItems={"flex-start"}>
+				<VStack gap="2" alignItems={"flex-start"} width={"100%"}>
 					<p className={css({ lineHeight: 1, fontWeight: "600" })}>
 						{date.title}
 					</p>

@@ -24,7 +24,7 @@ type TagsProps = {
 }
 
 export function Tags({ tags }: TagsProps) {
-	const [showAll, setShowAll] = useState(false)
+	const [showAll, setShowAll] = useState(tags.length <= 5)
 	const elementsShown = showAll ? tags.length : 5
 	const slicedElements = tags.slice(0, elementsShown)
 	return (
@@ -40,7 +40,7 @@ export function Tags({ tags }: TagsProps) {
 					</Link>
 				)
 			})}
-			{tags.length < 5 && !showAll && (
+			{!showAll && (
 				<button
 					type="button"
 					className={css({ cursor: "pointer", border: "none" }, tagStyles)}

@@ -3,6 +3,7 @@ import {
 	LoaderFunctionArgs,
 	MetaFunction,
 	json,
+	redirect,
 } from "@remix-run/node"
 import { match } from "ts-pattern"
 import { gqlFetch } from "~/graphql/graphql"
@@ -50,12 +51,13 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 	})
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request, params }: DataFunctionArgs) {
+	const { id } = $params("/free-date/:id", params)
 	const cookieHeader = request.headers.get("Cookie")
 	const cookie = await showShareScreen.parse(cookieHeader)
 	cookie.showShareScreen = false
 
-	return json(request, {
+	return redirect($path("/free-date/:id", { id }), {
 		headers: {
 			"Set-Cookie": await showShareScreen.serialize(cookie),
 		},
@@ -166,6 +168,7 @@ export default function FreeDateIdeaRoute() {
 				className={flex({
 					justifyContent: "space-between",
 					alignItems: "center",
+					width: "100%",
 					borderBottom: "1px solid",
 					borderBottomColor: "gray",
 					padding: {
@@ -174,7 +177,7 @@ export default function FreeDateIdeaRoute() {
 					},
 				})}
 			>
-				<fetcher.Form>
+				<fetcher.Form method="post">
 					<button
 						type="submit"
 						className={css({
@@ -201,7 +204,13 @@ export default function FreeDateIdeaRoute() {
 					Back
 				</div>
 			</div>
-			<div className={css({ justifyContent: "center" })}>
+			<div
+				className={css({
+					display: "flex",
+					justifyContent: "center",
+					width: "100%",
+				})}
+			>
 				<VStack
 					alignItems="flex-start"
 					justifyContent={"flex-start"}
@@ -209,7 +218,13 @@ export default function FreeDateIdeaRoute() {
 					paddingY={"20px"}
 					width={"300px"}
 				>
-					<div className={css({ justifyContent: "center" })}>
+					<div
+						className={css({
+							display: "flex",
+							width: "100%",
+							justifyContent: "center",
+						})}
+					>
 						<IoIosCheckmarkCircleOutline
 							className={css({ color: "primary" })}
 							size={30}
@@ -224,9 +239,9 @@ export default function FreeDateIdeaRoute() {
 					>
 						You successfully created your date! Make sure to share it.
 					</p>
-					<CopyLinkShareButton campaign={campaign} />
-					<FacebookShareButton campaign={campaign} />
-					<TwitterShareButton campaign={campaign} />
+					<CopyLinkShareButton campaign={campaign} css={{ width: "100%" }} />
+					<FacebookShareButton campaign={campaign} css={{ width: "100%" }} />
+					<TwitterShareButton campaign={campaign} css={{ width: "100%" }} />
 				</VStack>
 			</div>
 		</div>
@@ -241,35 +256,40 @@ export default function FreeDateIdeaRoute() {
 		>
 			<Outlet />
 			{match(dateExperience)
-				.with({ __typename: "EntityNotFoundError" }, () => (
+				.with({ __typename: "Error" }, () => (
 					<p className={css({ textStyle: "paragraph" })}>Not Found</p>
 				))
 				.with({ __typename: "DateExperience" }, (experience) => (
-					<VStack gap={4} alignItems={"flex-start"}>
+					<VStack gap={4} alignItems={"flex-start"} width={"100%"}>
 						<img
 							src={experience.thumbnail}
 							alt={experience.title}
-							className={css({ aspectRatio: "16/9" })}
+							className={css({
+								width: "100%",
+								aspectRatio: "16/9",
+								objectFit: "cover",
+								borderRadius: "8px",
+								backgroundColor: "gray",
+								maxHeight: "500px",
+							})}
 						/>
 						<HStack
 							gap={6}
 							alignItems="flex-start"
 							justifyContent={"flex-start"}
+							width={"100%"}
 						>
 							<VStack
 								gap={4}
 								alignItems="flex-start"
 								width={{ base: "100%", md: "66%" }}
 							>
-								<HStack
-									gap={4}
-									justifyContent={"space-between"}
-									alignItems="center"
-								>
+								<VStack gap={experience.nsfw ? 1 : 0}>
 									<h1 className={css({ textStyle: "h1", fontSize: 32 })}>
 										{experience.title}
 									</h1>
-								</HStack>
+									{experience.nsfw && <NSFWTag size="lg" />}
+								</VStack>
 								<VStack
 									gap={4}
 									justifyContent="flex-start"
@@ -293,7 +313,6 @@ export default function FreeDateIdeaRoute() {
 								</VStack>
 								<VStack gap={4} width="100%" alignItems={"flex-start"}>
 									<TastemakerInfo tastemaker={experience.tastemaker} />
-									{experience.nsfw && <NSFWTag size="lg" />}
 									<div
 										className={divider({
 											color: "gray",

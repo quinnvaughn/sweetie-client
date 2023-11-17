@@ -8,6 +8,7 @@ import { useActionData } from "@remix-run/react"
 import { $path } from "remix-routes"
 import { setFormDefaults, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
+import { showShareScreen } from "~/cookies.server"
 import {
 	FreeDateForm,
 	FreeDateFormValues,
@@ -45,9 +46,17 @@ export async function action({ request }: DataFunctionArgs) {
 			validationError(mapFieldErrorToValidationError(fieldErrors)),
 		)
 		.with({ __typename: "Error" }, ({ message }) => json({ error: message }))
-		.with({ __typename: "DateExperience" }, ({ id }) =>
-			redirect($path("/free-date/:id", { id })),
-		)
+		.with({ __typename: "DateExperience" }, async ({ id }) => {
+			// add showShareScreen cookie.
+			const cookieHeader = request.headers.get("Cookie")
+			const cookie = (await showShareScreen.parse(cookieHeader)) || {}
+			cookie.showShareScreen = true
+			return redirect($path("/free-date/:id", { id }), {
+				headers: {
+					"Set-Cookie": await showShareScreen.serialize(cookie),
+				},
+			})
+		})
 		.otherwise(() => json({ error: "Unknown error." }))
 }
 

@@ -125,6 +125,7 @@ export function ImageUpload({
 							objectFit: "cover",
 							borderRadius: "8px",
 							backgroundColor: "gray",
+							maxHeight: "500px",
 						})}
 						src={img}
 						alt="free date thumbnail"
@@ -137,6 +138,9 @@ export function ImageUpload({
 							position: "absolute",
 							top: "8px",
 							right: "8px",
+							padding: "8px",
+							borderRadius: "50%",
+							backgroundColor: "white",
 						})}
 					>
 						<FaTrash
