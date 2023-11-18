@@ -18,7 +18,6 @@ export function Textarea({
 	rows = 6,
 }: Props) {
 	const { error, getInputProps } = useField(name)
-
 	return (
 		<VStack
 			gap={1}

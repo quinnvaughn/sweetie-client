@@ -1,109 +1,17 @@
-import {
-	DataFunctionArgs,
-	LoaderFunctionArgs,
-	json,
-	redirect,
-} from "@remix-run/node"
-import { useFetcher } from "@remix-run/react"
-import { withZod } from "@remix-validated-form/with-zod"
+import { Link, Outlet } from "@remix-run/react"
 import { $path } from "remix-routes"
-import {
-	ValidatedForm,
-	setFormDefaults,
-	validationError,
-} from "remix-validated-form"
-import { match } from "ts-pattern"
-import { z } from "zod"
-import { Breadcrumbs, Input, PageContainer } from "~/features/ui"
-import { PersonalInfoEdit } from "~/features/user"
-import {
-	UpdatePasswordDocument,
-	ViewerIsLoggedInDocument,
-} from "~/graphql/generated"
-import { gqlFetch } from "~/graphql/graphql"
-import { isTypeofFieldError, mapFieldErrorToValidationError } from "~/lib"
+import { Breadcrumbs, PageContainer } from "~/features/ui"
+import { PersonalInfoField } from "~/features/user"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
-const validator = withZod(
-	z
-		.object({
-			currentPassword: z
-				.string()
-				.min(6, "Password must be at least 6 characters long"),
-			newPassword: z
-				.string()
-				.min(6, "Password must be at least 6 characters long"),
-		})
-		.refine(
-			(data) => {
-				return data.currentPassword !== data.newPassword
-			},
-			{
-				message: "New password must be different from current password",
-				path: ["newPassword"],
-			},
-		),
-)
-
-export async function action({ request }: DataFunctionArgs) {
-	const result = await validator.validate(await request.formData())
-
-	if (result.error) {
-		return validationError(result.error)
-	}
-
-	const { currentPassword, newPassword } = result.data
-
-	const { data } = await gqlFetch(request, UpdatePasswordDocument, {
-		input: {
-			currentPassword,
-			newPassword,
-		},
-	})
-
-	return match(data?.updatePassword)
-		.with({ __typename: "AuthError" }, () =>
-			json({ error: "You aren't allowed to do that." }, { status: 401 }),
-		)
-		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) =>
-			validationError(mapFieldErrorToValidationError(fieldErrors)),
-		)
-		.with({ __typename: "Error" }, ({ message }) =>
-			json({ error: message }, { status: 400 }),
-		)
-		.with({ __typename: "User" }, () => json({ error: null }, { status: 200 }))
-		.otherwise(() =>
-			json(
-				{ error: "Something happened. Please try again later." },
-				{ status: 500 },
-			),
-		)
-}
-
-export async function loader({ request }: LoaderFunctionArgs) {
-	// is user logged in?
-	const { data } = await gqlFetch(request, ViewerIsLoggedInDocument)
-
-	if (!data?.viewer) {
-		return redirect($path("/login"))
-	}
-
-	return json(
-		setFormDefaults("login-and-security-form", {
-			currentPassword: "",
-			newPassword: "",
-		}),
-	)
-}
-
 export default function LoginAndSecurityRoute() {
-	const fetcher = useFetcher<typeof action>()
 	return (
 		<PageContainer
 			width={{ base: "100%", lg: 1024 }}
 			padding={{ base: "40px 20px", lg: "40px 0px" }}
 		>
+			<Outlet />
 			<VStack gap={8} alignItems="flex-start">
 				<VStack gap={4} alignItems="flex-start">
 					<Breadcrumbs>
@@ -127,59 +35,28 @@ export default function LoginAndSecurityRoute() {
 						alignItems: "center",
 					})}
 				>
-					<VStack gap={2} alignItems="flex-start" width={"100%"}>
-						<VStack gap={2} alignItems="flex-start">
-							<h2
+					<VStack gap={2} alignItems={"flex-start"} width={"100%"}>
+						<div
+							className={css({
+								display: "flex",
+								justifyContent: "flex-end",
+								width: "100%",
+							})}
+						>
+							<Link
 								className={css({
-									textStyle: "paragraph",
-									fontSize: "20px",
+									borderRadius: "9999px",
+									padding: "8px 16px",
+									bg: "secondary",
+									color: "white",
 									fontWeight: "bold",
 								})}
+								to={$path("/account-settings/login-and-security/edit")}
 							>
-								Login
-							</h2>
-							<p className={css({ textStyle: "paragraph", color: "grayText" })}>
-								Update your password.
-							</p>
-						</VStack>
-						<ValidatedForm
-							id="login-and-security-form"
-							fetcher={fetcher}
-							validator={validator}
-							method="post"
-							className={css({ width: "100%" })}
-						>
-							<VStack gap={2} width={"100%"}>
-								<PersonalInfoEdit
-									close={!isTypeofFieldError(fetcher.data)}
-									fieldName="password"
-									label="Password"
-									editDescription="Update your password."
-									value={"********"}
-									input={
-										<VStack gap={2} width={"100%"}>
-											<Input
-												type="password"
-												name="currentPassword"
-												label="Current password"
-												placeholder="Please enter your current password"
-											/>
-											<Input
-												type="password"
-												name="newPassword"
-												label="New password"
-												placeholder="Please enter your new password"
-											/>
-										</VStack>
-									}
-								/>
-							</VStack>
-							{!isTypeofFieldError(fetcher.data) && fetcher.data?.error && (
-								<span className={css({ textStyle: "error" })}>
-									{fetcher.data.error}
-								</span>
-							)}
-						</ValidatedForm>
+								Edit Password
+							</Link>
+						</div>
+						<PersonalInfoField label="Password" value={"********"} />
 					</VStack>
 				</div>
 			</VStack>

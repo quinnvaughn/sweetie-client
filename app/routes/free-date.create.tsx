@@ -33,9 +33,8 @@ export async function action({ request }: DataFunctionArgs) {
 			...omit(result.data, "tagText", "tags", "nsfw", "stops"),
 			nsfw: result.data.nsfw === "true",
 			stops: result.data.stops.map((stop, i) => ({
-				...omit(stop, "location"),
+				...stop,
 				order: i + 1,
-				locationId: stop.location.id,
 			})),
 			tags: result.data.tags ?? [],
 		},

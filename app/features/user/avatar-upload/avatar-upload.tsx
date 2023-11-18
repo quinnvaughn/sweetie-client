@@ -1,8 +1,6 @@
-import { useActionData, useFetcher } from "@remix-run/react"
+import { useFetcher } from "@remix-run/react"
 import { useEffect, useRef, useState } from "react"
 import { $path } from "remix-routes"
-import { useControlField } from "remix-validated-form"
-import { P, match } from "ts-pattern"
 import { useViewer } from "~/hooks"
 import { isTypeofFieldError } from "~/lib"
 import { action } from "~/routes/api.upload-photo"
@@ -18,16 +16,15 @@ const defaultStyles = css.raw({
 })
 
 type Props = {
-	name: string
-	onImageUpload: (url: string) => void
+	value?: string
 }
 
-export default function AvatarUpload({ name, onImageUpload }: Props) {
+export default function AvatarUpload({ value }: Props) {
 	const fileRef = useRef<HTMLInputElement>(null)
 	const fetcher = useFetcher<typeof action>()
 	const { getViewerUsername } = useViewer()
 	const [error, setError] = useState("")
-	const [img, setImg] = useControlField<string>(name)
+	const [img, setImg] = useState(value || "")
 	const [uploadedFile, setUploadedFile] = useState<File | null>(null)
 
 	function onClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -60,7 +57,13 @@ export default function AvatarUpload({ name, onImageUpload }: Props) {
 		})
 		const img = url.split("?")[0]
 		setImg(img)
-		onImageUpload(img)
+		fetcher.submit(
+			{ avatar: img },
+			{
+				method: "post",
+				action: $path("/api/upload-avatar"),
+			},
+		)
 	}
 
 	useEffect(() => {
@@ -85,9 +88,7 @@ export default function AvatarUpload({ name, onImageUpload }: Props) {
 
 	return (
 		<fetcher.Form>
-			<input name="name" type="hidden" value={"hello"} />
 			<input
-				name={name}
 				className={css({ display: "none" })}
 				type="file"
 				accept="image/png, image/gif, image/jpeg, image/webp"
@@ -139,7 +140,7 @@ export default function AvatarUpload({ name, onImageUpload }: Props) {
 					})}
 					onClick={onClick}
 				>
-					{img ? "Edit" : "Add"}
+					Upload
 				</button>
 				{error && <span className={css({ textStyle: "error" })}>{error}</span>}
 			</div>

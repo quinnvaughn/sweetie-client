@@ -1,5 +1,5 @@
 export * from "./avatar"
 export * from "./profile"
 export * from "./account-settings-link"
-export * from "./personal-info-edit"
+export * from "./personal-info-field"
 export * from "./avatar-upload"

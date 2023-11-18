@@ -1,0 +1,40 @@
+mutation UpdateFreeDate($input: UpdateFreeDateInput!) {
+		updateFreeDate(input: $input) {
+            __typename
+			... on AuthError {
+			message
+			}
+            ... on FieldErrors {
+                fieldErrors {
+                    field
+                    message
+                }
+            }
+			... on Error {
+			message
+			}
+			... on DateExperience {
+			id
+			title
+			description
+			thumbnail
+			retired
+			nsfw
+			tags {
+				id 
+				name
+			}
+			timesOfDay {
+				id
+				name
+			}
+			tastemaker {
+				...TastemakerInfo
+			}
+			stops {
+				id
+				...DateStopItem
+			}
+      }
+		}
+	}

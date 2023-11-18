@@ -13,6 +13,7 @@ type Props = {
 
 export function Input({ name, label, required, placeholder, type }: Props) {
 	const { error, getInputProps } = useField(name)
+
 	return (
 		<VStack gap={1} alignItems="flex-start" width={"100%"}>
 			<label htmlFor={name}>

@@ -49,9 +49,7 @@ type Props = {
 
 export function LocationCombobox({ label, fields, required }: Props) {
 	const fetcher = useCustomFetcher<typeof loader>()
-	const [selectedLocation, setSelectedLocation] = useState<
-		Location | undefined | null
-	>(null)
+	const [id, setId] = useControlField<string>(fields.id)
 	const {
 		error,
 		getInputProps: getFieldProps,
@@ -68,7 +66,7 @@ export function LocationCombobox({ label, fields, required }: Props) {
 			defaultInputValue: value,
 			itemToString: (location) => location?.name ?? "",
 			onSelectedItemChange({ selectedItem }) {
-				setSelectedLocation(selectedItem)
+				setId(selectedItem?.id ?? "")
 				clearError()
 			},
 			onInputValueChange({ inputValue }) {
@@ -125,11 +123,7 @@ export function LocationCombobox({ label, fields, required }: Props) {
 							}),
 						})}
 					/>
-					<input
-						type="hidden"
-						name={fields.id}
-						value={selectedLocation?.id ?? ""}
-					/>
+					<input type="hidden" name={fields.id} value={id ?? ""} />
 				</div>
 			</div>
 			<ul
