@@ -1,5 +1,11 @@
+import { MetaFunction } from "@remix-run/node"
 import { Outlet } from "@remix-run/react"
 import { PageContainer } from "~/features/ui/page-container"
+
+export const meta: MetaFunction = ({ matches }) => {
+	const parentMeta = matches.flatMap((match) => match.meta ?? [])
+	return [...parentMeta, { name: "robots", content: "noindex" }]
+}
 
 export default function Auth() {
 	return (

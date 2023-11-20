@@ -11,6 +11,8 @@ export function DraftList({ drafts, admin }: Props) {
 	return (
 		<div
 			className={css({
+				width: "100%",
+				display: "grid",
 				gap: 2,
 				gridTemplateColumns: {
 					base: "1fr",

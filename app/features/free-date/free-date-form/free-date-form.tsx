@@ -1,6 +1,10 @@
 import { withZod } from "@remix-validated-form/with-zod"
 import { FiPlus } from "react-icons/fi/index.js"
-import { ValidatedForm, useFieldArray } from "remix-validated-form"
+import {
+	ValidatedForm,
+	useControlField,
+	useFieldArray,
+} from "remix-validated-form"
 import { z } from "zod"
 import { zfd } from "zod-form-data"
 import {
@@ -16,8 +20,10 @@ import {
 import { css } from "~/styled-system/css"
 import { VStack, HStack } from "~/styled-system/jsx"
 import { DateStopForm } from ".."
+import { SaveDraftButton } from "~/features/drafts"
 
 const schema = z.object({
+	id: z.string().optional(),
 	thumbnail: z
 		.string({
 			invalid_type_error: "Must be a url",
@@ -83,7 +89,7 @@ export type FreeDateFormValues = z.infer<typeof schema>
 
 type Props = {
 	formId: string
-	page: "create" | "edit"
+	page: "create" | "edit" | "draft"
 	error?: string
 }
 
@@ -91,21 +97,37 @@ export function FreeDateForm({ formId, page, error }: Props) {
 	const [stops, { push, remove, move }] = useFieldArray<Stop>("stops", {
 		formId,
 	})
+	const [id] = useControlField<string>("id", formId)
 	return (
 		<ValidatedForm id={formId} validator={freeDateValidator} method="post">
 			<VStack gap={4} alignItems="flex-start">
-				<HStack gap={1} justifyContent="space-between" alignItems="flex-start">
+				<HStack
+					gap={1}
+					justifyContent="space-between"
+					alignItems="flex-start"
+					width={"100%"}
+				>
 					<h1
 						className={css({
 							textStyle: "h1",
 							fontSize: { base: "24px", md: "32px" },
 						})}
 					>
-						{page === "create" ? "Create a free date" : "Edit free date"}
+						{page === "create"
+							? "Create a free date"
+							: page === "edit"
+							? "Edit free date"
+							: "Edit draft"}
 					</h1>
-					{/** TODO: Create save draft button. */}
-					{/* <SaveDraftButton values={functions.watchDateExperienceValues()} /> */}
+					<SaveDraftButton formId={formId} />
 				</HStack>
+				{page === "edit" && (
+					<input
+						type="hidden"
+						name="id"
+						value={id?.length > 0 ? id : undefined}
+					/>
+				)}
 				<ImageUpload
 					folder="free-dates"
 					name="thumbnail"
@@ -217,7 +239,11 @@ export function FreeDateForm({ formId, page, error }: Props) {
 					<SubmitButton
 						size="lg"
 						variant="primary"
-						label={page === "create" ? "Create new date" : "Edit date"}
+						label={
+							page === "create" || page === "draft"
+								? "Create new date"
+								: "Edit date"
+						}
 					/>
 				</div>
 				{error && <p className={css({ textStyle: "error" })}>{error}</p>}

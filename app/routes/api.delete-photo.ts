@@ -35,7 +35,6 @@ export async function action({ request }: DataFunctionArgs) {
 	if (data?.deleteImage.__typename === "AuthError") {
 		return redirect($path("/login"))
 	}
-	console.log({ data })
 	return json({
 		data:
 			data?.deleteImage.__typename === "DeleteImageResult"

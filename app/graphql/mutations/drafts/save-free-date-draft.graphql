@@ -1,0 +1,20 @@
+mutation SaveFreeDateDraft($input: SaveFreeDateDraftInput!) {
+  saveFreeDateDraft(input: $input) {
+    __typename
+    ... on DateExperienceDraft {
+      ...DraftCard
+    }
+	... on Error {
+			message
+	}
+	... on AuthError {
+		message 
+	}
+    ... on FieldErrors {
+      fieldErrors {
+        message
+        field
+      }
+    }
+  }
+}

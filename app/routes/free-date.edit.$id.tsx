@@ -21,15 +21,12 @@ import {
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { css } from "~/styled-system/css"
-import { isTypeofFieldError, omit } from "~/lib"
+import { isTypeofFieldError, mapFieldErrorToValidationError, omit } from "~/lib"
 import { match } from "ts-pattern"
 
 export async function action({ request, params }: DataFunctionArgs) {
 	const { id } = $params("/free-date/edit/:id", params)
 	const formData = await request.formData()
-	for (const [key, value] of formData.entries()) {
-		console.log(key, value)
-	}
 	const result = await freeDateValidator.validate(formData)
 	if (result.error) {
 		return validationError(result.error)
@@ -38,7 +35,7 @@ export async function action({ request, params }: DataFunctionArgs) {
 	const { data } = await gqlFetch(request, UpdateFreeDateDocument, {
 		input: {
 			id,
-			...omit(result.data, "tagText", "tags", "stops", "nsfw"),
+			...omit(result.data, "tagText", "tags", "stops", "nsfw", "id"),
 			nsfw: result.data.nsfw === "true",
 			stops: result.data.stops.map<UpdateDateStopInput>((stop, i) => ({
 				...stop,
@@ -49,10 +46,8 @@ export async function action({ request, params }: DataFunctionArgs) {
 	})
 	return match(data?.updateFreeDate)
 		.with({ __typename: "AuthError" }, () => redirect($path("/login")))
-		.with(
-			{ __typename: "FieldErrors" },
-			({ fieldErrors }) => json({ error: "Field Errors" }),
-			// validationError(mapFieldErrorToValidationError(fieldErrors)),
+		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) =>
+			validationError(mapFieldErrorToValidationError(fieldErrors)),
 		)
 		.with({ __typename: "DateExperience" }, ({ id }) =>
 			redirect($path("/free-date/:id", { id })),

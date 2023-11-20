@@ -1,4 +1,5 @@
 import { Link, useFetcher } from "@remix-run/react"
+import { FaEdit, FaTrash } from "react-icons/fa/index.js"
 import { $path } from "remix-routes"
 import { P, match } from "ts-pattern"
 import { DraftCardFragment } from "~/graphql/generated"
@@ -28,27 +29,33 @@ export function DraftCard({ draft, admin }: Props) {
 	return (
 		<VStack gap={2} alignItems="flex-start">
 			{!admin && draft.author.id === getViewerId() && (
-				<HStack gap={1} justifyContent="space-between" alignItems="flex-start">
+				<HStack
+					gap={4}
+					justifyContent="flex-end"
+					alignItems="flex-start"
+					width={"100%"}
+				>
 					<Link
 						className={css({
 							textStyle: "paragraph",
 							fontWeight: "bold",
 							_hover: { textDecoration: "underline" },
 						})}
-						to={$path("/free-date/:id/draft", { id: draft.id })}
+						to={$path("/free-date/draft/:id", { id: draft.id })}
 					>
-						Work on
+						<FaEdit className={css({ color: "black" })} size={26} />
 					</Link>
 					<button
 						type="button"
 						className={css({
 							textStyle: "paragraph",
 							fontWeight: "bold",
+							cursor: "pointer",
 							_hover: { textDecoration: "underline" },
 						})}
 						onClick={deleteDraft}
 					>
-						Delete draft
+						<FaTrash className={css({ color: "black" })} size={26} />
 					</button>
 				</HStack>
 			)}

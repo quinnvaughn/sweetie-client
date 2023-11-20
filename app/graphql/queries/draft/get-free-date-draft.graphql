@@ -1,0 +1,35 @@
+query GetFreeDateDraft($id: String!) {
+        freeDateDraft(id: $id) {
+            __typename
+            ... on AuthError {
+                message
+            }
+            ... on Error {
+                message
+            }
+            ... on DateExperienceDraft {
+                id
+                title
+                thumbnail
+                description
+				nsfw
+				tags {
+					...Tags
+				}
+                timesOfDay {
+                    id 
+                    name
+                }
+                stops {
+                    id
+                    order
+                    title
+                    location {
+                        id
+                        name
+                    }
+                    content
+                }
+            }
+        }
+    }

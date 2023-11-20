@@ -55,6 +55,7 @@ export function LocationCombobox({ label, fields, required }: Props) {
 		getInputProps: getFieldProps,
 		clearError,
 	} = useField(fields.name)
+	const { error: fieldError } = useField(fields.id)
 	const [value] = useControlField<string>(fields.name)
 	const locations = fetcher.data?.locations ?? []
 	type Location = typeof locations[number]
@@ -151,7 +152,11 @@ export function LocationCombobox({ label, fields, required }: Props) {
 						</li>
 					))}
 			</ul>
-			{error && <p className={css({ textStyle: "error" })}>{error}</p>}
+			{error ? (
+				<p className={css({ textStyle: "error" })}>{error}</p>
+			) : fieldError ? (
+				<p className={css({ textStyle: "error" })}>{fieldError}</p>
+			) : null}
 		</div>
 	)
 }
