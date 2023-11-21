@@ -42,6 +42,7 @@ export function DraftCard({ draft, admin }: Props) {
 							_hover: { textDecoration: "underline" },
 						})}
 						to={$path("/free-date/draft/:id", { id: draft.id })}
+						prefetch="intent"
 					>
 						<FaEdit className={css({ color: "black" })} size={26} />
 					</Link>

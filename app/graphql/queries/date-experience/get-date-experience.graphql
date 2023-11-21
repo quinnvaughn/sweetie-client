@@ -10,6 +10,11 @@ query GetDateExperience($id: String!) {
         nsfw
         createdAt
         updatedAt
+        cities {
+          id 
+          nameAndState
+          name
+        }
         tags {
           ...Tags
         }

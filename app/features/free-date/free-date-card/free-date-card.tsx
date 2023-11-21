@@ -21,6 +21,7 @@ export function FreeDateCard({ date }: Props) {
 			})}
 			to={$path("/free-date/:id", { id: date.id })}
 			target="_blank"
+			prefetch="intent"
 		>
 			<VStack gap="4" width={"100%"} alignItems="flex-start">
 				<img

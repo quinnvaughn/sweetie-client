@@ -9,14 +9,10 @@ fragment DateStopItem on DateStop {
       website
 	  address {
 		id
+		formattedAddress
 		coordinates {
 			lat
 			lng
-		}
-		city {
-			id 
-			name
-			nameAndState
 		}
 	  }
     }

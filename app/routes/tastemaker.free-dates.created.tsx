@@ -15,7 +15,7 @@ export async function loader({ request }: DataFunctionArgs) {
 	})
 
 	if (!data?.viewer) {
-		return redirect($path("/login"), { status: 404 })
+		return redirect($path("/login"))
 	}
 
 	return json({

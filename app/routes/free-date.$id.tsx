@@ -10,7 +10,13 @@ import { gqlFetch } from "~/graphql/graphql"
 import { GetDateExperienceDocument } from "~/graphql/generated"
 import { $params, $path } from "remix-routes"
 import { useMixpanel, useScrolledToBottom } from "~/hooks"
-import { Outlet, useFetcher, useLoaderData, useParams } from "@remix-run/react"
+import {
+	Link,
+	Outlet,
+	useFetcher,
+	useLoaderData,
+	useParams,
+} from "@remix-run/react"
 import { showShareScreen } from "~/cookies.server"
 import {
 	CopyLinkShareButton,
@@ -28,6 +34,7 @@ import { FiX } from "react-icons/fi/index.js"
 import { HStack, VStack } from "~/styled-system/jsx"
 import { IoIosCheckmarkCircleOutline } from "react-icons/io/index.js"
 import {
+	DateLocationsMap,
 	EmailItineraryRightSide,
 	NSFWTag,
 	TimeOfTheDay,
@@ -35,6 +42,8 @@ import {
 import { FloatingAddToCalendar } from "~/features/date-itinerary"
 import { TastemakerInfo } from "~/features/tastemaker"
 import { DateStop } from "~/features/date-stop"
+import { ClientOnly } from "remix-utils/client-only"
+import { singularOrPlural } from "~/lib"
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const { id } = $params("/free-date/:id", params)
@@ -79,10 +88,19 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 					createdAt,
 					updatedAt,
 					tastemaker,
-					stops,
+					cities,
 					id,
 				}) => [
 					{ title: `${title} by ${tastemaker.user.name} - Sweetie date idea` },
+					{
+						name: "keywords",
+						content: [
+							...tags.map((t) => t.name),
+							"dating",
+							"date ideas",
+							cities.map((c) => c.name),
+						],
+					},
 					{ name: "description", content: description.slice(0, 200) },
 					{
 						name: "og:title",
@@ -120,11 +138,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 							...tags.map((t) => t.name),
 							"dating",
 							"date ideas",
-							...Array.from(
-								new Set(
-									stops.map((s) => s.location.address.city.name.toLowerCase()),
-								),
-							),
+							cities.map((c) => c.name),
 						],
 					},
 					{
@@ -322,6 +336,54 @@ export default function FreeDateIdeaRoute() {
 										})}
 									/>
 								</VStack>
+								<VStack gap={4} width={"100%"} alignItems={"flex-start"}>
+									<div
+										className={css({
+											display: "flex",
+											gap: 1,
+											flexWrap: "wrap",
+										})}
+									>
+										<span className={css({ textStyle: "paragraph" })}>
+											{singularOrPlural(
+												experience.cities.length,
+												"City: ",
+												"Cities: ",
+											)}
+										</span>
+										{experience.cities.map((city) => (
+											<Link
+												className={css({
+													textDecoration: "underline",
+													textStyle: "paragraph",
+													fontWeight: "bold",
+												})}
+												to={$path("/search", {
+													cities: [city.nameAndState],
+												})}
+											>
+												<div
+													className={css({
+														display: "flex",
+														gap: 1,
+														alignItems: "center",
+													})}
+												>
+													{/* <FaCity className={css({ color: "black" })} /> */}
+													<span>{city.nameAndState}</span>
+												</div>
+											</Link>
+										))}
+									</div>
+									<div
+										className={divider({
+											color: "gray",
+											thickness: "1px",
+											orientation: "horizontal",
+											width: "100%",
+										})}
+									/>
+								</VStack>
 								<em
 									className={css({
 										textStyle: "paragraph",
@@ -351,6 +413,9 @@ export default function FreeDateIdeaRoute() {
 									</HStack>
 								</VStack>
 								<VStack gap={4}>
+									<ClientOnly>
+										{() => <DateLocationsMap stops={experience.stops} />}
+									</ClientOnly>
 									{experience.stops.map((stop) => (
 										<DateStop stop={stop} key={stop.id} />
 									))}

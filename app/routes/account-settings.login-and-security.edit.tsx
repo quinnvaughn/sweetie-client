@@ -75,8 +75,7 @@ export async function action({ request }: DataFunctionArgs) {
 		)
 		.otherwise(() =>
 			json(
-				{ error: "Something happened. Please try again later." },
-				{ status: 500 },
+				{ error: "Something happened. Please try again later." }
 			),
 		)
 }

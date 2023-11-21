@@ -19,6 +19,7 @@ export function EditFreeDate({ date }: Props) {
 					textStyle: "paragraph",
 				})}
 				to={$path("/free-date/edit/:id", { id: date.id })}
+				prefetch="intent"
 			>
 				Edit
 			</Link>

@@ -32,7 +32,14 @@ export function Tags({ tags }: TagsProps) {
 			{slicedElements?.map((tag) => {
 				return (
 					<Link
-						className={css({}, tagStyles)}
+						className={css(
+							{
+								_hover: {
+									textDecoration: "underline",
+								},
+							},
+							tagStyles,
+						)}
 						to={$path("/search", { query: tag.name })}
 						key={tag.id}
 					>
