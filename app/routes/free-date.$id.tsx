@@ -22,6 +22,7 @@ import {
 	CopyLinkShareButton,
 	Desktop,
 	FacebookShareButton,
+	Image,
 	Mobile,
 	OpenShareModalLink,
 	PageContainer,
@@ -275,17 +276,17 @@ export default function FreeDateIdeaRoute() {
 				))
 				.with({ __typename: "DateExperience" }, (experience) => (
 					<VStack gap={4} alignItems={"flex-start"} width={"100%"}>
-						<img
+						<Image
 							src={experience.thumbnail}
 							alt={experience.title}
-							className={css({
+							css={{
 								width: "100%",
 								aspectRatio: "16/9",
 								objectFit: "cover",
 								borderRadius: "8px",
 								backgroundColor: "gray",
 								maxHeight: "500px",
-							})}
+							}}
 						/>
 						<HStack
 							gap={6}
@@ -369,7 +370,6 @@ export default function FreeDateIdeaRoute() {
 														alignItems: "center",
 													})}
 												>
-													{/* <FaCity className={css({ color: "black" })} /> */}
 													<span>{city.nameAndState}</span>
 												</div>
 											</Link>

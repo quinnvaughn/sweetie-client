@@ -20,7 +20,9 @@ export function DateLocationsMap({ stops }: Props) {
 				const bounds = new window.google.maps.LatLngBounds()
 				for (let i = 0; i < stops.length; i++) {
 					const infoWindow = new window.google.maps.InfoWindow({
-						content: `<div><h2 style="font-weight: bold;">${stops[i].location.name}</h2><p>${stops[i].location.address.formattedAddress}</p></div>`,
+						content: `<div><h2 style="font-weight: bold;">${i + 1}. ${
+							stops[i].location.name
+						}</h2><p>${stops[i].location.address.formattedAddress}</p></div>`,
 					})
 					const marker = new window.google.maps.Marker({
 						position: new google.maps.LatLng(

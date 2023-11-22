@@ -1,5 +1,6 @@
 import { Link } from "@remix-run/react"
 import { $path } from "remix-routes"
+import { Image } from "~/features/ui"
 import { DateAnalyticsCardFragment } from "~/graphql/generated"
 import { singularOrPlural } from "~/lib"
 import { css } from "~/styled-system/css"
@@ -13,14 +14,14 @@ export function DateAnalyticsCard({ date }: Props) {
 	return (
 		<Link to={$path("/free-date/:id", { id: date.id })} target="_blank">
 			<VStack gap={4} alignItems="flex-start">
-				<img
+				<Image
 					alt={"analytics card thumbnail"}
-					className={css({
+					css={{
 						borderRadius: "8px",
 						aspectRatio: "20/19",
 						width: "100%",
 						objectFit: "cover",
-					})}
+					}}
 					src={date.thumbnail}
 				/>
 				<VStack gap={2} alignItems="flex-start">

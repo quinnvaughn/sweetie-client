@@ -1,19 +1,11 @@
 import { useFetcher } from "@remix-run/react"
 import { useEffect, useRef, useState } from "react"
 import { $path } from "remix-routes"
+import { Image } from "~/features/ui"
 import { useViewer } from "~/hooks"
 import { isTypeofFieldError } from "~/lib"
 import { action } from "~/routes/api.upload-photo"
 import { css } from "~/styled-system/css"
-
-const defaultStyles = css.raw({
-	width: "120px",
-	height: "120px",
-	borderRadius: "50%",
-	backgroundColor: "gray",
-	objectFit: "cover",
-	position: "relative",
-})
 
 type Props = {
 	value?: string
@@ -97,17 +89,31 @@ export default function AvatarUpload({ value }: Props) {
 			/>
 			<div className={css({ position: "relative", width: "120px" })}>
 				{img ? (
-					<img className={css(defaultStyles)} alt="user avatar" src={img} />
+					<Image
+						css={{
+							width: "120px",
+							height: "120px",
+							borderRadius: "50%",
+							backgroundColor: "gray",
+							objectFit: "cover",
+							position: "relative",
+						}}
+						alt="user avatar"
+						src={img}
+					/>
 				) : (
 					<div
-						className={css(
-							{
-								display: "flex",
-								justifyContent: "center",
-								alignItems: "center",
-							},
-							defaultStyles,
-						)}
+						className={css({
+							display: "flex",
+							justifyContent: "center",
+							alignItems: "center",
+							width: "120px",
+							height: "120px",
+							borderRadius: "50%",
+							backgroundColor: "gray",
+							objectFit: "cover",
+							position: "relative",
+						})}
 					>
 						<p
 							className={css({

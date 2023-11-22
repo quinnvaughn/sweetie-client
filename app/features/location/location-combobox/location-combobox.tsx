@@ -1,5 +1,5 @@
+import { Link } from "@remix-run/react"
 import { useCombobox } from "downshift"
-import { useState } from "react"
 import { $path } from "remix-routes"
 import { useControlField, useField } from "remix-validated-form"
 import { useCustomFetcher } from "~/hooks"
@@ -40,6 +40,7 @@ const menu = cva({
 
 type Props = {
 	label: string
+	locationPath: string
 	fields: {
 		name: string
 		id: string
@@ -47,7 +48,12 @@ type Props = {
 	required?: boolean
 }
 
-export function LocationCombobox({ label, fields, required }: Props) {
+export function LocationCombobox({
+	label,
+	fields,
+	required,
+	locationPath,
+}: Props) {
 	const fetcher = useCustomFetcher<typeof loader>()
 	const [id, setId] = useControlField<string>(fields.id)
 	const {
@@ -104,7 +110,7 @@ export function LocationCombobox({ label, fields, required }: Props) {
 					className={css({
 						shadow: "sm",
 						bg: "white",
-						display: "inline-flex",
+						display: "flex",
 						gap: 2,
 						alignItems: "center",
 						flexWrap: "wrap",
@@ -127,10 +133,7 @@ export function LocationCombobox({ label, fields, required }: Props) {
 					<input type="hidden" name={fields.id} value={id ?? ""} />
 				</div>
 			</div>
-			<ul
-				className={menu({ hidden: !(isOpen && locations.length) })}
-				{...getMenuProps()}
-			>
+			<ul className={menu({ hidden: !isOpen })} {...getMenuProps()}>
 				{isOpen &&
 					locations.map((location, index) => (
 						<li
@@ -138,7 +141,7 @@ export function LocationCombobox({ label, fields, required }: Props) {
 								paddingY: 2,
 								paddingX: 3,
 								cursor: "pointer",
-								"&:hover": { bg: "gray" },
+								"&:hover": { bg: "#EEEEEE" },
 							})}
 							key={`${location}${index}`}
 							{...getItemProps({ item: location, index })}
@@ -151,6 +154,22 @@ export function LocationCombobox({ label, fields, required }: Props) {
 							</VStack>
 						</li>
 					))}
+				<li className={css({ width: "100%" })}>
+					<Link
+						to={locationPath}
+						className={css({
+							display: "block",
+							textAlign: "center",
+							paddingY: 2,
+							paddingX: 3,
+							cursor: "pointer",
+							width: "100%",
+							"&:hover": { bg: "#EEEEEE" },
+						})}
+					>
+						+ Add new location
+					</Link>
+				</li>
 			</ul>
 			{error ? (
 				<p className={css({ textStyle: "error" })}>{error}</p>

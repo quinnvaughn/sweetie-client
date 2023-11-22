@@ -1,4 +1,5 @@
 import { P, match } from "ts-pattern"
+import { Image } from "~/features/ui"
 import { css, cva } from "~/styled-system/css"
 
 const image = cva({
@@ -73,7 +74,7 @@ type Props = {
 export function UserAvatar({ user, size = "md" }: Props) {
 	return match(user.avatar)
 		.with(P.string, (avatar) => (
-			<img className={image({ size })} alt={"User avatar"} src={avatar} />
+			<Image cva={image({ size })} alt={"User avatar"} src={avatar} />
 		))
 		.with(P.nullish, () => (
 			<div

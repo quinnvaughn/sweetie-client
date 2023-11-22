@@ -3,6 +3,7 @@ import { DateSuggestionCardFragment } from "~/graphql/generated"
 import { css } from "~/styled-system/css"
 import { HStack } from "~/styled-system/jsx"
 import { DateSuggestionCard } from "../date-suggestion-card"
+import { Image } from "~/features/ui"
 
 type Props = {
 	suggestions: DateSuggestionCardFragment[]
@@ -14,7 +15,7 @@ export function DateSuggestionList({ suggestions }: Props) {
 			(suggestions) => suggestions.length === 0,
 			() => (
 				<HStack justifyContent="center" width={"100%"}>
-					<img
+					<Image
 						alt="No suggestions yet"
 						src="https://media.giphy.com/media/3orif5NUjcfHZLfZZK/giphy.gif"
 					/>

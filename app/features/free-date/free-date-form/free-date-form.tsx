@@ -91,9 +91,10 @@ type Props = {
 	formId: string
 	page: "create" | "edit" | "draft"
 	error?: string
+	locationPath: string
 }
 
-export function FreeDateForm({ formId, page, error }: Props) {
+export function FreeDateForm({ formId, page, error, locationPath }: Props) {
 	const [stops, { push, remove, move }] = useFieldArray<Stop>("stops", {
 		formId,
 	})
@@ -202,6 +203,7 @@ export function FreeDateForm({ formId, page, error }: Props) {
 					</p>
 					{stops.map((stop, index) => (
 						<DateStopForm
+							locationPath={locationPath}
 							index={index}
 							isFirst={index === 0}
 							isLast={index === stops.length - 1}

@@ -7,7 +7,7 @@ import { $path } from "remix-routes"
 import { ValidatedForm } from "remix-validated-form"
 import { z } from "zod"
 import { zfd } from "zod-form-data"
-import { CityCombobox } from "~/features/city"
+import { MultipleCityCombobox } from "~/features/city"
 import { CheckboxGroup, RadioGroup } from "~/features/ui"
 import { css, cva } from "~/styled-system/css"
 import { HStack } from "~/styled-system/jsx"
@@ -151,7 +151,10 @@ export function SearchBar() {
 					alignItems={"flex-start"}
 					className={visible({ visible: isVisible })}
 				>
-					<CityCombobox label="Find dates in" defaultCities={cities ?? []} />
+					<MultipleCityCombobox
+						label="Find dates in"
+						defaultCities={cities ?? []}
+					/>
 					<RadioGroup
 						label="NSFW Filter"
 						name="nsfw"

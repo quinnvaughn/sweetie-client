@@ -4,7 +4,7 @@ import {
 	json,
 	redirect,
 } from "@remix-run/node"
-import { useActionData } from "@remix-run/react"
+import { Outlet, useActionData } from "@remix-run/react"
 import { $path } from "remix-routes"
 import { setFormDefaults, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
@@ -89,10 +89,12 @@ export default function CreateFreeDateRoute() {
 			width={{ base: "100%", md: 780, lg: 1024 }}
 			padding={{ base: "20px", xl: "20px 0px" }}
 		>
+			<Outlet />
 			<FreeDateForm
 				formId="create-free-date-form"
 				page="create"
 				error={!isTypeofFieldError(actionData) ? actionData?.error ?? "" : ""}
+				locationPath={$path("/free-date/create/add-location")}
 			/>
 		</PageContainer>
 	)

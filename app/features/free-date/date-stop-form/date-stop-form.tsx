@@ -12,6 +12,7 @@ type Props = {
 	remove: () => void
 	onMoveUp: () => void
 	onMoveDown: () => void
+	locationPath: string
 	fields: {
 		title: string
 		content: string
@@ -31,6 +32,7 @@ export function DateStopForm({
 	fields: { title, content, location },
 	onMoveDown,
 	onMoveUp,
+	locationPath,
 }: Props) {
 	return (
 		<VStack gap={4} alignItems="flex-start" width={"100%"}>
@@ -94,6 +96,7 @@ export function DateStopForm({
 					required
 					label="Select a location"
 					fields={location}
+					locationPath={locationPath}
 				/>
 				<Textarea
 					required

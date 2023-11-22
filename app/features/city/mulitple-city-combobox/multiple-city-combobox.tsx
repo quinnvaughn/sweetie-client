@@ -6,7 +6,7 @@ import { City } from "~/graphql/generated"
 import { useCustomFetcher } from "~/hooks"
 import { loader } from "~/routes/api.cities"
 import { css, cva } from "~/styled-system/css"
-import {IoCloseOutline} from 'react-icons/io5/index.js'
+import { IoCloseOutline } from "react-icons/io5/index.js"
 
 const menu = cva({
 	base: {
@@ -46,7 +46,7 @@ type Props = {
 	defaultCities?: string[]
 }
 
-export function CityCombobox({ label, defaultCities }: Props) {
+export function MultipleCityCombobox({ label, defaultCities }: Props) {
 	const [inputValue, setInputValue] = useState("")
 	const fetcher = useCustomFetcher<typeof loader>()
 	const [selectedCities, setSelectedCities] = useState<string[]>(
@@ -86,48 +86,43 @@ export function CityCombobox({ label, defaultCities }: Props) {
 			},
 		})
 
-	const {
-		isOpen,
-		getLabelProps,
-		getInputProps,
-		getMenuProps,
-		getItemProps,
-	} = useCombobox<NewCity>({
-		id: "city-combobox",
-		items: cities,
-		itemToString: (city) => city?.nameAndState ?? "",
-		defaultHighlightedIndex: 0,
-		selectedItem: null,
-		onStateChange({
-			inputValue: newInputValue,
-			type,
-			selectedItem: newSelectedItem,
-		}) {
-			match(type)
-				.with(
-					useCombobox.stateChangeTypes.InputKeyDownEnter,
-					useCombobox.stateChangeTypes.ItemClick,
-					useCombobox.stateChangeTypes.InputBlur,
-					() => {
-						if (newSelectedItem) {
-							setSelectedCities([
-								...selectedCities,
-								newSelectedItem.nameAndState,
-							])
+	const { isOpen, getLabelProps, getInputProps, getMenuProps, getItemProps } =
+		useCombobox<NewCity>({
+			id: "multiple-city-combobox",
+			items: cities,
+			itemToString: (city) => city?.nameAndState ?? "",
+			defaultHighlightedIndex: 0,
+			selectedItem: null,
+			onStateChange({
+				inputValue: newInputValue,
+				type,
+				selectedItem: newSelectedItem,
+			}) {
+				match(type)
+					.with(
+						useCombobox.stateChangeTypes.InputKeyDownEnter,
+						useCombobox.stateChangeTypes.ItemClick,
+						useCombobox.stateChangeTypes.InputBlur,
+						() => {
+							if (newSelectedItem) {
+								setSelectedCities([
+									...selectedCities,
+									newSelectedItem.nameAndState,
+								])
+								fetcher.reset()
+								setInputValue("")
+							}
+						},
+					)
+					.with(useCombobox.stateChangeTypes.InputChange, () => {
+						setInputValue(newInputValue ?? "")
+						if (newInputValue?.length === 0) {
 							fetcher.reset()
-							setInputValue("")
 						}
-					},
-				)
-				.with(useCombobox.stateChangeTypes.InputChange, () => {
-					setInputValue(newInputValue ?? "")
-					if (newInputValue?.length === 0) {
-						fetcher.reset()
-					}
-				})
-				.otherwise(() => {})
-		},
-	})
+					})
+					.otherwise(() => {})
+			},
+		})
 
 	return (
 		<div
@@ -181,7 +176,7 @@ export function CityCombobox({ label, defaultCities }: Props) {
 									removeSelectedItem(selectedCity)
 								}}
 							>
-								<IoCloseOutline size={20} className={css({ color: 'white' })} />
+								<IoCloseOutline size={20} className={css({ color: "white" })} />
 							</button>
 						</span>
 					))}
@@ -192,14 +187,10 @@ export function CityCombobox({ label, defaultCities }: Props) {
 							{...getInputProps(getDropdownProps({ preventKeyAction: isOpen }))}
 							value={inputValue}
 						/>
-						{selectedCities.length > 0 && selectedCities.map((c) => (
-							<input
-								key={c}
-								type="hidden"
-								name="cities"
-								value={c}
-							/>
-						))}
+						{selectedCities.length > 0 &&
+							selectedCities.map((c) => (
+								<input key={c} type="hidden" name="cities" value={c} />
+							))}
 					</div>
 				</div>
 			</div>

@@ -2,6 +2,7 @@ import { Link, useFetcher } from "@remix-run/react"
 import { FaEdit, FaTrash } from "react-icons/fa/index.js"
 import { $path } from "remix-routes"
 import { P, match } from "ts-pattern"
+import { Image } from "~/features/ui"
 import { DraftCardFragment } from "~/graphql/generated"
 import { useViewer } from "~/hooks"
 import { css } from "~/styled-system/css"
@@ -73,15 +74,15 @@ export function DraftCard({ draft, admin }: Props) {
 						/>
 					))
 					.with(P.string, (thumbnail) => (
-						<img
+						<Image
 							alt={"draft card thumbnail"}
-							className={css({
+							css={{
 								backgroundColor: "gray",
 								borderRadius: "8px",
 								aspectRatio: "20/19",
 								width: "100%",
 								objectFit: "cover",
-							})}
+							}}
 							src={thumbnail}
 						/>
 					))

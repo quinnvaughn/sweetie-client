@@ -6,6 +6,7 @@ import { HStack, VStack } from "~/styled-system/jsx"
 import { numLines } from "~/styled-system/patterns"
 import { UserAvatar } from "~/features/user"
 import { NSFWTag } from ".."
+import { Image } from "~/features/ui"
 
 type Props = {
 	date: FreeDateCardFragment
@@ -17,6 +18,7 @@ export function FreeDateCard({ date }: Props) {
 			className={css({
 				display: "block",
 				textDecoration: "none",
+				width: "100%",
 				_visited: { color: "inherit" },
 			})}
 			to={$path("/free-date/:id", { id: date.id })}
@@ -24,15 +26,15 @@ export function FreeDateCard({ date }: Props) {
 			prefetch="intent"
 		>
 			<VStack gap="4" width={"100%"} alignItems="flex-start">
-				<img
+				<Image
 					src={date.thumbnail}
 					alt={`${date.title} thumbnail`}
-					className={css({
+					css={{
 						aspectRatio: "20/19",
 						objectFit: "cover",
 						borderRadius: "8px",
 						backgroundColor: "gray",
-					})}
+					}}
 				/>
 				<VStack gap="2" alignItems={"flex-start"} width={"100%"}>
 					<p className={css({ lineHeight: 1, fontWeight: "600" })}>
