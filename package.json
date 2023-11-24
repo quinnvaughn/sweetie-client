@@ -6,7 +6,7 @@
 		"dev": "concurrently \"remix-routes -w\" \"yarn dev:node\"",
 		"prepare": "panda codegen",
 		"dev:node": "remix dev",
-		"start": "remix-serve build/index.js",
+		"start": "dotenv -e .env remix-serve build/index.js",
 		"typecheck": "tsc",
 		"codegen": "graphql-codegen --config codegen.ts",
 		"codegen:watch": "yarn codegen --watch"
@@ -20,6 +20,7 @@
 		"@remix-run/react": "^2.2.0",
 		"@remix-run/serve": "^2.2.0",
 		"@remix-validated-form/with-zod": "^2.0.7",
+		"@sentry/node": "^7.81.1",
 		"downshift": "^8.2.3",
 		"express": "^4.18.2",
 		"graphql": "^16.8.1",
@@ -52,6 +53,7 @@
 		"@types/react": "^18.2.33",
 		"@types/react-dom": "^18.2.14",
 		"concurrently": "^8.2.2",
+		"dotenv-cli": "^7.3.0",
 		"typescript": "^5.2.2"
 	},
 	"engines": {
