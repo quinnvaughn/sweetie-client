@@ -354,6 +354,7 @@ export default function FreeDateIdeaRoute() {
 										</span>
 										{experience.cities.map((city) => (
 											<Link
+												key={city.id}
 												className={css({
 													textDecoration: "underline",
 													textStyle: "paragraph",

@@ -44,6 +44,7 @@ export async function action({ request }: DataFunctionArgs) {
 			})
 		})
 		.with({ __typename: "User" }, () => {
+			console.log("set-cookie", response?.headers.get("Set-Cookie"))
 			if (formData.get("redirectTo")) {
 				return redirect(formData.get("redirectTo") as string, {
 					headers: {
