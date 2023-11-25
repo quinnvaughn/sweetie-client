@@ -47,6 +47,7 @@ export async function gqlFetch<TData = any, TVariables = Record<string, any>>(
 					"Content-Type": "application/json",
 					"Access-Control-Allow-Origin": "*",
 					"Access-Control-Expose-Headers": "*",
+					"Access-Control-Allow-Credentials": "true",
 				},
 				method: "POST",
 			},
