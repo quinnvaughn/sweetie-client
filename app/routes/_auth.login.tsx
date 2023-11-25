@@ -44,6 +44,7 @@ export async function action({ request }: DataFunctionArgs) {
 			})
 		})
 		.with({ __typename: "User" }, () => {
+			console.log({ headers: response?.headers })
 			if (formData.get("redirectTo")) {
 				return redirect(formData.get("redirectTo") as string, {
 					headers: {

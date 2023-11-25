@@ -46,6 +46,7 @@ export async function gqlFetch<TData = any, TVariables = Record<string, any>>(
 					cookie: request.headers.get("cookie") || "",
 					"Content-Type": "application/json",
 					"Access-Control-Allow-Origin": "*",
+					"Access-Control-Expose-Headers": "*",
 				},
 				method: "POST",
 			},

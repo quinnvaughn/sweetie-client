@@ -1,13 +1,12 @@
-import { useMixpanel } from "../use-mixpanel"
 import { useEffect } from "react"
+import { mixpanel } from "~/lib"
 
 export function useOpenedModal(modal: string) {
-	const mixpanel = useMixpanel()
 	useEffect(() => {
 		mixpanel.track("User Opened Modal", {
 			modal,
 		})
-	}, [modal, mixpanel])
+	}, [modal])
 
 	return null
 }

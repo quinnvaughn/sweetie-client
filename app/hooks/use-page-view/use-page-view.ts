@@ -1,10 +1,8 @@
-import { useMixpanel } from "../use-mixpanel"
 import { useEffect } from "react"
+import { mixpanel } from "~/lib"
 
 export function usePageView(page: string) {
-	const mixpanel = useMixpanel()
-
 	useEffect(() => {
 		mixpanel.track_pageview({ page })
-	}, [mixpanel, page])
+	}, [page])
 }

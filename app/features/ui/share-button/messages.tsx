@@ -1,8 +1,7 @@
 import { ShareButton } from "./share-button"
-import { generateUTMLink } from "~/lib"
+import { generateUTMLink, mixpanel } from "~/lib"
 import { FiMessageSquare } from "react-icons/fi/index.js"
 import { css } from "~/styled-system/css"
-import { useMixpanel } from "~/hooks"
 import { SystemStyleObject } from "@pandacss/dev"
 
 type Props = {
@@ -16,7 +15,6 @@ export function MessagesShareButton({
 	link,
 	css: cssProp = {},
 }: Props) {
-	const mixpanel = useMixpanel()
 	return (
 		<ShareButton
 			css={cssProp}

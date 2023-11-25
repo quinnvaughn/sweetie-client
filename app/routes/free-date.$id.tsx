@@ -9,7 +9,7 @@ import { match } from "ts-pattern"
 import { gqlFetch } from "~/graphql/graphql"
 import { GetDateExperienceDocument } from "~/graphql/generated"
 import { $params, $path } from "remix-routes"
-import { useMixpanel, useScrolledToBottom } from "~/hooks"
+import { useScrolledToBottom } from "~/hooks"
 import {
 	Link,
 	Outlet,
@@ -44,7 +44,7 @@ import { FloatingAddToCalendar } from "~/features/date-itinerary"
 import { TastemakerInfo } from "~/features/tastemaker"
 import { DateStop } from "~/features/date-stop"
 import { ClientOnly } from "remix-utils/client-only"
-import { singularOrPlural } from "~/lib"
+import { mixpanel, singularOrPlural } from "~/lib"
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const { id } = $params("/free-date/:id", params)
@@ -166,7 +166,6 @@ const campaign = "tastemaker share date"
 
 export default function FreeDateIdeaRoute() {
 	const { dateExperience, showShareScreen } = useLoaderData<typeof loader>()
-	const mixpanel = useMixpanel()
 	const params = useParams()
 	const { id } = $params("/free-date/:id", params)
 	const fetcher = useFetcher()

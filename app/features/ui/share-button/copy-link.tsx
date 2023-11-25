@@ -1,6 +1,6 @@
 import { ShareButton } from "./share-button"
-import { useMixpanel, useToast } from "~/hooks"
-import { generateUTMLink } from "~/lib"
+import { useToast } from "~/hooks"
+import { generateUTMLink, mixpanel } from "~/lib"
 import { FiCopy } from "react-icons/fi/index.js"
 import { css } from "~/styled-system/css"
 import { SystemStyleObject } from "@pandacss/dev"
@@ -17,7 +17,6 @@ export function CopyLinkShareButton({
 	css: cssProp = {},
 }: Props) {
 	const { success } = useToast()
-	const mixpanel = useMixpanel()
 	return (
 		<ShareButton
 			css={cssProp}

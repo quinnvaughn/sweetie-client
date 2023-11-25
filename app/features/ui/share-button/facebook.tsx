@@ -1,7 +1,6 @@
 import { ShareButton } from "./share-button"
-import { generateUTMLink } from "~/lib"
+import { generateUTMLink, mixpanel } from "~/lib"
 import { FaSquareFacebook } from "react-icons/fa6/index.js"
-import { useMixpanel } from "~/hooks"
 import { SystemStyleObject } from "@pandacss/dev"
 
 type Props = {
@@ -15,7 +14,6 @@ export function FacebookShareButton({
 	link,
 	css: cssProp = {},
 }: Props) {
-	const mixpanel = useMixpanel()
 	return (
 		<ShareButton
 			css={cssProp}
