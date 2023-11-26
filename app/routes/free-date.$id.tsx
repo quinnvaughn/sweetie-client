@@ -30,7 +30,7 @@ import {
 	TwitterShareButton,
 } from "~/features/ui"
 import { css } from "~/styled-system/css"
-import { divider, flex } from "~/styled-system/patterns"
+import { divider, flex, numLines } from "~/styled-system/patterns"
 import { FiX } from "react-icons/fi/index.js"
 import { HStack, VStack } from "~/styled-system/jsx"
 import { IoIosCheckmarkCircleOutline } from "react-icons/io/index.js"
@@ -45,6 +45,7 @@ import { TastemakerInfo } from "~/features/tastemaker"
 import { DateStop } from "~/features/date-stop"
 import { ClientOnly } from "remix-utils/client-only"
 import { mixpanel, singularOrPlural } from "~/lib"
+import { UserAvatar } from "~/features/user"
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const { id } = $params("/free-date/:id", params)
@@ -169,12 +170,14 @@ export default function FreeDateIdeaRoute() {
 	const params = useParams()
 	const { id } = $params("/free-date/:id", params)
 	const fetcher = useFetcher()
-	useScrolledToBottom(() =>
-		mixpanel.track("User Scrolled To Bottom", {
-			of: "Free Date Page",
-			free_date_id: id,
-		}),
-	)
+	useScrolledToBottom(() => {
+		if (!showShareScreen) {
+			mixpanel.track("User Scrolled To Bottom", {
+				of: "Free Date Page",
+				free_date_id: id,
+			})
+		}
+	})
 
 	return showShareScreen ? (
 		<div className={css({ width: "100%" })}>
@@ -232,6 +235,39 @@ export default function FreeDateIdeaRoute() {
 					paddingY={"20px"}
 					width={"300px"}
 				>
+					{match(dateExperience)
+						.with({ __typename: "DateExperience" }, (date) => (
+							<VStack gap="4" width={"100%"} alignItems="flex-start">
+								<Image
+									src={date.thumbnail}
+									alt={`${date.title} thumbnail`}
+									css={{
+										aspectRatio: "20/19",
+										objectFit: "cover",
+										borderRadius: "8px",
+										backgroundColor: "gray",
+									}}
+								/>
+								<VStack gap="2" alignItems={"flex-start"} width={"100%"}>
+									<p className={css({ lineHeight: 1, fontWeight: "600" })}>
+										{date.title}
+									</p>
+									<HStack gap={1} alignItems="center">
+										<UserAvatar
+											size={"sm"}
+											user={{
+												name: date.tastemaker.user.name,
+												avatar: date.tastemaker.user.profile?.avatar,
+											}}
+										/>
+										<p className={css({ color: "grayText" })}>
+											{date.tastemaker.user.name}
+										</p>
+									</HStack>
+								</VStack>
+							</VStack>
+						))
+						.otherwise(() => null)}
 					<div
 						className={css({
 							display: "flex",
@@ -412,7 +448,7 @@ export default function FreeDateIdeaRoute() {
 										))}
 									</HStack>
 								</VStack>
-								<VStack gap={4}>
+								<VStack gap={4} alignItems={"flex-start"}>
 									<ClientOnly>
 										{() => <DateLocationsMap stops={experience.stops} />}
 									</ClientOnly>

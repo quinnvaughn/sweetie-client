@@ -26,7 +26,7 @@ export function ImageUpload({
 	onImageUpload,
 	onImageDelete,
 }: Props) {
-	const { error, setTouched, clearError } = useField(name)
+	const { error, setTouched, clearError, getInputProps } = useField(name)
 	const [img, setImg] = useControlField<string>(name)
 	const [uploadedFile, setUploadedFile] = useState<File | null>(null)
 	const [formError, setFormError] = useState("")
@@ -115,7 +115,13 @@ export function ImageUpload({
 					{required && <span className={css({ textStyle: "error" })}>*</span>}
 				</span>
 			</label>
-			<input type="hidden" name={name} value={img} />
+			<div className={css({ width: 0, overflow: "hidden" })}>
+				<input
+					{...getInputProps({
+						value: img,
+					})}
+				/>
+			</div>
 			{img ? (
 				<div className={css({ width: "100%", position: "relative" })}>
 					<img

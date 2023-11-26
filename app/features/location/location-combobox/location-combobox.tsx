@@ -143,7 +143,7 @@ export function LocationCombobox({
 								cursor: "pointer",
 								"&:hover": { bg: "#EEEEEE" },
 							})}
-							key={`${location}${index}`}
+							key={`${location.name}${index}`}
 							{...getItemProps({ item: location, index })}
 						>
 							<VStack gap={1} alignItems="flex-start" width="100%">

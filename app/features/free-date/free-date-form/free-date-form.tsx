@@ -132,7 +132,7 @@ export function FreeDateForm({ formId, page, error, locationPath }: Props) {
 				<ImageUpload
 					folder="free-dates"
 					name="thumbnail"
-					label="Thumbnail"
+					label="Thumbnail (We strongly recommend landscape images)"
 					required
 				/>
 				<Input
@@ -176,7 +176,7 @@ export function FreeDateForm({ formId, page, error, locationPath }: Props) {
 				</VStack>
 				<VStack gap={4} alignItems="flex-start">
 					<p className={css({ textStyle: "paragraph", fontWeight: "bold" })}>
-						Is this date experience NSFW?
+						Is this date not safe for work (NSFW)?
 					</p>
 					<RadioGroup
 						required
@@ -226,7 +226,9 @@ export function FreeDateForm({ formId, page, error, locationPath }: Props) {
 						variant="black"
 						size="md"
 						icon={<FiPlus className={css({ color: "white" })} />}
-						onClick={() => push({ title: "", content: "", location: "" })}
+						onClick={() =>
+							push({ title: "", content: "", location: { id: "", name: "" } })
+						}
 					>
 						Add another stop
 					</Button>

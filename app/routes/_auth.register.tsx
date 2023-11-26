@@ -6,7 +6,7 @@ import { ValidatedForm, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
 import { Input, SubmitButton } from "~/features/ui"
-import { LoginDocument } from "~/graphql/generated"
+import { RegisterDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
@@ -24,12 +24,12 @@ export async function action({ request }: DataFunctionArgs) {
 	const result = await validator.validate(formData)
 
 	if (result.error) return validationError(result.error)
-	const { data, response } = await gqlFetch(request, LoginDocument, {
+	const { data, response } = await gqlFetch(request, RegisterDocument, {
 		input: result.data,
 	})
 	if (!data) throw new Error("No data returned from server")
 
-	return match(data.login)
+	return match(data.register)
 		.with({ __typename: "AlreadyLoggedInError" }, () => {
 			return redirect("/")
 		})

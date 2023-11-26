@@ -32,6 +32,8 @@ export function DateStop({ stop }: Props) {
 								textDecoration: "underline",
 							})}
 							href={stop.location.website}
+							target="_blank"
+							rel="noreferrer noopener external nofollow"
 						>
 							{stop.location.name}
 						</a>

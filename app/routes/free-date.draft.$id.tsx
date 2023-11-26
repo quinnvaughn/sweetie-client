@@ -17,8 +17,6 @@ import {
 	CreateDateStopInput,
 	CreateFreeDateDocument,
 	GetFreeDateDraftDocument,
-	UpdateDateStopInput,
-	UpdateFreeDateDocument,
 	ViewerIsLoggedInDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
@@ -26,8 +24,7 @@ import { css } from "~/styled-system/css"
 import { isTypeofFieldError, mapFieldErrorToValidationError, omit } from "~/lib"
 import { P, match } from "ts-pattern"
 
-export async function action({ request, params }: DataFunctionArgs) {
-	const { id } = $params("/free-date/draft/:id", params)
+export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
 	const result = await freeDateValidator.validate(formData)
 	if (result.error) {
@@ -42,7 +39,7 @@ export async function action({ request, params }: DataFunctionArgs) {
 				...stop,
 				order: i + 1,
 			})),
-			tags: result.data.tags ?? [],
+			tags: result.data.tags?.filter((v) => v.length > 0) ?? [],
 		},
 	})
 

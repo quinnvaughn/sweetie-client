@@ -41,7 +41,7 @@ export async function action({ request, params }: DataFunctionArgs) {
 				...stop,
 				order: i + 1,
 			})),
-			tags: result.data.tags ?? [],
+			tags: result.data.tags?.filter((v) => v.length > 0) ?? [],
 		},
 	})
 	return match(data?.updateFreeDate)
