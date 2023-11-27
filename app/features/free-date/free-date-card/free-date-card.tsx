@@ -34,6 +34,7 @@ export function FreeDateCard({ date }: Props) {
 						objectFit: "cover",
 						borderRadius: "8px",
 						backgroundColor: "gray",
+						width: "100%",
 					}}
 				/>
 				<VStack gap="2" alignItems={"flex-start"} width={"100%"}>
