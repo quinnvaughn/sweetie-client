@@ -13,6 +13,7 @@ type Props = {
 
 export function SaveDraftButton({ formId }: Props) {
 	const fetcher = useFetcher<typeof action>()
+	// TODO: Add toast for errors.
 	const { getValues } = useFormContext(formId)
 	function saveDraft() {
 		fetcher.submit(getValues(), {
@@ -38,11 +39,6 @@ export function SaveDraftButton({ formId }: Props) {
 			>
 				<Desktop>Save draft</Desktop>
 			</Button>
-			{/* {formError && (
-				<Text as="p" fontSize={12} color="red">
-					{formError}
-				</Text>
-			)} */}
 		</VStack>
 	)
 }

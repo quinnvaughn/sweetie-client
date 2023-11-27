@@ -4,7 +4,12 @@ import {
 	json,
 	redirect,
 } from "@remix-run/node"
-import { useActionData, useLoaderData } from "@remix-run/react"
+import {
+	Outlet,
+	useActionData,
+	useLoaderData,
+	useParams,
+} from "@remix-run/react"
 import { $params, $path } from "remix-routes"
 import { setFormDefaults, validationError } from "remix-validated-form"
 import {
@@ -122,16 +127,20 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 export default function EditFreeDateRoute() {
 	const loaderData = useLoaderData<typeof loader>()
 	const actionData = useActionData<typeof action>()
+	const params = useParams()
+	const { id } = $params("/free-date/edit/:id", params)
 	return (
 		<PageContainer
 			tastemaker
 			width={{ base: "100%", md: 780, lg: 1024 }}
 			padding={{ base: "20px", xl: "20px 0px" }}
 		>
+			<Outlet />
 			{loaderData.error ? (
 				<p className={css({ textStyle: "error" })}>{loaderData.error}</p>
 			) : (
 				<FreeDateForm
+					locationPath={$path("/free-date/edit/:id/add-location", { id })}
 					formId="edit-free-date-form"
 					page="edit"
 					error={!isTypeofFieldError(actionData) ? actionData?.error : ""}

@@ -1,23 +1,12 @@
-import { cva } from "~/styled-system/css"
+import { css, cva } from "~/styled-system/css"
 
-const button = cva({
+const button = css({
 	base: {
 		background: "none",
 		border: "none",
 		padding: 0,
 		cursor: "pointer",
-		borderBottom: "2px solid",
-		borderColor: "transparent",
-	},
-	variants: {
-		active: {
-			true: {
-				borderColor: "secondary",
-			},
-			false: {
-				borderColor: "transparent",
-			},
-		},
+		borderBottom: "2px solid transparent",
 	},
 })
 
@@ -30,9 +19,12 @@ const text = cva({
 	variants: {
 		active: {
 			true: {
+				borderBottom: "2px solid",
+				borderBottomColor: "secondary",
 				color: "secondary",
 			},
 			false: {
+				borderBottom: "2px solid transparent",
 				color: "black",
 			},
 		},
@@ -46,8 +38,9 @@ type Props = {
 }
 
 export function Tab({ title, onClick, active }: Props) {
+	console.log({ active })
 	return (
-		<button type="button" className={button({ active })} onClick={onClick}>
+		<button type="button" className={button} onClick={onClick}>
 			<p className={text({ active })}>{title}</p>
 		</button>
 	)

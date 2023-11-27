@@ -1,0 +1,15 @@
+mutation RetireFreeDate($input: RetireDateExperienceInput!) {
+  retireDateExperience(input: $input) {
+    __typename
+    ... on AuthError {
+      message
+    }
+    ... on DateExperience {
+      id
+	  ...FreeDateCard
+    }
+    ... on Error {
+      message
+    }
+  }
+}

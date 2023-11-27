@@ -120,9 +120,9 @@ export function FreeDateForm({ formId, page, error, locationPath }: Props) {
 							? "Edit free date"
 							: "Edit draft"}
 					</h1>
-					<SaveDraftButton formId={formId} />
+					{page !== "edit" && <SaveDraftButton formId={formId} />}
 				</HStack>
-				{page === "edit" && (
+				{page !== "create" && (
 					<input
 						type="hidden"
 						name="id"

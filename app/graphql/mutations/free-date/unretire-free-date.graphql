@@ -1,0 +1,12 @@
+mutation UnretireFreeDate($input: UnretireDateExperienceInput!) {
+  unretireDateExperience(input: $input) {
+    __typename
+    ... on DateExperience {
+		id
+      ...FreeDateCard
+    }
+    ... on Error {
+      message
+    }
+  }
+}
