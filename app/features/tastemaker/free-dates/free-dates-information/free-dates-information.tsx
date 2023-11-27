@@ -11,7 +11,12 @@ type Props = {
 
 export function FreeDatesInformation({ retired, dates }: Props) {
 	return (
-		<VStack gap={4} justifyContent={"flex-start"} alignItems="flex-start">
+		<VStack
+			gap={4}
+			justifyContent={"flex-start"}
+			alignItems="flex-start"
+			width={"100%"}
+		>
 			<h1
 				className={css({
 					textStyle: "h1",
@@ -25,6 +30,7 @@ export function FreeDatesInformation({ retired, dates }: Props) {
 				flexWrap="wrap"
 				justifyContent={dates.length === 0 ? "center" : "flex-start"}
 				alignItems="flex-start"
+				width={"100%"}
 			>
 				{match([dates, retired])
 					.when(

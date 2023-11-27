@@ -91,9 +91,6 @@ export default defineConfig({
 					tertiary: {
 						value: "#55FFB7",
 					},
-					quarternary: {
-						value: "#F2FF55",
-					},
 					gray: {
 						value: "#DDDDDD",
 					},

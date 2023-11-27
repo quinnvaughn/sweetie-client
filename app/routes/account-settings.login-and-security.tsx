@@ -47,8 +47,8 @@ export default function LoginAndSecurityRoute() {
 								className={css({
 									borderRadius: "9999px",
 									padding: "8px 16px",
-									bg: "secondary",
-									color: "white",
+									bg: "tertiary",
+									color: "black",
 									fontWeight: "bold",
 								})}
 								to={$path("/account-settings/login-and-security/edit")}

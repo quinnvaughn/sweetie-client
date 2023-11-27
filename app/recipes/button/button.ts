@@ -23,6 +23,7 @@ export const buttonRecipe = defineRecipe({
 		variant: {
 			primary: { backgroundColor: "primary" },
 			secondary: { backgroundColor: "secondary" },
+			tertiary: { backgroundColor: "tertiary", color: "black" },
 			black: { backgroundColor: "black" },
 		},
 		size: {
@@ -53,6 +54,14 @@ export const buttonRecipe = defineRecipe({
 			variant: "black",
 			css: {
 				border: "1px solid var(--colors-black)",
+				backgroundColor: "white",
+			},
+		},
+		{
+			visual: "outlined",
+			variant: "tertiary",
+			css: {
+				border: "1px solid var(--colors-tertiary)",
 				backgroundColor: "white",
 			},
 		},

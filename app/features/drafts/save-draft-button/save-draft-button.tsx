@@ -24,7 +24,7 @@ export function SaveDraftButton({ formId }: Props) {
 	return (
 		<VStack gap={1} alignItems="flex-end">
 			<Button
-				variant="black"
+				variant="tertiary"
 				size="sm"
 				onClick={saveDraft}
 				icon={

@@ -12,6 +12,7 @@ export function EditFreeDatesList({ dates }: Props) {
 			className={css({
 				display: "grid",
 				gap: 2,
+				width: "100%",
 				gridTemplateColumns: {
 					base: "1fr",
 					md: "repeat(2, 1fr)",

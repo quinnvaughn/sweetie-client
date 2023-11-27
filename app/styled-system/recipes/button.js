@@ -29,6 +29,14 @@ const buttonFn = /* @__PURE__ */ createRecipe('button', {
       "border": "1px solid var(--colors-black)",
       "backgroundColor": "white"
     }
+  },
+  {
+    "visual": "outlined",
+    "variant": "tertiary",
+    "css": {
+      "border": "1px solid var(--colors-tertiary)",
+      "backgroundColor": "white"
+    }
   }
 ])
 
@@ -40,6 +48,7 @@ const buttonVariantMap = {
   "variant": [
     "primary",
     "secondary",
+    "tertiary",
     "black"
   ],
   "size": [

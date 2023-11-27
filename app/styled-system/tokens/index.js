@@ -1595,6 +1595,10 @@ const tokens = {
     "value": "#6255ff",
     "variable": "var(--colors-secondary)"
   },
+  "colors.tertiary": {
+    "value": "#55FFB7",
+    "variable": "var(--colors-tertiary)"
+  },
   "colors.gray": {
     "value": "#DDDDDD",
     "variable": "var(--colors-gray)"
