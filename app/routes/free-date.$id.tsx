@@ -52,14 +52,11 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 	const { data } = await gqlFetch(request, GetDateExperienceDocument, { id })
 
 	if (!data?.dateExperience) {
-		console.log("this is throwing.")
 		throw new Response("Not Found", { status: 404 })
 	}
 	const cookieHeader = request.headers.get("Cookie")
 	const cookie = await showShareScreen.parse(cookieHeader)
 	const { dateExperience } = data
-
-	console.log({ dateExperience })
 
 	if (
 		dateExperience.__typename === "DateExperience" &&
