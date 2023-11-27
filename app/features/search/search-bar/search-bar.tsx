@@ -85,6 +85,7 @@ export function SearchBar() {
 								border: "none",
 								outline: "none",
 								flex: "1 1 0%",
+								background: "white",
 							})}
 							defaultValue={searchParams.get("query") ?? ""}
 							placeholder="Search for any kind of date..."
