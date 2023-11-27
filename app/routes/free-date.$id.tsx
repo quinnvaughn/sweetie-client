@@ -398,13 +398,7 @@ export default function FreeDateIdeaRoute() {
 									/>
 								</VStack>
 								<VStack gap={4} width={"100%"} alignItems={"flex-start"}>
-									<div
-										className={css({
-											display: "flex",
-											gap: 1,
-											flexWrap: "wrap",
-										})}
-									>
+									<div className={css({ display: "flex", gap: 1 })}>
 										<span className={css({ textStyle: "paragraph" })}>
 											{singularOrPlural(
 												experience.cities.length,
@@ -412,29 +406,41 @@ export default function FreeDateIdeaRoute() {
 												"Cities: ",
 											)}
 										</span>
-										{experience.cities.map((city) => (
-											<Link
-												key={city.id}
-												className={css({
-													textDecoration: "underline",
-													textStyle: "paragraph",
-													fontWeight: "bold",
-												})}
-												to={$path("/search", {
-													cities: [city.nameAndState],
-												})}
-											>
-												<div
-													className={css({
-														display: "flex",
-														gap: 1,
-														alignItems: "center",
-													})}
-												>
-													<span>{city.nameAndState}</span>
-												</div>
-											</Link>
-										))}
+										<div
+											className={css({
+												display: "flex",
+												gap: 2,
+												flexWrap: "wrap",
+											})}
+										>
+											{experience.cities.map((city, i) => (
+												<>
+													<Link
+														key={city.id}
+														className={css({
+															textDecoration: "underline",
+															textStyle: "paragraph",
+															fontWeight: "bold",
+														})}
+														to={$path("/search", {
+															cities: [city.nameAndState],
+														})}
+													>
+														<div
+															className={css({
+																display: "flex",
+																gap: 1,
+																alignItems: "center",
+															})}
+														>
+															<span>{city.nameAndState}</span>
+														</div>
+													</Link>
+													{experience.cities.length > 1 &&
+														i < experience.cities.length - 1 && <span>/</span>}
+												</>
+											))}
+										</div>
 									</div>
 									<div
 										className={divider({
