@@ -15,7 +15,7 @@ import { ExploreDateIdeas, SearchBar } from "~/features/search"
 import { PageContainer } from "~/features/ui"
 import { DateExperiencesDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import { getEnv, mixpanel } from "~/lib"
+import { mixpanel } from "~/lib"
 
 const SearchParamsSchema = z.object({
 	query: z.string().optional(),
@@ -76,18 +76,9 @@ export async function loader({ request }: DataFunctionArgs) {
 		},
 		{ skipNull: true, sort: (a, b) => order.indexOf(a) - order.indexOf(b) },
 	)
-	const env = getEnv()
-	// const cleanedURL = request.url
-	// 	// remove the protocol and domain
-	// 	.replace(env.FRONTEND_URL, "")
-	// 	// remove all the + and replace them with %20 aka space
-	// 	.replaceAll("+", "%20")
-	// if (cleaned !== cleanedURL) {
-	// 	return redirect(cleaned)
-	// }
-	// if (cleaned === $path("/search")) {
-	// 	return redirect($path("/"))
-	// }
+	if (cleaned === $path("/search")) {
+		return redirect($path("/"))
+	}
 	const { data } = await gqlFetch(request, DateExperiencesDocument, {
 		nsfw: parsedParams.nsfw,
 		query: parsedParams.query,
