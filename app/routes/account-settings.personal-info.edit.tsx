@@ -19,7 +19,7 @@ import {
 	UpdateUserProfileDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import { mapFieldErrorToValidationError } from "~/lib"
+import { mapFieldErrorToValidationError, mixpanel } from "~/lib"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
@@ -98,9 +98,15 @@ export async function action({ request }: DataFunctionArgs) {
 		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) =>
 			validationError(mapFieldErrorToValidationError(fieldErrors)),
 		)
-		.with({ __typename: "User" }, () =>
-			redirect($path("/account-settings/personal-info")),
-		)
+		.with({ __typename: "User" }, ({ profile, name, username, email }) => {
+			mixpanel.people.set({
+				$avatar: profile?.avatar,
+				$name: name,
+				$username: username,
+				$email: email,
+			})
+			return redirect($path("/account-settings/personal-info"))
+		})
 		.otherwise(() => json({ error: "Unknown error" }))
 }
 

@@ -29,7 +29,12 @@ import {
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { useOpenedModal, useViewer } from "~/hooks"
-import { formatTime, getEnv, mapFieldErrorToValidationError } from "~/lib"
+import {
+	formatTime,
+	getEnv,
+	mapFieldErrorToValidationError,
+	mixpanel,
+} from "~/lib"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
@@ -128,7 +133,24 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	})
 
 	return match(data?.createDateItinerary)
-		.with({ __typename: "PlannedDate" }, () => {
+		.with({ __typename: "PlannedDate" }, (plannedDate) => {
+			const date = DateTime.fromISO(plannedDate.plannedTime)
+			const experience = plannedDate.experience
+			mixpanel.track("Date Planned", {
+				last_planned_date_at: new Date(),
+				day_of_planned_date: date.weekdayLong,
+				time_of_planned_date: date.toLocaleString(DateTime.TIME_SIMPLE),
+				location_names: experience.stops.map((stop) => stop.location.name),
+				location_cities: experience.cities.map((city) => city.name),
+				title: experience.title,
+				tastemaker_id: experience.tastemaker.user.id,
+				tastemaker_name: experience.tastemaker.user.name,
+				tastemaker_username: experience.tastemaker.user.username,
+			})
+			mixpanel.people.increment({
+				planned_dates: 1,
+				invited_guests: guest?.email ? 1 : 0,
+			})
 			return json({ success: true, errors: null, formData: result.data })
 		})
 		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) => {

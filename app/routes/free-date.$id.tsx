@@ -30,7 +30,7 @@ import {
 	TwitterShareButton,
 } from "~/features/ui"
 import { css } from "~/styled-system/css"
-import { divider, flex, numLines } from "~/styled-system/patterns"
+import { divider, flex } from "~/styled-system/patterns"
 import { FiX } from "react-icons/fi/index.js"
 import { HStack, VStack } from "~/styled-system/jsx"
 import { IoIosCheckmarkCircleOutline } from "react-icons/io/index.js"
@@ -56,6 +56,21 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 	}
 	const cookieHeader = request.headers.get("Cookie")
 	const cookie = await showShareScreen.parse(cookieHeader)
+	const { dateExperience } = data
+	if (
+		dateExperience.__typename === "DateExperience" &&
+		!dateExperience.isUserTastemaker
+	) {
+		mixpanel.track_pageview({
+			page: "Free Date",
+			location_names: dateExperience.stops.map((stop) => stop.location.name),
+			location_cities: dateExperience.cities.map((city) => city.name),
+			title: dateExperience.title,
+			tastemaker_id: dateExperience.tastemaker.user.id,
+			tastemaker_name: dateExperience.tastemaker.user.name,
+			tastemaker_username: dateExperience.tastemaker.user.username,
+		})
+	}
 	return json({
 		dateExperience: data.dateExperience,
 		showShareScreen: cookie ? (cookie.showShareScreen as boolean) : false,
@@ -171,7 +186,10 @@ export default function FreeDateIdeaRoute() {
 	const { id } = $params("/free-date/:id", params)
 	const fetcher = useFetcher()
 	useScrolledToBottom(() => {
-		if (!showShareScreen) {
+		if (
+			dateExperience.__typename === "DateExperience" &&
+			!dateExperience.isUserTastemaker
+		) {
 			mixpanel.track("User Scrolled To Bottom", {
 				of: "Free Date Page",
 				free_date_id: id,

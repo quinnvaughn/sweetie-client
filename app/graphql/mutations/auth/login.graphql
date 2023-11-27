@@ -12,6 +12,8 @@ mutation Login($input: LoginInput!) {
     }
     ... on User {
       id
+      email 
+      name
     }
   }
 }

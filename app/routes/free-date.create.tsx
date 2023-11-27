@@ -20,7 +20,12 @@ import {
 	ViewerIsLoggedInDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import { isTypeofFieldError, mapFieldErrorToValidationError, omit } from "~/lib"
+import {
+	isTypeofFieldError,
+	mapFieldErrorToValidationError,
+	mixpanel,
+	omit,
+} from "~/lib"
 
 export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
@@ -45,12 +50,23 @@ export async function action({ request }: DataFunctionArgs) {
 			validationError(mapFieldErrorToValidationError(fieldErrors)),
 		)
 		.with({ __typename: "Error" }, ({ message }) => json({ error: message }))
-		.with({ __typename: "DateExperience" }, async ({ id }) => {
-			// add showShareScreen cookie.
+		.with({ __typename: "DateExperience" }, async (date) => {
+			mixpanel.track("Free Date Created", {
+				free_date_id: date.id,
+				num_stops: result.data.stops.length,
+				times_of_day: result.data.timesOfDay,
+				num_tags: result.data.tags?.length ?? 0,
+				nsfw: result.data.nsfw === "true",
+				tags: result.data.tags ?? [],
+			})
+			mixpanel.people.increment({ num_free_dates: 1 })
+			mixpanel.people.set({
+				last_created_free_date_at: new Date().toISOString(),
+			})
 			const cookieHeader = request.headers.get("Cookie")
 			const cookie = (await showShareScreen.parse(cookieHeader)) || {}
 			cookie.showShareScreen = true
-			return redirect($path("/free-date/:id", { id }), {
+			return redirect($path("/free-date/:id", { id: date.id }), {
 				headers: {
 					"Set-Cookie": await showShareScreen.serialize(cookie),
 				},

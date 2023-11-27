@@ -15,7 +15,7 @@ import { ExploreDateIdeas, SearchBar } from "~/features/search"
 import { PageContainer } from "~/features/ui"
 import { DateExperiencesDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import { getEnv } from "~/lib"
+import { getEnv, mixpanel } from "~/lib"
 
 const SearchParamsSchema = z.object({
 	query: z.string().optional(),
@@ -94,6 +94,19 @@ export async function loader({ request }: DataFunctionArgs) {
 		cities: parsedParams.cities,
 		timesOfDay: parsedParams.timesOfDay,
 	})
+	if (data?.dateExperiences) {
+		const { edges } = data.dateExperiences
+		mixpanel.track("User Searched", {
+			for: "Free Date",
+			cities: parsedParams.cities,
+			nsfw: parsedParams.nsfw === "on",
+			timesOfDay: parsedParams.timesOfDay,
+			text: parsedParams.query,
+			num_results: edges.length,
+			has_results: edges.length > 0,
+		})
+	}
+
 	return json(data)
 }
 

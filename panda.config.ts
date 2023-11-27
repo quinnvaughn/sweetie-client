@@ -88,6 +88,12 @@ export default defineConfig({
 					secondary: {
 						value: "#6255ff",
 					},
+					tertiary: {
+						value: "#55FFB7",
+					},
+					quarternary: {
+						value: "#F2FF55",
+					},
 					gray: {
 						value: "#DDDDDD",
 					},

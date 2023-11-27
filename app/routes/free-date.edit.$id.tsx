@@ -21,7 +21,12 @@ import {
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { css } from "~/styled-system/css"
-import { isTypeofFieldError, mapFieldErrorToValidationError, omit } from "~/lib"
+import {
+	isTypeofFieldError,
+	mapFieldErrorToValidationError,
+	mixpanel,
+	omit,
+} from "~/lib"
 import { match } from "ts-pattern"
 
 export async function action({ request, params }: DataFunctionArgs) {
@@ -49,8 +54,19 @@ export async function action({ request, params }: DataFunctionArgs) {
 		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) =>
 			validationError(mapFieldErrorToValidationError(fieldErrors)),
 		)
-		.with({ __typename: "DateExperience" }, ({ id }) =>
-			redirect($path("/free-date/:id", { id })),
+		.with(
+			{ __typename: "DateExperience" },
+			({ id, stops, timesOfDay, tags, nsfw }) => {
+				mixpanel.track("Free Date Updated", {
+					free_date_id: id,
+					num_stops: stops?.length,
+					times_of_day: timesOfDay.map((tod) => tod.name),
+					num_tags: tags?.length,
+					nsfw,
+					tags: tags.map((tag) => tag.name),
+				})
+				return redirect($path("/free-date/:id", { id }))
+			},
 		)
 		.with({ __typename: "Error" }, ({ message }) => json({ error: message }))
 		.otherwise(() => json({ error: "Something went wrong." }))
