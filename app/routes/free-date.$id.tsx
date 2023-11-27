@@ -109,7 +109,11 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 					cities,
 					id,
 				}) => [
-					{ title: `${title} by ${tastemaker.user.name} - Sweetie date idea` },
+					{
+						title: `${title.trim()} by ${
+							tastemaker.user.name
+						} - Sweetie date idea`,
+					},
 					{
 						name: "keywords",
 						content: [
@@ -122,7 +126,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 					{ name: "description", content: description.slice(0, 200) },
 					{
 						name: "og:title",
-						content: `${title} by ${tastemaker.user.name} - Sweetie date idea`,
+						content: `${title.trim()} by ${
+							tastemaker.user.name
+						} - Sweetie date idea`,
 					},
 					{ name: "og:description", content: description.slice(0, 200) },
 					{ name: "og:image", content: thumbnail },
