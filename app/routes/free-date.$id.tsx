@@ -414,9 +414,11 @@ export default function FreeDateIdeaRoute() {
 											})}
 										>
 											{experience.cities.map((city, i) => (
-												<>
+												<div
+													key={city.id}
+													className={css({ display: "flex", gap: 2 })}
+												>
 													<Link
-														key={city.id}
 														className={css({
 															textDecoration: "underline",
 															textStyle: "paragraph",
@@ -438,7 +440,7 @@ export default function FreeDateIdeaRoute() {
 													</Link>
 													{experience.cities.length > 1 &&
 														i < experience.cities.length - 1 && <span>/</span>}
-												</>
+												</div>
 											))}
 										</div>
 									</div>

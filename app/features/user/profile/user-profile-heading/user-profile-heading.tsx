@@ -33,9 +33,10 @@ export function UserProfileHeading({ user }: Props) {
 					@{user.username}
 				</p>
 				{user.profile?.link && (
-					<Link
+					<a
 						className={css({ color: "secondary", fontWeight: "bold" })}
-						to={user.profile.link}
+						href={user.profile.link}
+						rel="noopener noreferrer nofollow"
 					>
 						<div
 							className={css({ display: "flex", gap: 1, alignItems: "center" })}
@@ -43,7 +44,7 @@ export function UserProfileHeading({ user }: Props) {
 							{user.profile.link.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "")}
 							<FaExternalLinkAlt className={css({ color: "secondary" })} />
 						</div>
-					</Link>
+					</a>
 				)}
 			</VStack>
 		</VStack>
