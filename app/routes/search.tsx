@@ -77,17 +77,17 @@ export async function loader({ request }: DataFunctionArgs) {
 		{ skipNull: true, sort: (a, b) => order.indexOf(a) - order.indexOf(b) },
 	)
 	const env = getEnv()
-	const cleanedURL = request.url
-		// remove the protocol and domain
-		.replace(env.FRONTEND_URL, "")
-		// remove all the + and replace them with %20 aka space
-		.replaceAll("+", "%20")
-	if (cleaned !== cleanedURL) {
-		return redirect(cleaned)
-	}
-	if (cleaned === $path("/search")) {
-		return redirect($path("/"))
-	}
+	// const cleanedURL = request.url
+	// 	// remove the protocol and domain
+	// 	.replace(env.FRONTEND_URL, "")
+	// 	// remove all the + and replace them with %20 aka space
+	// 	.replaceAll("+", "%20")
+	// if (cleaned !== cleanedURL) {
+	// 	return redirect(cleaned)
+	// }
+	// if (cleaned === $path("/search")) {
+	// 	return redirect($path("/"))
+	// }
 	const { data } = await gqlFetch(request, DateExperiencesDocument, {
 		nsfw: parsedParams.nsfw,
 		query: parsedParams.query,
