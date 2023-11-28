@@ -131,7 +131,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 					{ name: "og:image", content: thumbnail },
 					{
 						name: "og:url",
-						content: `https://trysweetie.com/experience/${id}`,
+						content: `https://trysweetie.com/free-date/${id}`,
 					},
 					{
 						name: "og:site_name",
@@ -328,11 +328,11 @@ export default function FreeDateIdeaRoute() {
 				.with({ __typename: "Error" }, () => (
 					<p className={css({ textStyle: "paragraph" })}>Not Found</p>
 				))
-				.with({ __typename: "FreeDate" }, (experience) => (
+				.with({ __typename: "FreeDate" }, (freeDate) => (
 					<VStack gap={4} alignItems={"flex-start"} width={"100%"}>
 						<Image
-							src={experience.thumbnail}
-							alt={experience.title}
+							src={freeDate.thumbnail}
+							alt={freeDate.title}
 							css={{
 								width: "100%",
 								aspectRatio: "16/9",
@@ -353,11 +353,11 @@ export default function FreeDateIdeaRoute() {
 								alignItems="flex-start"
 								width={{ base: "100%", md: "66%" }}
 							>
-								<VStack gap={experience.nsfw ? 1 : 0}>
+								<VStack gap={freeDate.nsfw ? 1 : 0}>
 									<h1 className={css({ textStyle: "h1", fontSize: 32 })}>
-										{experience.title}
+										{freeDate.title}
 									</h1>
-									{experience.nsfw && <NSFWTag size="lg" />}
+									{freeDate.nsfw && <NSFWTag size="lg" />}
 								</VStack>
 								<VStack
 									gap={4}
@@ -366,11 +366,9 @@ export default function FreeDateIdeaRoute() {
 									width={"100%"}
 								>
 									<OpenShareModalLink
-										to={$path("/free-date/:id/share", { id: experience.id })}
+										to={$path("/free-date/:id/share", { id: freeDate.id })}
 									/>
-									{experience.tags.length > 0 && (
-										<Tags tags={experience.tags} />
-									)}
+									{freeDate.tags.length > 0 && <Tags tags={freeDate.tags} />}
 									<div
 										className={divider({
 											color: "gray",
@@ -381,7 +379,7 @@ export default function FreeDateIdeaRoute() {
 									/>
 								</VStack>
 								<VStack gap={4} width="100%" alignItems={"flex-start"}>
-									<TastemakerInfo tastemaker={experience.tastemaker} />
+									<TastemakerInfo tastemaker={freeDate.tastemaker} />
 									<div
 										className={divider({
 											color: "gray",
@@ -395,7 +393,7 @@ export default function FreeDateIdeaRoute() {
 									<div className={css({ display: "flex", gap: 1 })}>
 										<span className={css({ textStyle: "paragraph" })}>
 											{singularOrPlural(
-												experience.cities.length,
+												freeDate.cities.length,
 												"City: ",
 												"Cities: ",
 											)}
@@ -407,7 +405,7 @@ export default function FreeDateIdeaRoute() {
 												flexWrap: "wrap",
 											})}
 										>
-											{experience.cities.map((city, i) => (
+											{freeDate.cities.map((city, i) => (
 												<div
 													key={city.id}
 													className={css({ display: "flex", gap: 2 })}
@@ -432,8 +430,8 @@ export default function FreeDateIdeaRoute() {
 															<span>{city.nameAndState}</span>
 														</div>
 													</Link>
-													{experience.cities.length > 1 &&
-														i < experience.cities.length - 1 && <span>/</span>}
+													{freeDate.cities.length > 1 &&
+														i < freeDate.cities.length - 1 && <span>/</span>}
 												</div>
 											))}
 										</div>
@@ -455,7 +453,7 @@ export default function FreeDateIdeaRoute() {
 										fontFamily: "spectral",
 									})}
 								>
-									{experience.description}
+									{freeDate.description}
 								</em>
 								<VStack gap={4} alignItems="flex-start">
 									<h3
@@ -466,20 +464,20 @@ export default function FreeDateIdeaRoute() {
 										})}
 									>
 										{`Recommended time${
-											experience.timesOfDay.length > 1 ? "s" : ""
+											freeDate.timesOfDay.length > 1 ? "s" : ""
 										} of the day`}
 									</h3>
 									<HStack gap={2} justifyContent="flex-start">
-										{experience.timesOfDay.map((time) => (
+										{freeDate.timesOfDay.map((time) => (
 											<TimeOfTheDay name={time.name} key={time.id} />
 										))}
 									</HStack>
 								</VStack>
 								<VStack gap={4} alignItems={"flex-start"}>
 									<ClientOnly>
-										{() => <DateLocationsMap stops={experience.stops} />}
+										{() => <DateLocationsMap stops={freeDate.stops} />}
 									</ClientOnly>
-									{experience.stops.map((stop) => (
+									{freeDate.stops.map((stop) => (
 										<DateStop stop={stop} key={stop.id} />
 									))}
 								</VStack>

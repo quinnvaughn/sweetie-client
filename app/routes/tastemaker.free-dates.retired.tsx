@@ -1,5 +1,5 @@
 import { DataFunctionArgs, json, redirect } from "@remix-run/node"
-import { Link, Outlet, useLoaderData } from "@remix-run/react"
+import { useLoaderData } from "@remix-run/react"
 import { $path } from "remix-routes"
 import { FreeDatesInformation } from "~/features/tastemaker"
 import { PageContainer } from "~/features/ui"
@@ -32,7 +32,7 @@ export default function FreeDatesRetiredRoute() {
 			<VStack alignItems="flex-start" width={"100%"}>
 				<FreeDatesInformation
 					retired={true}
-					dates={data.viewer.tastemaker?.experiences ?? []}
+					dates={data.viewer.tastemaker?.freeDates ?? []}
 				/>
 			</VStack>
 		</PageContainer>

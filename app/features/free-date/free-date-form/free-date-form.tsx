@@ -145,7 +145,7 @@ export function FreeDateForm({ formId, page, error, locationPath }: Props) {
 					required
 					name="description"
 					label="Description"
-					placeholder="Provide a brief synopsis of your date experience that will entice users to keep reading"
+					placeholder="Provide a brief synopsis of your date idea that will entice users to keep reading"
 				/>
 				<VStack gap={4} alignItems="flex-start">
 					<p className={css({ textStyle: "paragraph", fontWeight: "bold" })}>

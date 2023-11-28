@@ -16,7 +16,7 @@ export function UserProfileDesktop({ user }: Props) {
 				<div className={css({ flexBasis: `${(7 / 12) * 100}%` })}>
 					<FreeDateList
 						noDatesText="Hasn't added any dates yet."
-						freeDates={user.tastemaker.experiences}
+						freeDates={user.tastemaker.freeDates}
 						xl={{ gridTemplateColumns: "repeat(2, 1fr)" }}
 					/>
 				</div>

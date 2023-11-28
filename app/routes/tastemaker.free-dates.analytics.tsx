@@ -16,7 +16,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		return redirect($path("/login"))
 	}
 
-	return json({ dates: data.viewer.tastemaker?.experiences ?? [] })
+	return json({ dates: data.viewer.tastemaker?.freeDates ?? [] })
 }
 
 export default function FreeDatesAnalyticsRoute() {

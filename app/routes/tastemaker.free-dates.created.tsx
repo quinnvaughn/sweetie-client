@@ -21,8 +21,8 @@ export async function loader({ request }: DataFunctionArgs) {
 	return json({
 		viewer: data.viewer,
 		hasCreatedADate:
-			data?.viewer?.tastemaker?.experiences &&
-			data?.viewer.tastemaker.experiences.length > 0,
+			data?.viewer?.tastemaker?.freeDates &&
+			data?.viewer.tastemaker.freeDates.length > 0,
 	})
 }
 
@@ -60,7 +60,7 @@ export default function FreeDatesRoute() {
 				)}
 				<FreeDatesInformation
 					retired={false}
-					dates={data.viewer.tastemaker?.experiences ?? []}
+					dates={data.viewer.tastemaker?.freeDates ?? []}
 				/>
 			</VStack>
 		</PageContainer>
