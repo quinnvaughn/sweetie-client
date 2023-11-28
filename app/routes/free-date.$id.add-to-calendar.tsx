@@ -3,6 +3,7 @@ import { useActionData, useLoaderData } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
 import { DateTime } from "luxon"
 import { $params, $path } from "remix-routes"
+import { ClientOnly } from "remix-utils/client-only"
 import {
 	ValidatedForm,
 	ValidatorError,
@@ -39,56 +40,61 @@ import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
 const validator = withZod(
-	z.object({
-		guest: z
-			.object({
-				email: z.string().email("Must be a valid email").or(z.literal("")),
-				name: z
-					.string()
-					.min(1, "Must be at least 1 character")
-					.or(z.literal("")),
-			})
-			.optional()
-			.refine(
-				(data) => {
-					if (
-						data?.email &&
-						data?.email.length > 0 &&
-						data?.name.length === 0
-					) {
-						return false
-					}
-					return true
-				},
-				{
-					path: ["name"],
-					message: "Must provide a name if you provide an email",
-				},
-			),
-		date: z
-			.string()
-			.refine((date) => DateTime.fromISO(date).isValid, "Must be a valid date")
-			.refine((date) => {
-				const zone = Intl.DateTimeFormat().resolvedOptions().timeZone
-				console.log({ zone })
-				console.log(
-					"first date",
-					DateTime.fromISO(date).toLocal().startOf("day"),
-				)
-				console.log("second date", DateTime.local({ zone }).startOf("day"))
-				return (
-					DateTime.fromISO(date).setZone(zone).startOf("day") >=
-					DateTime.now().setZone(zone).startOf("day")
-				)
-			}, "Must be a future date"),
-		time: z
-			.string()
-			.regex(
-				/^(1[0-2]|0?[1-9]):[0-5][0-9] (AM|PM)$/,
-				"Must be a valid time format",
-			),
-		timeZone: z.string(),
-	}),
+	z
+		.object({
+			guest: z
+				.object({
+					email: z.string().email("Must be a valid email").or(z.literal("")),
+					name: z
+						.string()
+						.min(1, "Must be at least 1 character")
+						.or(z.literal("")),
+				})
+				.optional()
+				.refine(
+					(data) => {
+						if (
+							data?.email &&
+							data?.email.length > 0 &&
+							data?.name.length === 0
+						) {
+							return false
+						}
+						return true
+					},
+					{
+						path: ["name"],
+						message: "Must provide a name if you provide an email",
+					},
+				),
+			date: z.string(),
+			time: z
+				.string()
+				.regex(
+					/^(1[0-2]|0?[1-9]):[0-5][0-9] (AM|PM)$/,
+					"Must be a valid time format",
+				),
+			timeZone: z.string(),
+		})
+		.refine(
+			(data) => DateTime.fromISO(data.date).isValid,
+			"Must be a valid date",
+		)
+		.refine((data) => {
+			console.log({ zone: data.timeZone })
+			console.log(
+				"first date",
+				DateTime.fromISO(data.date).setZone(data.timeZone).startOf("day"),
+			)
+			console.log(
+				"second date",
+				DateTime.now().setZone(data.timeZone).startOf("day"),
+			)
+			return (
+				DateTime.fromISO(data.date).setZone(data.timeZone).startOf("day") >=
+				DateTime.now().setZone(data.timeZone).startOf("day")
+			)
+		}, "Must be a future date"),
 )
 
 const env = getEnv()
@@ -276,11 +282,15 @@ export default function AddToCalendarPage() {
 								label="Date's email (optional)"
 								placeholder={"Your date's email"}
 							/>
-							<input
-								type="hidden"
-								name="timeZone"
-								value={Intl.DateTimeFormat().resolvedOptions().timeZone}
-							/>
+							<ClientOnly>
+								{() => (
+									<input
+										type="hidden"
+										name="timeZone"
+										value={Intl.DateTimeFormat().resolvedOptions().timeZone}
+									/>
+								)}
+							</ClientOnly>
 						</VStack>
 					)}
 				</Modal.Body>
