@@ -122,18 +122,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		date: DateTime.fromFormat(`${date} ${formattedTime}`, "yyyy-MM-dd hh:mm a")
 			.setZone(timeZone)
 			.toISO() as string,
-		timeZone: timeZone,
 		guest: guest?.email && guest.email.length > 0 ? guest : undefined,
 		experienceId: id,
 	}
 
-	const { data, errors } = await gqlFetch(
-		request,
-		CreateDateItineraryDocument,
-		{
-			input,
-		},
-	)
+	const { data } = await gqlFetch(request, CreateDateItineraryDocument, {
+		input,
+	})
 
 	return match(data?.createDateItinerary)
 		.with({ __typename: "PlannedDate" }, (plannedDate) => {
@@ -157,7 +152,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 			return json({ success: true, errors: null, formData: result.data })
 		})
 		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) => {
-			console.log("field errors")
 			const reduceToValidatorError = mapFieldErrorToValidationError(fieldErrors)
 			return json(
 				{ success: false, errors: reduceToValidatorError, formData: null },
@@ -165,7 +159,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 			)
 		})
 		.otherwise(() => {
-			console.log("weird error")
 			return json(
 				{ success: false, errors: null, formData: null },
 				{ status: 500 },

@@ -114,7 +114,6 @@ export type CreateDateItineraryInput = {
   date: Scalars['DateTime']['input'];
   experienceId: Scalars['String']['input'];
   guest?: InputMaybe<GuestInput>;
-  timeZone: Scalars['String']['input'];
 };
 
 export type CreateDateItineraryPayload = AuthError | EntityCreationError | EntityNotFoundError | Error | FieldErrors | PlannedDate;
