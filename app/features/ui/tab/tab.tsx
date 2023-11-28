@@ -38,7 +38,6 @@ type Props = {
 }
 
 export function Tab({ title, onClick, active }: Props) {
-	console.log({ active })
 	return (
 		<button type="button" className={button} onClick={onClick}>
 			<p className={text({ active })}>{title}</p>
