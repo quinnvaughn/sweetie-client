@@ -110,7 +110,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	const result = await validator.validate(await request.formData())
 
 	if (result.error) {
-		console.log("validation error")
+		console.log("validation error", result.error)
 		return json(
 			{ success: false, errors: validationError(result.error), formData: null },
 			{ status: 400 },
