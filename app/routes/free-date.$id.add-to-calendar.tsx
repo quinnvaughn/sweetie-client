@@ -70,6 +70,11 @@ const validator = withZod(
 			.refine((date) => DateTime.fromISO(date).isValid, "Must be a valid date")
 			.refine((date) => {
 				const zone = Intl.DateTimeFormat().resolvedOptions().timeZone
+				console.log(
+					"first date",
+					DateTime.fromISO(date).setZone(zone).startOf("day"),
+				)
+				console.log("second date", DateTime.now().setZone(zone).startOf("day"))
 				return (
 					DateTime.fromISO(date).setZone(zone).startOf("day") >=
 					DateTime.now().setZone(zone).startOf("day")
