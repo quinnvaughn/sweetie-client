@@ -132,9 +132,15 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		experienceId: id,
 	}
 
-	const { data } = await gqlFetch(request, CreateDateItineraryDocument, {
-		input,
-	})
+	const { data, errors } = await gqlFetch(
+		request,
+		CreateDateItineraryDocument,
+		{
+			input,
+		},
+	)
+
+	console.log({ errors })
 
 	return match(data?.createDateItinerary)
 		.with({ __typename: "PlannedDate" }, (plannedDate) => {
