@@ -68,12 +68,13 @@ const validator = withZod(
 		date: z
 			.string()
 			.refine((date) => DateTime.fromISO(date).isValid, "Must be a valid date")
-			.refine(
-				(date) =>
-					DateTime.fromISO(date).startOf("day") >=
-					DateTime.now().startOf("day"),
-				"Must be a future date",
-			),
+			.refine((date) => {
+				const zone = Intl.DateTimeFormat().resolvedOptions().timeZone
+				return (
+					DateTime.fromISO(date).setZone(zone).startOf("day") >=
+					DateTime.now().setZone(zone).startOf("day")
+				)
+			}, "Must be a future date"),
 		time: z
 			.string()
 			.regex(
