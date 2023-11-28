@@ -134,21 +134,21 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		.with({ __typename: "PlannedDate" }, (plannedDate) => {
 			const date = DateTime.fromISO(plannedDate.plannedTime)
 			const freeDate = plannedDate.freeDate
-			mixpanel.track("Date Planned", {
-				last_planned_date_at: new Date(),
-				day_of_planned_date: date.weekdayLong,
-				time_of_planned_date: date.toLocaleString(DateTime.TIME_SIMPLE),
-				location_names: freeDate.stops.map((stop) => stop.location.name),
-				location_cities: freeDate.cities.map((city) => city.name),
-				title: freeDate.title,
-				tastemaker_id: freeDate.tastemaker.user.id,
-				tastemaker_name: freeDate.tastemaker.user.name,
-				tastemaker_username: freeDate.tastemaker.user.username,
-			})
-			mixpanel.people.increment({
-				planned_dates: 1,
-				invited_guests: guest?.email ? 1 : 0,
-			})
+			// mixpanel.track("Date Planned", {
+			// 	last_planned_date_at: new Date(),
+			// 	day_of_planned_date: date.weekdayLong,
+			// 	time_of_planned_date: date.toLocaleString(DateTime.TIME_SIMPLE),
+			// 	location_names: freeDate.stops.map((stop) => stop.location.name),
+			// 	location_cities: freeDate.cities.map((city) => city.name),
+			// 	title: freeDate.title,
+			// 	tastemaker_id: freeDate.tastemaker.user.id,
+			// 	tastemaker_name: freeDate.tastemaker.user.name,
+			// 	tastemaker_username: freeDate.tastemaker.user.username,
+			// })
+			// mixpanel.people.increment({
+			// 	planned_dates: 1,
+			// 	invited_guests: guest?.email ? 1 : 0,
+			// })
 			return json({ success: true, errors: null, formData: result.data })
 		})
 		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) => {

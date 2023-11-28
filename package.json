@@ -26,6 +26,7 @@
 		"graphql": "^16.8.1",
 		"isbot": "^3.7.0",
 		"luxon": "^3.4.3",
+		"mixpanel": "^0.18.0",
 		"mixpanel-browser": "^2.47.0",
 		"query-string": "^8.1.0",
 		"react": "^18.2.0",
@@ -36,6 +37,7 @@
 		"remix-utils": "^7.1.0",
 		"remix-validated-form": "^5.1.5",
 		"ts-pattern": "^5.0.5",
+		"ua-parser-js": "^1.0.37",
 		"zod": "^3.22.4",
 		"zod-form-data": "^2.0.2",
 		"zustand": "^4.4.6"
@@ -52,6 +54,7 @@
 		"@types/mixpanel-browser": "^2.47.4",
 		"@types/react": "^18.2.33",
 		"@types/react-dom": "^18.2.14",
+		"@types/ua-parser-js": "^0.7.39",
 		"concurrently": "^8.2.2",
 		"typescript": "^5.2.2"
 	},

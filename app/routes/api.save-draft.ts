@@ -70,7 +70,7 @@ export async function action({ request }: DataFunctionArgs) {
 			validationError(mapFieldErrorToValidationError(fieldErrors)),
 		)
 		.with({ __typename: "Error" }, ({ message }) => json({ error: message }))
-		.with({ __typename: "DateExperienceDraft" }, () =>
+		.with({ __typename: "FreeDateDraft" }, () =>
 			redirect($path("/tastemaker/free-dates/drafts")),
 		)
 		.otherwise(() => json({ error: "Unknown error" }))

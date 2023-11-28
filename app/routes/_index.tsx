@@ -42,7 +42,7 @@ export default function HomeRoute() {
 					</p>
 				</VStack>
 				<SearchBar />
-				<TrendingFreeDates freeDates={data.featuredDateExperiences} />
+				<TrendingFreeDates freeDates={data.featuredFreeDates} />
 			</VStack>
 		</PageContainer>
 	)

@@ -87,15 +87,15 @@ export async function loader({ request }: DataFunctionArgs) {
 	})
 	if (data?.freeDates) {
 		const { edges } = data.freeDates
-		mixpanel.track("User Searched", {
-			for: "Free Date",
-			cities: parsedParams.cities,
-			nsfw: parsedParams.nsfw === "on",
-			timesOfDay: parsedParams.timesOfDay,
-			text: parsedParams.query,
-			num_results: edges.length,
-			has_results: edges.length > 0,
-		})
+		// mixpanel.track("User Searched", {
+		// 	for: "Free Date",
+		// 	cities: parsedParams.cities,
+		// 	nsfw: parsedParams.nsfw === "on",
+		// 	timesOfDay: parsedParams.timesOfDay,
+		// 	text: parsedParams.query,
+		// 	num_results: edges.length,
+		// 	has_results: edges.length > 0,
+		// })
 	}
 
 	return json(data)

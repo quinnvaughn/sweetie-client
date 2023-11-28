@@ -59,15 +59,15 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 	const { freeDate } = data
 
 	if (freeDate.__typename === "FreeDate" && !freeDate.isUserTastemaker) {
-		mixpanel.track_pageview({
-			page: "Free Date",
-			location_names: freeDate.stops.map((stop) => stop.location.name),
-			location_cities: freeDate.cities.map((city) => city.name),
-			title: freeDate.title,
-			tastemaker_id: freeDate.tastemaker.user.id,
-			tastemaker_name: freeDate.tastemaker.user.name,
-			tastemaker_username: freeDate.tastemaker.user.username,
-		})
+		// mixpanel.track_pageview({
+		// 	page: "Free Date",
+		// 	location_names: freeDate.stops.map((stop) => stop.location.name),
+		// 	location_cities: freeDate.cities.map((city) => city.name),
+		// 	title: freeDate.title,
+		// 	tastemaker_id: freeDate.tastemaker.user.id,
+		// 	tastemaker_name: freeDate.tastemaker.user.name,
+		// 	tastemaker_username: freeDate.tastemaker.user.username,
+		// })
 	}
 	return json({
 		freeDate: data.freeDate,

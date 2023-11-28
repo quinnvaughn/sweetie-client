@@ -23,12 +23,12 @@ export async function action({ request }: DataFunctionArgs) {
 					id,
 				},
 			})
-			return match(data?.retireDateExperience)
+			return match(data?.retireFreeDate)
 				.with({ __typename: "AuthError" }, () => redirect($path("/login")))
 				.with({ __typename: "Error" }, ({ message }) =>
 					json({ error: message, data: null }),
 				)
-				.with({ __typename: "DateExperience" }, ({ title }) =>
+				.with({ __typename: "FreeDate" }, ({ title }) =>
 					json({ error: null, data: title }),
 				)
 				.otherwise(() => json({ error: "Unknown error", data: null }))
@@ -40,12 +40,12 @@ export async function action({ request }: DataFunctionArgs) {
 				},
 			})
 
-			return match(data?.unretireDateExperience)
+			return match(data?.unretireFreeDate)
 				.with({ __typename: "AuthError" }, () => redirect($path("/login")))
 				.with({ __typename: "Error" }, ({ message }) =>
 					json({ error: message, data: null }),
 				)
-				.with({ __typename: "DateExperience" }, ({ title }) =>
+				.with({ __typename: "FreeDate" }, ({ title }) =>
 					json({ error: null, data: title }),
 				)
 				.otherwise(() => json({ error: "Unknown error", data: null }))

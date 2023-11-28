@@ -16,7 +16,7 @@ export async function action({ request }: ActionFunctionArgs) {
 			// TODO: Add toast error.
 		})
 		.with({ __typename: "LogoutResult" }, async () => {
-			mixpanel.reset()
+			// mixpanel.reset()
 			return redirect($path("/"), {
 				headers: {
 					"Set-Cookie": `qid=; Path=/; HttpOnly; SameSite=Lax; Max-Age=1; Expires=${new Date(

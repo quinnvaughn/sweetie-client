@@ -48,12 +48,12 @@ export async function action({ request }: DataFunctionArgs) {
 		},
 	})
 
-	return match(data?.createDateExperience)
+	return match(data?.createFreeDate)
 		.with({ __typename: "AuthError" }, () => redirect($path("/login")))
 		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) =>
 			validationError(mapFieldErrorToValidationError(fieldErrors)),
 		)
-		.with({ __typename: "DateExperience" }, ({ id }) =>
+		.with({ __typename: "FreeDate" }, ({ id }) =>
 			redirect($path("/free-date/:id", { id })),
 		)
 		.with({ __typename: "Error" }, ({ message }) => json({ error: message }))

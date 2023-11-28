@@ -62,14 +62,14 @@ export async function action({ request, params }: DataFunctionArgs) {
 		.with(
 			{ __typename: "FreeDate" },
 			({ id, stops, timesOfDay, tags, nsfw }) => {
-				mixpanel.track("Free Date Updated", {
-					free_date_id: id,
-					num_stops: stops?.length,
-					times_of_day: timesOfDay.map((tod) => tod.name),
-					num_tags: tags?.length,
-					nsfw,
-					tags: tags.map((tag) => tag.name),
-				})
+				// mixpanel.track("Free Date Updated", {
+				// 	free_date_id: id,
+				// 	num_stops: stops?.length,
+				// 	times_of_day: timesOfDay.map((tod) => tod.name),
+				// 	num_tags: tags?.length,
+				// 	nsfw,
+				// 	tags: tags.map((tag) => tag.name),
+				// })
 				return redirect($path("/free-date/:id", { id }))
 			},
 		)

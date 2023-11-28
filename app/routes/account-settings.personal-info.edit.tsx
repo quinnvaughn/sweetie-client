@@ -99,12 +99,12 @@ export async function action({ request }: DataFunctionArgs) {
 			validationError(mapFieldErrorToValidationError(fieldErrors)),
 		)
 		.with({ __typename: "User" }, ({ profile, name, username, email }) => {
-			mixpanel.people.set({
-				$avatar: profile?.avatar,
-				$name: name,
-				$username: username,
-				$email: email,
-			})
+			// mixpanel.people.set({
+			// 	$avatar: profile?.avatar,
+			// 	$name: name,
+			// 	$username: username,
+			// 	$email: email,
+			// })
 			return redirect($path("/account-settings/personal-info"))
 		})
 		.otherwise(() => json({ error: "Unknown error" }))

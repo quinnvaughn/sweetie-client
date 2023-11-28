@@ -26,7 +26,7 @@ export function UserProfileMobile({ user }: Props) {
 			{user.tastemaker && (
 				<FreeDateList
 					noDatesText="Hasn't added any dates yet."
-					freeDates={user.tastemaker.experiences}
+					freeDates={user.tastemaker.freeDates}
 				/>
 			)}
 		</VStack>
