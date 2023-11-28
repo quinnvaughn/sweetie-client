@@ -106,8 +106,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
+	const formData = await request.formData()
 	const { id } = $params("/free-date/:id/add-to-calendar", params)
-	const result = await validator.validate(await request.formData())
+	const result = await validator.validate(formData)
+
+	console.log({ result })
 
 	if (result.error) {
 		console.log("validation error", result.error)
