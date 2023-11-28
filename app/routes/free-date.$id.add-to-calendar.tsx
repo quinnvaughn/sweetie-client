@@ -79,21 +79,7 @@ const validator = withZod(
 		.refine((data) => DateTime.fromISO(data.date).isValid, {
 			path: ["date"],
 			message: "Must be a valid date",
-		})
-		.refine(
-			(data) => {
-				console.log("first date", DateTime.fromISO(data.date).startOf("day"))
-				console.log(
-					"second date",
-					DateTime.now().setZone(data.timeZone).startOf("day"),
-				)
-				return (
-					DateTime.fromISO(data.date).startOf("day") >=
-					DateTime.now().setZone(data.timeZone).startOf("day")
-				)
-			},
-			{ path: ["date"], message: "Must be a date in the future" },
-		),
+		}),
 )
 
 const env = getEnv()
@@ -122,10 +108,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	const { id } = $params("/free-date/:id/add-to-calendar", params)
 	const result = await validator.validate(formData)
 
-	console.log({ result })
-
 	if (result.error) {
-		console.log("validation error", result.error)
 		return json(
 			{ success: false, errors: validationError(result.error), formData: null },
 			{ status: 400 },
@@ -151,8 +134,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 			input,
 		},
 	)
-
-	console.log({ errors })
 
 	return match(data?.createDateItinerary)
 		.with({ __typename: "PlannedDate" }, (plannedDate) => {
