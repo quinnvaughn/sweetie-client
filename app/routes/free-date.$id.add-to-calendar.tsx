@@ -110,6 +110,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	const result = await validator.validate(await request.formData())
 
 	if (result.error) {
+		console.log("validation error")
 		return json(
 			{ success: false, errors: validationError(result.error), formData: null },
 			{ status: 400 },
@@ -154,6 +155,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 			return json({ success: true, errors: null, formData: result.data })
 		})
 		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) => {
+			console.log("field errors")
 			const reduceToValidatorError = mapFieldErrorToValidationError(fieldErrors)
 			return json(
 				{ success: false, errors: reduceToValidatorError, formData: null },
@@ -161,6 +163,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 			)
 		})
 		.otherwise(() => {
+			console.log("weird error")
 			return json(
 				{ success: false, errors: null, formData: null },
 				{ status: 500 },
