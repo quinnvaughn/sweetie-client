@@ -93,8 +93,12 @@ export default function DateTimePicker({
 						}}
 					/>
 				)}
-				<div className={css({ width: 0, overflow: "hidden" })}>
-					<input name={name} value={currentDate.toISODate() as string} />
+				<div className={css({ width: 0, overflow: "hidden", height: 0 })}>
+					<input
+						name={name}
+						onChange={() => {}}
+						value={currentDate.toISODate() as string}
+					/>
 				</div>
 			</div>
 		</VStack>
