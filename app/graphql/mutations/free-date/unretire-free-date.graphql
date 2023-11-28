@@ -1,7 +1,7 @@
-mutation UnretireFreeDate($input: UnretireDateExperienceInput!) {
-  unretireDateExperience(input: $input) {
+mutation UnretireFreeDate($input: UnretireFreeDateInput!) {
+  unretireFreeDate(input: $input) {
     __typename
-    ... on DateExperience {
+    ... on FreeDate {
 		id
       ...FreeDateCard
     }

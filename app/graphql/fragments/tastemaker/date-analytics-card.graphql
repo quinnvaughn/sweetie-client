@@ -1,4 +1,4 @@
-fragment DateAnalyticsCard on DateExperience {
+fragment DateAnalyticsCard on FreeDate {
           id
           title
           thumbnail

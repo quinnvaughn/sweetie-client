@@ -3,7 +3,7 @@ query GetViewerFreeDateAnalytics {
 	  id
       tastemaker {
         id
-        experiences {
+        freeDates {
           id
           ...DateAnalyticsCard
         }

@@ -7,7 +7,7 @@ query GetFreeDateDraft($id: String!) {
             ... on Error {
                 message
             }
-            ... on DateExperienceDraft {
+            ... on FreeDateDraft {
                 id
                 title
                 thumbnail

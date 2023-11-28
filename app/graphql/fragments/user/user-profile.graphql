@@ -2,7 +2,7 @@ fragment UserProfile on User {
   ...UserProfileLeftSide
   tastemaker {
     id
-    experiences {
+    freeDates {
       id
       ...FreeDateCard
     }

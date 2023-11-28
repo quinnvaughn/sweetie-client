@@ -16,7 +16,7 @@ mutation UpdateUserProfile($input: UpdateUserProfileInput!) {
 	... on AuthError {
 		message
 	}
-	... on EntityUpdateError {
+	... on Error {
 		message
 	}
 	... on FieldErrors {

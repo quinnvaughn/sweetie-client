@@ -1,4 +1,4 @@
-fragment DraftCard on DateExperienceDraft {
+fragment DraftCard on FreeDateDraft {
         id
         title
         thumbnail

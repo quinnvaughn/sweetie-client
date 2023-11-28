@@ -7,7 +7,7 @@ import {
 } from "@remix-run/node"
 import { match } from "ts-pattern"
 import { gqlFetch } from "~/graphql/graphql"
-import { GetDateExperienceDocument } from "~/graphql/generated"
+import { GetFreeDateDocument } from "~/graphql/generated"
 import { $params, $path } from "remix-routes"
 import { useScrolledToBottom } from "~/hooks"
 import {
@@ -49,31 +49,28 @@ import { UserAvatar } from "~/features/user"
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const { id } = $params("/free-date/:id", params)
-	const { data } = await gqlFetch(request, GetDateExperienceDocument, { id })
+	const { data } = await gqlFetch(request, GetFreeDateDocument, { id })
 
-	if (!data?.dateExperience) {
+	if (!data?.freeDate) {
 		throw new Response("Not Found", { status: 404 })
 	}
 	const cookieHeader = request.headers.get("Cookie")
 	const cookie = await showShareScreen.parse(cookieHeader)
-	const { dateExperience } = data
+	const { freeDate } = data
 
-	if (
-		dateExperience.__typename === "DateExperience" &&
-		!dateExperience.isUserTastemaker
-	) {
+	if (freeDate.__typename === "FreeDate" && !freeDate.isUserTastemaker) {
 		mixpanel.track_pageview({
 			page: "Free Date",
-			location_names: dateExperience.stops.map((stop) => stop.location.name),
-			location_cities: dateExperience.cities.map((city) => city.name),
-			title: dateExperience.title,
-			tastemaker_id: dateExperience.tastemaker.user.id,
-			tastemaker_name: dateExperience.tastemaker.user.name,
-			tastemaker_username: dateExperience.tastemaker.user.username,
+			location_names: freeDate.stops.map((stop) => stop.location.name),
+			location_cities: freeDate.cities.map((city) => city.name),
+			title: freeDate.title,
+			tastemaker_id: freeDate.tastemaker.user.id,
+			tastemaker_name: freeDate.tastemaker.user.name,
+			tastemaker_username: freeDate.tastemaker.user.username,
 		})
 	}
 	return json({
-		dateExperience: data.dateExperience,
+		freeDate: data.freeDate,
 		showShareScreen: cookie ? (cookie.showShareScreen as boolean) : false,
 	})
 }
@@ -92,12 +89,12 @@ export async function action({ request, params }: DataFunctionArgs) {
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	if (!data?.dateExperience) {
+	if (!data?.freeDate) {
 		return [{ title: "Not Found" }, { status: "404" }]
 	} else {
-		return match(data.dateExperience)
+		return match(data.freeDate)
 			.with(
-				{ __typename: "DateExperience" },
+				{ __typename: "FreeDate" },
 				({
 					title,
 					description,
@@ -188,15 +185,12 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 const campaign = "tastemaker share date"
 
 export default function FreeDateIdeaRoute() {
-	const { dateExperience, showShareScreen } = useLoaderData<typeof loader>()
+	const { freeDate, showShareScreen } = useLoaderData<typeof loader>()
 	const params = useParams()
 	const { id } = $params("/free-date/:id", params)
 	const fetcher = useFetcher()
 	useScrolledToBottom(() => {
-		if (
-			dateExperience.__typename === "DateExperience" &&
-			!dateExperience.isUserTastemaker
-		) {
+		if (freeDate.__typename === "FreeDate" && !freeDate.isUserTastemaker) {
 			mixpanel.track("User Scrolled To Bottom", {
 				of: "Free Date Page",
 				free_date_id: id,
@@ -260,8 +254,8 @@ export default function FreeDateIdeaRoute() {
 					paddingY={"20px"}
 					width={"300px"}
 				>
-					{match(dateExperience)
-						.with({ __typename: "DateExperience" }, (date) => (
+					{match(freeDate)
+						.with({ __typename: "FreeDate" }, (date) => (
 							<VStack gap="4" width={"100%"} alignItems="flex-start">
 								<Image
 									src={date.thumbnail}
@@ -330,11 +324,11 @@ export default function FreeDateIdeaRoute() {
 			}}
 		>
 			<Outlet />
-			{match(dateExperience)
+			{match(freeDate)
 				.with({ __typename: "Error" }, () => (
 					<p className={css({ textStyle: "paragraph" })}>Not Found</p>
 				))
-				.with({ __typename: "DateExperience" }, (experience) => (
+				.with({ __typename: "FreeDate" }, (experience) => (
 					<VStack gap={4} alignItems={"flex-start"} width={"100%"}>
 						<Image
 							src={experience.thumbnail}

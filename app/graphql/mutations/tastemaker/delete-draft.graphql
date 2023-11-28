@@ -4,7 +4,7 @@ mutation DeleteFreeDateDraft($input: DeleteFreeDateDraftInput!) {
     ... on AuthError {
       message
     }
-    ... on DateExperienceDraft {
+    ... on FreeDateDraft {
       ...DraftCard
     }
     ... on Error {

@@ -1,4 +1,4 @@
-fragment FreeDateCard on DateExperience {
+fragment FreeDateCard on FreeDate {
     id
     title
 	retired

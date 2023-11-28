@@ -26,7 +26,7 @@ import {
 import {
 	CreateDateItineraryDocument,
 	CreateDateItineraryInput,
-	GetDateExperienceDocument,
+	GetFreeDateDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { useOpenedModal, useViewer } from "~/hooks"
@@ -86,19 +86,19 @@ const env = getEnv()
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
 	const { id } = $params("/free-date/:id/add-to-calendar", params)
-	const { data } = await gqlFetch(request, GetDateExperienceDocument, { id })
+	const { data } = await gqlFetch(request, GetFreeDateDocument, { id })
 
-	if (!data?.dateExperience) {
+	if (!data?.freeDate) {
 		throw new Response("Not Found", { status: 404 })
 	}
-	if (!(data.dateExperience.__typename === "DateExperience")) {
+	if (!(data.freeDate.__typename === "FreeDate")) {
 		throw new Response("Not Found", { status: 404 })
 	}
 	const link = `${env.FRONTEND_URL}${$path("/free-date/:id", {
-		id: data.dateExperience.id,
+		id: data.freeDate.id,
 	})}`
 	return json({
-		dateExperience: data.dateExperience,
+		freeDate: data.freeDate,
 		link,
 	})
 }
@@ -123,7 +123,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 			.setZone(timeZone)
 			.toISO() as string,
 		guest: guest?.email && guest.email.length > 0 ? guest : undefined,
-		experienceId: id,
+		freeDateId: id,
 	}
 
 	const { data } = await gqlFetch(request, CreateDateItineraryDocument, {
@@ -133,7 +133,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	return match(data?.createDateItinerary)
 		.with({ __typename: "PlannedDate" }, (plannedDate) => {
 			const date = DateTime.fromISO(plannedDate.plannedTime)
-			const experience = plannedDate.experience
+			const experience = plannedDate.freeDate
 			mixpanel.track("Date Planned", {
 				last_planned_date_at: new Date(),
 				day_of_planned_date: date.weekdayLong,
@@ -169,7 +169,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 const campaign = "date itinerary success"
 
 export default function AddToCalendarPage() {
-	const { dateExperience, link } = useLoaderData<typeof loader>()
+	const { freeDate, link } = useLoaderData<typeof loader>()
 	const { isLoggedIn } = useViewer()
 	const actionData = useActionData<typeof action>()
 	useOpenedModal("create-date-itinerary")
@@ -178,7 +178,7 @@ export default function AddToCalendarPage() {
 			<Modal>
 				<Modal.Header
 					title={"Add to calendar"}
-					to={$path("/free-date/:id", { id: dateExperience.id })}
+					to={$path("/free-date/:id", { id: freeDate.id })}
 				/>
 				<Modal.Body>
 					{actionData?.success ? (
@@ -272,9 +272,9 @@ export default function AddToCalendarPage() {
 		</ValidatedForm>
 	) : (
 		<AuthModal
-			onCloseLink={$path("/free-date/:id", { id: dateExperience.id })}
+			onCloseLink={$path("/free-date/:id", { id: freeDate.id })}
 			redirectTo={$path("/free-date/:id/add-to-calendar", {
-				id: dateExperience.id,
+				id: freeDate.id,
 			})}
 		/>
 	)

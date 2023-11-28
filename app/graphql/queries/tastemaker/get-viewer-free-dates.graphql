@@ -3,7 +3,7 @@ query GetViewerFreeDates($retired: Boolean!) {
 	  id
     tastemaker {
         id
-        experiences (retired: $retired) {
+        freeDates (retired: $retired) {
           id
           ...FreeDateCard
         }

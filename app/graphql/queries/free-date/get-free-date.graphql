@@ -1,12 +1,21 @@
-query GetEditDateExperience($id: String!) {
-    getEditDateExperience(id: $id) {
+query GetFreeDate($id: String!) {
+    freeDate(id: $id) {
       __typename
-      ... on DateExperience {
+      ... on FreeDate {
         id
         title
         description
         thumbnail
+        retired
         nsfw
+        createdAt
+        updatedAt
+        isUserTastemaker
+        cities {
+          id 
+          nameAndState
+          name
+        }
         tags {
           ...Tags
         }

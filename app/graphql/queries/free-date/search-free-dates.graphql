@@ -1,0 +1,9 @@
+query FreeDates($query: String, $timesOfDay: [String!], $nsfw: String, $cities: [String!]) {
+  freeDates(query: $query, timesOfDay: $timesOfDay, nsfw: $nsfw, cities: $cities) {
+    edges {
+      node {
+        ...FreeDateCard
+      }
+    }
+  }
+}

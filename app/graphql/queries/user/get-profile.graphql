@@ -5,7 +5,7 @@ query GetProfile($username: String!) {
       id
       ...UserProfile
     }
-    ... on EntityNotFoundError {
+    ... on Error {
       message
     }
   }

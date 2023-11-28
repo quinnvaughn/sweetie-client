@@ -13,7 +13,7 @@ import { z } from "zod"
 import { FreeDateList } from "~/features/free-date"
 import { ExploreDateIdeas, SearchBar } from "~/features/search"
 import { PageContainer } from "~/features/ui"
-import { DateExperiencesDocument } from "~/graphql/generated"
+import { FreeDatesDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { mixpanel } from "~/lib"
 
@@ -79,14 +79,14 @@ export async function loader({ request }: DataFunctionArgs) {
 	if (cleaned === $path("/search")) {
 		return redirect($path("/"))
 	}
-	const { data } = await gqlFetch(request, DateExperiencesDocument, {
+	const { data } = await gqlFetch(request, FreeDatesDocument, {
 		nsfw: parsedParams.nsfw,
 		query: parsedParams.query,
 		cities: parsedParams.cities,
 		timesOfDay: parsedParams.timesOfDay,
 	})
-	if (data?.dateExperiences) {
-		const { edges } = data.dateExperiences
+	if (data?.freeDates) {
+		const { edges } = data.freeDates
 		mixpanel.track("User Searched", {
 			for: "Free Date",
 			cities: parsedParams.cities,
@@ -214,7 +214,7 @@ export default function SearchRoute() {
 			<ExploreDateIdeas />
 			<SearchBar />
 			<FreeDateList
-				freeDates={data.dateExperiences.edges.map(({ node }) => ({
+				freeDates={data.freeDates.edges.map(({ node }) => ({
 					...node,
 				}))}
 			/>

@@ -13,7 +13,7 @@ mutation UpdateFreeDate($input: UpdateFreeDateInput!) {
 			... on Error {
 			message
 			}
-			... on DateExperience {
+			... on FreeDate {
 			id
 			title
 			description

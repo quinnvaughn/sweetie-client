@@ -19,7 +19,7 @@ import {
 } from "~/features/free-date"
 import { PageContainer } from "~/features/ui"
 import {
-	GetEditDateExperienceDocument,
+	GetEditFreeDateDocument,
 	UpdateDateStopInput,
 	UpdateFreeDateDocument,
 	ViewerIsLoggedInDocument,
@@ -60,7 +60,7 @@ export async function action({ request, params }: DataFunctionArgs) {
 			validationError(mapFieldErrorToValidationError(fieldErrors)),
 		)
 		.with(
-			{ __typename: "DateExperience" },
+			{ __typename: "FreeDate" },
 			({ id, stops, timesOfDay, tags, nsfw }) => {
 				mixpanel.track("Free Date Updated", {
 					free_date_id: id,
@@ -85,20 +85,20 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 	}
 	const { id } = $params("/free-date/edit/:id", params)
 
-	const { data } = await gqlFetch(request, GetEditDateExperienceDocument, {
+	const { data } = await gqlFetch(request, GetEditFreeDateDocument, {
 		id,
 	})
 
-	if (!data?.getEditDateExperience) {
+	if (!data?.getEditFreeDate) {
 		return json({ error: "Free date not found." })
 	}
 
-	if (data.getEditDateExperience.__typename !== "DateExperience") {
-		return json({ error: data.getEditDateExperience.message })
+	if (data.getEditFreeDate.__typename !== "FreeDate") {
+		return json({ error: data.getEditFreeDate.message })
 	}
 
 	const { description, nsfw, stops, tags, thumbnail, timesOfDay, title } =
-		data.getEditDateExperience
+		data.getEditFreeDate
 
 	return json({
 		error: null,

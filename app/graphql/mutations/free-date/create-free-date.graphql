@@ -1,5 +1,5 @@
-mutation CreateFreeDate($input: CreateDateExperienceInput!) {
-    createDateExperience(input: $input) {
+mutation CreateFreeDate($input: CreateFreeDateInput!) {
+    createFreeDate(input: $input) {
       __typename
       ... on AuthError {
         message
@@ -7,7 +7,7 @@ mutation CreateFreeDate($input: CreateDateExperienceInput!) {
       ... on Error {
         message
       }
-      ... on DateExperience {
+      ... on FreeDate {
 		    id
         ...FreeDateCard
       }
