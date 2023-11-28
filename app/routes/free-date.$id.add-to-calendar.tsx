@@ -80,21 +80,12 @@ const validator = withZod(
 			(data) => DateTime.fromISO(data.date).isValid,
 			"Must be a valid date",
 		)
-		.refine((data) => {
-			console.log({ zone: data.timeZone })
-			console.log(
-				"first date",
-				DateTime.fromISO(data.date).setZone(data.timeZone).startOf("day"),
-			)
-			console.log(
-				"second date",
+		.refine(
+			(data) =>
+				DateTime.fromISO(data.date).startOf("day") >=
 				DateTime.now().setZone(data.timeZone).startOf("day"),
-			)
-			return (
-				DateTime.fromISO(data.date).setZone(data.timeZone).startOf("day") >=
-				DateTime.now().setZone(data.timeZone).startOf("day")
-			)
-		}, "Must be a future date"),
+			"Must be a future date",
+		),
 )
 
 const env = getEnv()
