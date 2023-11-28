@@ -62,7 +62,7 @@ export default function DateTimePicker({
 					padding: "8px",
 					position: "relative",
 					width: "100%",
-					shadow: 'sm',
+					shadow: "sm",
 				})}
 				ref={containerRef}
 			>
@@ -93,11 +93,9 @@ export default function DateTimePicker({
 						}}
 					/>
 				)}
-				<input
-					type="hidden"
-					name={name}
-					value={currentDate.toISODate() as string}
-				/>
+				<div className={css({ width: 0, overflow: "hidden" })}>
+					<input name={name} value={currentDate.toISODate() as string} />
+				</div>
 			</div>
 		</VStack>
 	)
