@@ -47,7 +47,7 @@ export async function action({ request }: DataFunctionArgs) {
 			})
 		})
 		.with({ __typename: "User" }, ({ id, email, name }) => {
-			Mixpanel.
+			// Mixpanel.
 			// mixpanel.identify(id)
 			// mixpanel.track("User Logged In")
 			// mixpanel.people.set({
