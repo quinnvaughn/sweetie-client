@@ -76,15 +76,23 @@ const validator = withZod(
 				),
 			timeZone: z.string(),
 		})
+		.refine((data) => DateTime.fromISO(data.date).isValid, {
+			path: ["date"],
+			message: "Must be a valid date",
+		})
 		.refine(
-			(data) => DateTime.fromISO(data.date).isValid,
-			"Must be a valid date",
-		)
-		.refine(
-			(data) =>
-				DateTime.fromISO(data.date).startOf("day") >=
-				DateTime.now().setZone(data.timeZone).startOf("day"),
-			"Must be a future date",
+			(data) => {
+				console.log("first date", DateTime.fromISO(data.date).startOf("day"))
+				console.log(
+					"second date",
+					DateTime.now().setZone(data.timeZone).startOf("day"),
+				)
+				return (
+					DateTime.fromISO(data.date).startOf("day") >=
+					DateTime.now().setZone(data.timeZone).startOf("day")
+				)
+			},
+			{ path: ["date"], message: "Must be a date in the future" },
 		),
 )
 
