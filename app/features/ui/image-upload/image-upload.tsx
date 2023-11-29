@@ -115,7 +115,7 @@ export function ImageUpload({
 					{required && <span className={css({ textStyle: "error" })}>*</span>}
 				</span>
 			</label>
-			<div className={css({ width: 0, overflow: "hidden" })}>
+			<div className={css({ width: 0, overflow: "hidden", height: 0 })}>
 				<input
 					{...getInputProps({
 						value: img,

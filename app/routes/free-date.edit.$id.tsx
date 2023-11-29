@@ -37,11 +37,11 @@ import { match } from "ts-pattern"
 export async function action({ request, params }: DataFunctionArgs) {
 	const { id } = $params("/free-date/edit/:id", params)
 	const formData = await request.formData()
+	console.log("tags", formData.getAll("tags"))
 	const result = await freeDateValidator.validate(formData)
 	if (result.error) {
 		return validationError(result.error)
 	}
-
 	const { data } = await gqlFetch(request, UpdateFreeDateDocument, {
 		input: {
 			id,

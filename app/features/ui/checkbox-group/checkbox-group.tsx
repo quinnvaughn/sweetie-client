@@ -2,7 +2,7 @@ import { HStack } from "~/styled-system/jsx"
 import { Checkbox } from "../checkbox"
 import { css } from "~/styled-system/css"
 import { SystemStyleObject } from "@pandacss/dev"
-import { useControlField, useField } from "remix-validated-form"
+import { useField } from "remix-validated-form"
 
 type Props = {
 	name: string

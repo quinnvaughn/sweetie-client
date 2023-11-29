@@ -1,6 +1,7 @@
 {
 	"type": "module",
 	"scripts": {
+		"precommit": "npx @biomejs/biome format --write ./app",
 		"routes": "remix-routes",
 		"build": "remix-routes && remix build",
 		"dev": "concurrently \"remix-routes -w\" \"yarn dev:node\"",

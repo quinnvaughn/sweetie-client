@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { FiPlus, FiX } from "react-icons/fi/index.js"
 import { useControlField, useField } from "remix-validated-form"
 import { css } from "~/styled-system/css"
@@ -11,8 +12,14 @@ type Props = {
 
 export function TagsInput({ tagsName, textName, label }: Props) {
 	const { getInputProps, error } = useField(textName)
+	const { error: tagsError } = useField(tagsName)
 	const [text, setText] = useControlField<string>(textName)
 	const [tags, setTags] = useControlField<string[]>(tagsName)
+
+	useEffect(() => {
+		console.log("tags", tags)
+	}, [tags])
+
 	return (
 		<VStack gap={2} alignItems={"flex-start"}>
 			<VStack gap={1} alignItems={"flex-start"}>
@@ -79,8 +86,23 @@ export function TagsInput({ tagsName, textName, label }: Props) {
 						<FiPlus className={css({ color: "white" })} size={22} />
 					</button>
 				</div>
-				<input type="hidden" name={tagsName} value={tags} />
-				{error && <p className={css({ textStyle: "error" })}>{error}</p>}
+				<div className={css({ width: 0, overflow: "hidden", height: 0 })}>
+					<input name={tagsName} />
+				</div>
+				{tags.map((tag) => (
+					<input
+						key={tag}
+						type="hidden"
+						name={tagsName}
+						value={tag}
+						onChange={() => {}}
+					/>
+				))}
+				{error ? (
+					<p className={css({ textStyle: "error" })}>{error}</p>
+				) : tagsError ? (
+					<p className={css({ textStyle: "error" })}>{tagsError}</p>
+				) : null}
 			</VStack>
 			<div className={css({ display: "flex", gap: "8px", flexWrap: "wrap" })}>
 				{tags.map((tag) => (

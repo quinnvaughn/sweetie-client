@@ -55,7 +55,14 @@ const schema = z.object({
 			},
 			{ message: "Must select at least one time of day." },
 		),
-	tags: zfd.repeatableOfType(z.string()).optional(),
+	tags: z
+		.array(z.string())
+		.or(z.string())
+		.optional()
+		.transform((data) => {
+			if (typeof data === "string") return [data]
+			return data
+		}),
 	stops: z.array(
 		z.object({
 			title: z

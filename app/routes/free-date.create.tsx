@@ -20,12 +20,7 @@ import {
 	ViewerIsLoggedInDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import {
-	isTypeofFieldError,
-	mapFieldErrorToValidationError,
-	mixpanel,
-	omit,
-} from "~/lib"
+import { isTypeofFieldError, mapFieldErrorToValidationError, omit } from "~/lib"
 
 export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
@@ -33,6 +28,7 @@ export async function action({ request }: DataFunctionArgs) {
 	if (result.error) {
 		return validationError(result.error)
 	}
+	console.log("tags", result.data.tags)
 	const { data } = await gqlFetch(request, CreateFreeDateDocument, {
 		input: {
 			...omit(result.data, "tagText", "tags", "nsfw", "stops"),
