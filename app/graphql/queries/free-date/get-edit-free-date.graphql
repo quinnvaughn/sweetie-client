@@ -25,5 +25,8 @@ query GetEditFreeDate($id: String!) {
       ... on Error {
         message
       }
+      ... on AuthError {
+        message
+      }
     }
   }

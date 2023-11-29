@@ -12,7 +12,7 @@ import {
 } from "@remix-run/react"
 import { $params, $path } from "remix-routes"
 import { setFormDefaults, validationError } from "remix-validated-form"
-import { match } from "ts-pattern"
+import { P, match } from "ts-pattern"
 import {
 	FreeDateForm,
 	FreeDateFormValues,
@@ -72,39 +72,37 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 		id,
 	})
 
-	if (!data?.getEditFreeDate) {
-		return json({ error: "Free date not found." })
-	}
-
-	if (data.getEditFreeDate.__typename !== "FreeDate") {
-		return json({ error: data.getEditFreeDate.message })
-	}
-
-	const { description, nsfw, stops, tags, thumbnail, timesOfDay, title } =
-		data.getEditFreeDate
-
-	return json({
-		error: null,
-		...setFormDefaults<FreeDateFormValues>("edit-free-date-form", {
-			description,
-			thumbnail,
-			nsfw: nsfw ? "true" : "false",
-			stops: stops.map(({ title, content, location }) => ({
-				title,
-				content,
-				location: {
-					id: location.id,
-					name: location.name,
-				},
-			})),
-			tags: tags.map(({ name }) => name),
-			tagText: "",
-			timesOfDay: timesOfDay.map(
-				({ name }) => name,
-			) as FreeDateFormValues["timesOfDay"],
-			title,
-		}),
-	})
+	return match(data?.getEditFreeDate)
+		.with(P.nullish, () => json({ error: "Free date not found." }))
+		.with({ __typename: "AuthError" }, () => redirect($path("/login")))
+		.with({ __typename: "Error" }, ({ message }) => json({ error: message }))
+		.with(
+			{ __typename: "FreeDate" },
+			({ description, nsfw, stops, tags, thumbnail, timesOfDay, title }) =>
+				json({
+					error: null,
+					...setFormDefaults<FreeDateFormValues>("edit-free-date-form", {
+						description,
+						thumbnail,
+						nsfw: nsfw ? "true" : "false",
+						stops: stops.map(({ title, content, location }) => ({
+							title,
+							content,
+							location: {
+								id: location.id,
+								name: location.name,
+							},
+						})),
+						tags: tags.map(({ name }) => name),
+						tagText: "",
+						timesOfDay: timesOfDay.map(
+							({ name }) => name,
+						) as FreeDateFormValues["timesOfDay"],
+						title,
+					}),
+				}),
+		)
+		.otherwise(() => json({ error: "Something went wrong." }))
 }
 
 export default function EditFreeDateRoute() {

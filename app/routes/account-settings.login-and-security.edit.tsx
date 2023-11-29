@@ -13,11 +13,9 @@ import {
 } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
-import { Input, Modal, Textarea } from "~/features/ui"
+import { Input, Modal } from "~/features/ui"
 import {
-	GetViewerInfoDocument,
 	UpdatePasswordDocument,
-	UpdateUserProfileDocument,
 	ViewerIsLoggedInDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
@@ -74,9 +72,7 @@ export async function action({ request }: DataFunctionArgs) {
 			redirect($path("/account-settings/login-and-security")),
 		)
 		.otherwise(() =>
-			json(
-				{ error: "Something happened. Please try again later." }
-			),
+			json({ error: "Something happened. Please try again later." }),
 		)
 }
 
