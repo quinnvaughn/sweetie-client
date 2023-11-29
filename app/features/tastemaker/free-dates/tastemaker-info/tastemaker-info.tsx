@@ -28,6 +28,7 @@ export function TastemakerInfo({ tastemaker }: Props) {
 						}}
 					/>
 					<Link
+						prefetch="intent"
 						to={$path("/user/:username", {
 							username: tastemaker.user.username,
 						})}
