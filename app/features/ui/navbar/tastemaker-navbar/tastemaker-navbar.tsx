@@ -1,11 +1,11 @@
+import { Link, useLocation } from "@remix-run/react"
 import { useState } from "react"
-import { Navbar } from ".."
-import { HStack } from "~/styled-system/jsx"
 // import { useViewer } from "~/hooks";
 import { $path } from "remix-routes"
-import { Link, useLocation } from "@remix-run/react"
-import { Desktop, Mobile } from "../.."
 import { css } from "~/styled-system/css"
+import { HStack } from "~/styled-system/jsx"
+import { Navbar } from ".."
+import { Desktop, Mobile } from "../.."
 
 const linkAsButton = css({
 	backgroundColor: "primary",
@@ -39,6 +39,7 @@ export function TastemakerNavbar() {
 							<Navbar.HamburgerDropdown>
 								{isOnFreeDates && (
 									<Link
+										prefetch="intent"
 										className={linkAsButton}
 										to={$path("/free-date/create")}
 									>
@@ -166,7 +167,11 @@ export function TastemakerNavbar() {
 						<Navbar.ButtonAsLink action={$path("/api/logout")} text="Log out" />
 					</HStack>
 					{isOnFreeDates && (
-						<Link className={linkAsButton} to={$path("/free-date/create")}>
+						<Link
+							prefetch="intent"
+							className={linkAsButton}
+							to={$path("/free-date/create")}
+						>
 							Create new date
 						</Link>
 					)}

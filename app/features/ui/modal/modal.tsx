@@ -1,13 +1,22 @@
-import { ModalHeader } from "./header"
+import { useEffect } from "react"
+import { css } from "~/styled-system/css"
 import { ModalBody } from "./body"
 import { ModalFooter } from "./footer"
-import { css } from "~/styled-system/css"
+import { ModalHeader } from "./header"
 
 type Props = {
 	children?: React.ReactNode
 }
 
 export function Modal({ children }: Props) {
+	useEffect(() => {
+		document.body.style.overflow = "hidden"
+
+		return () => {
+			document.body.style.overflow = "auto"
+		}
+	}, [])
+
 	return (
 		<div
 			className={css({

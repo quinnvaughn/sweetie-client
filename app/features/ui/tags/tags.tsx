@@ -42,6 +42,7 @@ export function Tags({ tags }: TagsProps) {
 						)}
 						to={$path("/search", { query: tag.name })}
 						key={tag.id}
+						prefetch="intent"
 					>
 						#{tag.name}
 					</Link>

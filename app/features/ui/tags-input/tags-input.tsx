@@ -1,4 +1,3 @@
-import { useEffect } from "react"
 import { FiPlus, FiX } from "react-icons/fi/index.js"
 import { useControlField, useField } from "remix-validated-form"
 import { css } from "~/styled-system/css"
@@ -15,10 +14,6 @@ export function TagsInput({ tagsName, textName, label }: Props) {
 	const { error: tagsError } = useField(tagsName)
 	const [text, setText] = useControlField<string>(textName)
 	const [tags, setTags] = useControlField<string[]>(tagsName)
-
-	useEffect(() => {
-		console.log("tags", tags)
-	}, [tags])
 
 	return (
 		<VStack gap={2} alignItems={"flex-start"}>

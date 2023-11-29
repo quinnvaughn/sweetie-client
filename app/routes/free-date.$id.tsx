@@ -404,6 +404,7 @@ export default function FreeDateIdeaRoute() {
 															textStyle: "paragraph",
 															fontWeight: "bold",
 														})}
+														prefetch="intent"
 														to={$path("/search", {
 															cities: [city.nameAndState],
 														})}

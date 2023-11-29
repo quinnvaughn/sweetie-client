@@ -35,7 +35,11 @@ type Props = {
 export function NavbarLink({ to, text }: Props) {
 	const { pathname } = useLocation()
 	return (
-		<Link className={link({ active: pathname.includes(to) })} to={to}>
+		<Link
+			prefetch="intent"
+			className={link({ active: pathname.includes(to) })}
+			to={to}
+		>
 			{text}
 		</Link>
 	)
