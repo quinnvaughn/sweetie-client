@@ -46,7 +46,6 @@ export const links: LinksFunction = () => [
 ]
 
 export async function loader({ request }: DataFunctionArgs) {
-	console.log("fake.")
 	const { data } = await gqlFetch(request, ViewerIsLoggedInDocument)
 	const env = process.env
 	return json({
