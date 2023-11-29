@@ -1,19 +1,18 @@
+import { LoaderFunctionArgs, json } from "@remix-run/node"
+import { useLoaderData } from "@remix-run/react"
+import { $params } from "remix-routes"
+import { P, match } from "ts-pattern"
 import { Desktop, Mobile, PageContainer } from "~/features/ui"
 import { UserProfileDesktop, UserProfileMobile } from "~/features/user"
-import { P, match } from "ts-pattern"
-import { useLoaderData } from "@remix-run/react"
-import { gqlFetch } from "~/graphql/graphql"
 import { GetProfileDocument } from "~/graphql/generated"
-import { LoaderFunctionArgs, json } from "@remix-run/node"
-import { $params } from "remix-routes"
-import { usePageView } from "~/hooks"
+import { gqlFetch } from "~/graphql/graphql"
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
 	const { username } = $params("/user/:username", params)
 	const { data } = await gqlFetch(request, GetProfileDocument, { username })
 
 	return match(data?.user)
-		.with(P.nullish, { __typename: "EntityNotFoundError" }, () => {
+		.with(P.nullish, { __typename: "Error" }, () => {
 			throw new Response("Not Found", { status: 404 })
 		})
 		.with({ __typename: "User" }, (user) => {
@@ -26,7 +25,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export default function UserProfileRoute() {
 	const { user } = useLoaderData<typeof loader>()
-	usePageView("User Profile")
 	return (
 		<PageContainer
 			width={{ base: "100%", md: 900, lg: 1200 }}

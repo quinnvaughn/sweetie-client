@@ -46,6 +46,7 @@ export async function gqlFetch<TData = any, TVariables = Record<string, any>>(
 					cookie: request.headers.get("cookie") || "",
 					"Content-Type": "application/json",
 					"Access-Control-Allow-Origin": "*",
+					"User-Agent": request.headers.get("User-Agent") || "",
 				},
 				method: "POST",
 			},
@@ -53,6 +54,7 @@ export async function gqlFetch<TData = any, TVariables = Record<string, any>>(
 
 		if (response.ok) {
 			const value = await response.json()
+
 			return { ...value, response }
 		}
 		return {

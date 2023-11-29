@@ -1,8 +1,9 @@
-import { ShareButton } from "./share-button"
-import { generateUTMLink, mixpanel } from "~/lib"
-import { FiMessageSquare } from "react-icons/fi/index.js"
-import { css } from "~/styled-system/css"
 import { SystemStyleObject } from "@pandacss/dev"
+import { FiMessageSquare } from "react-icons/fi/index.js"
+import { useTrack } from "~/hooks"
+import { generateUTMLink } from "~/lib"
+import { css } from "~/styled-system/css"
+import { ShareButton } from "./share-button"
 
 type Props = {
 	campaign: string
@@ -15,6 +16,7 @@ export function MessagesShareButton({
 	link,
 	css: cssProp = {},
 }: Props) {
+	const track = useTrack()
 	return (
 		<ShareButton
 			css={cssProp}
@@ -26,7 +28,7 @@ export function MessagesShareButton({
 					medium: "share-button",
 					campaign,
 				})
-				mixpanel.track("User Shared", {
+				track("User Shared", {
 					share_method: "sms",
 					share_medium: "share-button",
 					share_campaign: campaign,

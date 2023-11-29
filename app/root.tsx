@@ -1,4 +1,10 @@
 import {
+	DataFunctionArgs,
+	LinksFunction,
+	MetaFunction,
+	json,
+} from "@remix-run/node"
+import {
 	Links,
 	LiveReload,
 	Meta,
@@ -9,18 +15,12 @@ import {
 	useLoaderData,
 	useRouteError,
 } from "@remix-run/react"
-import styles from "./index.css"
-import {
-	DataFunctionArgs,
-	LinksFunction,
-	MetaFunction,
-	json,
-} from "@remix-run/node"
-import { gqlFetch } from "./graphql/graphql"
-import { ViewerIsLoggedInDocument } from "./graphql/generated"
 import { createPortal } from "react-dom"
-import { PageContainer, ToastContainer } from "./features/ui"
 import { ClientOnly } from "remix-utils/client-only"
+import { PageContainer, ToastContainer } from "./features/ui"
+import { ViewerIsLoggedInDocument } from "./graphql/generated"
+import { gqlFetch } from "./graphql/graphql"
+import styles from "./index.css"
 import { css } from "./styled-system/css"
 import { VStack } from "./styled-system/jsx"
 
@@ -52,8 +52,6 @@ export async function loader({ request }: DataFunctionArgs) {
 		data,
 		ENV: {
 			GOOGLE_MAPS_API_KEY: env.GOOGLE_MAPS_API_KEY,
-			MIXPANEL_TOKEN: env.MIXPANEL_TOKEN,
-			MIXPANEL_PROXY: env.MIXPANEL_PROXY,
 			GRAPHQL_ENDPOINT: env.GRAPHQL_ENDPOINT,
 			FRONTEND_URL: env.FRONTEND_URL,
 			NODE_ENV: env.NODE_ENV,

@@ -1,7 +1,8 @@
-import { ShareButton } from "./share-button"
-import { generateUTMLink, mixpanel } from "~/lib"
-import { FaTwitter } from "react-icons/fa/index.js"
 import { SystemStyleObject } from "@pandacss/dev"
+import { FaTwitter } from "react-icons/fa/index.js"
+import { useTrack } from "~/hooks"
+import { generateUTMLink } from "~/lib"
+import { ShareButton } from "./share-button"
 
 type Props = {
 	campaign: string
@@ -14,6 +15,7 @@ export function TwitterShareButton({
 	link,
 	css: cssProp = {},
 }: Props) {
+	const track = useTrack()
 	return (
 		<ShareButton
 			css={cssProp}
@@ -25,7 +27,7 @@ export function TwitterShareButton({
 					medium: "share-button",
 					campaign,
 				})
-				mixpanel.track("User Shared", {
+				track("User Shared", {
 					share_method: "twitter",
 					share_medium: "share-button",
 					share_campaign: campaign,

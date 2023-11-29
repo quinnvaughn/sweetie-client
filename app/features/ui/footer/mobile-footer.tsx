@@ -1,7 +1,7 @@
 import { css, cva } from "~/styled-system/css"
 import { SocialLinks } from "../social-links"
 import { DateTime } from "luxon"
-import { useLocation } from "react-router-dom"
+import { useLocation } from "@remix-run/react"
 import { HStack } from "~/styled-system/jsx"
 
 const mobileContainer = cva({

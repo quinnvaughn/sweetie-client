@@ -8,14 +8,13 @@ import {
 import { useLoaderData } from "@remix-run/react"
 import queryString from "query-string"
 import { $path } from "remix-routes"
-import { match, P } from "ts-pattern"
+import { P, match } from "ts-pattern"
 import { z } from "zod"
 import { FreeDateList } from "~/features/free-date"
 import { ExploreDateIdeas, SearchBar } from "~/features/search"
 import { PageContainer } from "~/features/ui"
 import { FreeDatesDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import { mixpanel } from "~/lib"
 
 const SearchParamsSchema = z.object({
 	query: z.string().optional(),
@@ -85,18 +84,6 @@ export async function loader({ request }: DataFunctionArgs) {
 		cities: parsedParams.cities,
 		timesOfDay: parsedParams.timesOfDay,
 	})
-	if (data?.freeDates) {
-		const { edges } = data.freeDates
-		// mixpanel.track("User Searched", {
-		// 	for: "Free Date",
-		// 	cities: parsedParams.cities,
-		// 	nsfw: parsedParams.nsfw === "on",
-		// 	timesOfDay: parsedParams.timesOfDay,
-		// 	text: parsedParams.query,
-		// 	num_results: edges.length,
-		// 	has_results: edges.length > 0,
-		// })
-	}
 
 	return json(data)
 }

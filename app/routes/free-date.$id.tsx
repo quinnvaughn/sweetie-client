@@ -5,11 +5,6 @@ import {
 	json,
 	redirect,
 } from "@remix-run/node"
-import { match } from "ts-pattern"
-import { gqlFetch } from "~/graphql/graphql"
-import { GetFreeDateDocument } from "~/graphql/generated"
-import { $params, $path } from "remix-routes"
-import { useScrolledToBottom } from "~/hooks"
 import {
 	Link,
 	Outlet,
@@ -17,7 +12,21 @@ import {
 	useLoaderData,
 	useParams,
 } from "@remix-run/react"
+import { FiX } from "react-icons/fi/index.js"
+import { IoIosCheckmarkCircleOutline } from "react-icons/io/index.js"
+import { $params, $path } from "remix-routes"
+import { ClientOnly } from "remix-utils/client-only"
+import { match } from "ts-pattern"
 import { showShareScreen } from "~/cookies.server"
+import { FloatingAddToCalendar } from "~/features/date-itinerary"
+import { DateStop } from "~/features/date-stop"
+import {
+	DateLocationsMap,
+	EmailItineraryRightSide,
+	NSFWTag,
+	TimeOfTheDay,
+} from "~/features/free-date"
+import { TastemakerInfo } from "~/features/tastemaker"
 import {
 	CopyLinkShareButton,
 	Desktop,
@@ -29,23 +38,14 @@ import {
 	Tags,
 	TwitterShareButton,
 } from "~/features/ui"
-import { css } from "~/styled-system/css"
-import { divider, flex } from "~/styled-system/patterns"
-import { FiX } from "react-icons/fi/index.js"
-import { HStack, VStack } from "~/styled-system/jsx"
-import { IoIosCheckmarkCircleOutline } from "react-icons/io/index.js"
-import {
-	DateLocationsMap,
-	EmailItineraryRightSide,
-	NSFWTag,
-	TimeOfTheDay,
-} from "~/features/free-date"
-import { FloatingAddToCalendar } from "~/features/date-itinerary"
-import { TastemakerInfo } from "~/features/tastemaker"
-import { DateStop } from "~/features/date-stop"
-import { ClientOnly } from "remix-utils/client-only"
-import { mixpanel, singularOrPlural } from "~/lib"
 import { UserAvatar } from "~/features/user"
+import { GetFreeDateDocument } from "~/graphql/generated"
+import { gqlFetch } from "~/graphql/graphql"
+import { useScrolledToBottom, useTrack } from "~/hooks"
+import { singularOrPlural } from "~/lib"
+import { css } from "~/styled-system/css"
+import { HStack, VStack } from "~/styled-system/jsx"
+import { divider, flex } from "~/styled-system/patterns"
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const { id } = $params("/free-date/:id", params)
@@ -56,19 +56,6 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 	}
 	const cookieHeader = request.headers.get("Cookie")
 	const cookie = await showShareScreen.parse(cookieHeader)
-	const { freeDate } = data
-
-	if (freeDate.__typename === "FreeDate" && !freeDate.isUserTastemaker) {
-		// mixpanel.track_pageview({
-		// 	page: "Free Date",
-		// 	location_names: freeDate.stops.map((stop) => stop.location.name),
-		// 	location_cities: freeDate.cities.map((city) => city.name),
-		// 	title: freeDate.title,
-		// 	tastemaker_id: freeDate.tastemaker.user.id,
-		// 	tastemaker_name: freeDate.tastemaker.user.name,
-		// 	tastemaker_username: freeDate.tastemaker.user.username,
-		// })
-	}
 	return json({
 		freeDate: data.freeDate,
 		showShareScreen: cookie ? (cookie.showShareScreen as boolean) : false,
@@ -189,9 +176,10 @@ export default function FreeDateIdeaRoute() {
 	const params = useParams()
 	const { id } = $params("/free-date/:id", params)
 	const fetcher = useFetcher()
+	const track = useTrack()
 	useScrolledToBottom(() => {
 		if (freeDate.__typename === "FreeDate" && !freeDate.isUserTastemaker) {
-			mixpanel.track("User Scrolled To Bottom", {
+			track("User Scrolled To Bottom", {
 				of: "Free Date Page",
 				free_date_id: id,
 			})

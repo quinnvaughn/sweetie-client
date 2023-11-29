@@ -1,8 +1,9 @@
-import { ShareButton } from "./share-button"
-import { generateUTMLink, mixpanel } from "~/lib"
-import { FiMail } from "react-icons/fi/index.js"
-import { css } from "~/styled-system/css"
 import { SystemStyleObject } from "@pandacss/dev"
+import { FiMail } from "react-icons/fi/index.js"
+import { useTrack } from "~/hooks"
+import { generateUTMLink } from "~/lib"
+import { css } from "~/styled-system/css"
+import { ShareButton } from "./share-button"
 
 type Props = {
 	campaign: string
@@ -11,6 +12,7 @@ type Props = {
 }
 
 export function EmailShareButton({ campaign, link, css: cssProp = {} }: Props) {
+	const track = useTrack()
 	return (
 		<ShareButton
 			css={cssProp}
@@ -22,7 +24,7 @@ export function EmailShareButton({ campaign, link, css: cssProp = {} }: Props) {
 					medium: "share-button",
 					campaign,
 				})
-				mixpanel.track("User Shared", {
+				track("User Shared", {
 					share_method: "email",
 					share_medium: "share-button",
 					share_campaign: campaign,

@@ -10,7 +10,6 @@ import { RegisterDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
-import { mixpanel } from "~/lib"
 
 const validator = withZod(
 	z.object({
@@ -45,14 +44,7 @@ export async function action({ request }: DataFunctionArgs) {
 				),
 			})
 		})
-		.with({ __typename: "User" }, ({ id, email, name }) => {
-			// mixpanel.identify(id)
-			// mixpanel.track("User Signed Up")
-			// mixpanel.people.set_once({
-			// 	$email: email,
-			// 	$name: name,
-			// 	$created: new Date(),
-			// })
+		.with({ __typename: "User" }, () => {
 			if (formData.get("redirectTo")) {
 				return redirect(formData.get("redirectTo") as string, {
 					headers: {

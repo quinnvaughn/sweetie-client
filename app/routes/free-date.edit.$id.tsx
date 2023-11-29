@@ -12,6 +12,7 @@ import {
 } from "@remix-run/react"
 import { $params, $path } from "remix-routes"
 import { setFormDefaults, validationError } from "remix-validated-form"
+import { match } from "ts-pattern"
 import {
 	FreeDateForm,
 	FreeDateFormValues,
@@ -25,19 +26,12 @@ import {
 	ViewerIsLoggedInDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
+import { isTypeofFieldError, mapFieldErrorToValidationError, omit } from "~/lib"
 import { css } from "~/styled-system/css"
-import {
-	isTypeofFieldError,
-	mapFieldErrorToValidationError,
-	mixpanel,
-	omit,
-} from "~/lib"
-import { match } from "ts-pattern"
 
 export async function action({ request, params }: DataFunctionArgs) {
 	const { id } = $params("/free-date/edit/:id", params)
 	const formData = await request.formData()
-	console.log("tags", formData.getAll("tags"))
 	const result = await freeDateValidator.validate(formData)
 	if (result.error) {
 		return validationError(result.error)
@@ -59,19 +53,8 @@ export async function action({ request, params }: DataFunctionArgs) {
 		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) =>
 			validationError(mapFieldErrorToValidationError(fieldErrors)),
 		)
-		.with(
-			{ __typename: "FreeDate" },
-			({ id, stops, timesOfDay, tags, nsfw }) => {
-				// mixpanel.track("Free Date Updated", {
-				// 	free_date_id: id,
-				// 	num_stops: stops?.length,
-				// 	times_of_day: timesOfDay.map((tod) => tod.name),
-				// 	num_tags: tags?.length,
-				// 	nsfw,
-				// 	tags: tags.map((tag) => tag.name),
-				// })
-				return redirect($path("/free-date/:id", { id }))
-			},
+		.with({ __typename: "FreeDate" }, () =>
+			redirect($path("/free-date/:id", { id })),
 		)
 		.with({ __typename: "Error" }, ({ message }) => json({ error: message }))
 		.otherwise(() => json({ error: "Something went wrong." }))

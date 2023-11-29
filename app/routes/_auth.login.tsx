@@ -8,7 +8,6 @@ import { z } from "zod"
 import { Input, SubmitButton } from "~/features/ui"
 import { LoginDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import { Mixpanel } from "~/mixpanel.server"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
@@ -22,8 +21,6 @@ const validator = withZod(
 export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
 	const result = await validator.validate(formData)
-
-	console.log({ request: request.headers.get("User-Agent") })
 
 	if (result.error) return validationError(result.error)
 	const { data, response } = await gqlFetch(request, LoginDocument, {
@@ -46,14 +43,7 @@ export async function action({ request }: DataFunctionArgs) {
 				),
 			})
 		})
-		.with({ __typename: "User" }, ({ id, email, name }) => {
-			// Mixpanel.
-			// mixpanel.identify(id)
-			// mixpanel.track("User Logged In")
-			// mixpanel.people.set({
-			// 	$email: email,
-			// 	$name: name,
-			// })
+		.with({ __typename: "User" }, () => {
 			if (formData.get("redirectTo")) {
 				return redirect(formData.get("redirectTo") as string, {
 					headers: {

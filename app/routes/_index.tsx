@@ -1,16 +1,18 @@
 import { DataFunctionArgs, MetaFunction, json } from "@remix-run/node"
 import { useLoaderData } from "@remix-run/react"
-import { gqlFetch } from "~/graphql/graphql"
-import { GetFeaturedDatesDocument } from "~/graphql/generated"
-import { PageContainer } from "~/features/ui/page-container"
 import { TrendingFreeDates } from "~/features/free-date"
-import { VStack } from "~/styled-system/jsx"
-import { css } from "~/styled-system/css"
 import { SearchBar } from "~/features/search"
+import { PageContainer } from "~/features/ui/page-container"
+import { GetFeaturedDatesDocument } from "~/graphql/generated"
+import { gqlFetch } from "~/graphql/graphql"
+import { css } from "~/styled-system/css"
+import { VStack } from "~/styled-system/jsx"
 
 export async function loader({ request }: DataFunctionArgs) {
-	const { data } = await gqlFetch(request, GetFeaturedDatesDocument)
-	return json(data)
+	const { data, response } = await gqlFetch(request, GetFeaturedDatesDocument)
+	return json(data, {
+		headers: { "Set-Cookie": response?.headers.get("Set-Cookie") ?? "" },
+	})
 }
 
 export type SearchParams = {

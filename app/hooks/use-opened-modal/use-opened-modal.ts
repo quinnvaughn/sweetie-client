@@ -1,9 +1,12 @@
 import { useEffect } from "react"
-import { mixpanel } from "~/lib"
+import { useTrack } from ".."
 
 export function useOpenedModal(modal: string) {
+	const track = useTrack()
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		mixpanel.track("User Opened Modal", {
+		track("User Opened Modal", {
 			modal,
 		})
 	}, [modal])

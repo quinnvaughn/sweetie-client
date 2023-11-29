@@ -28,7 +28,6 @@ export async function action({ request }: DataFunctionArgs) {
 	if (result.error) {
 		return validationError(result.error)
 	}
-	console.log("tags", result.data.tags)
 	const { data } = await gqlFetch(request, CreateFreeDateDocument, {
 		input: {
 			...omit(result.data, "tagText", "tags", "nsfw", "stops"),
@@ -47,18 +46,6 @@ export async function action({ request }: DataFunctionArgs) {
 		)
 		.with({ __typename: "Error" }, ({ message }) => json({ error: message }))
 		.with({ __typename: "FreeDate" }, async (date) => {
-			// mixpanel.track("Free Date Created", {
-			// 	free_date_id: date.id,
-			// 	num_stops: result.data.stops.length,
-			// 	times_of_day: result.data.timesOfDay,
-			// 	num_tags: result.data.tags?.length ?? 0,
-			// 	nsfw: result.data.nsfw === "true",
-			// 	tags: result.data.tags ?? [],
-			// })
-			// mixpanel.people.increment({ num_free_dates: 1 })
-			// mixpanel.people.set({
-			// 	last_created_free_date_at: new Date().toISOString(),
-			// })
 			const cookieHeader = request.headers.get("Cookie")
 			const cookie = (await showShareScreen.parse(cookieHeader)) || {}
 			cookie.showShareScreen = true

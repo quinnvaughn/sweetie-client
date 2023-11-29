@@ -1,7 +1,8 @@
-import { ShareButton } from "./share-button"
-import { generateUTMLink, mixpanel } from "~/lib"
-import { FaSquareFacebook } from "react-icons/fa6/index.js"
 import { SystemStyleObject } from "@pandacss/dev"
+import { FaSquareFacebook } from "react-icons/fa6/index.js"
+import { useTrack } from "~/hooks"
+import { generateUTMLink } from "~/lib"
+import { ShareButton } from "./share-button"
 
 type Props = {
 	campaign: string
@@ -14,6 +15,7 @@ export function FacebookShareButton({
 	link,
 	css: cssProp = {},
 }: Props) {
+	const track = useTrack()
 	return (
 		<ShareButton
 			css={cssProp}
@@ -25,7 +27,7 @@ export function FacebookShareButton({
 					medium: "share-button",
 					campaign,
 				})
-				mixpanel.track("User Shared", {
+				track("User Shared", {
 					share_method: "facebook",
 					share_medium: "share-button",
 					share_campaign: campaign,

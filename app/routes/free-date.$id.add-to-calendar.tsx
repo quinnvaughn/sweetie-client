@@ -4,11 +4,7 @@ import { withZod } from "@remix-validated-form/with-zod"
 import { DateTime } from "luxon"
 import { $params, $path } from "remix-routes"
 import { ClientOnly } from "remix-utils/client-only"
-import {
-	ValidatedForm,
-	ValidatorError,
-	validationError,
-} from "remix-validated-form"
+import { ValidatedForm, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
 import { AuthModal } from "~/features/auth"
@@ -30,12 +26,7 @@ import {
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { useOpenedModal, useViewer } from "~/hooks"
-import {
-	formatTime,
-	getEnv,
-	mapFieldErrorToValidationError,
-	mixpanel,
-} from "~/lib"
+import { formatTime, getEnv, mapFieldErrorToValidationError } from "~/lib"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
@@ -131,26 +122,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	})
 
 	return match(data?.createDateItinerary)
-		.with({ __typename: "PlannedDate" }, (plannedDate) => {
-			const date = DateTime.fromISO(plannedDate.plannedTime)
-			const freeDate = plannedDate.freeDate
-			// mixpanel.track("Date Planned", {
-			// 	last_planned_date_at: new Date(),
-			// 	day_of_planned_date: date.weekdayLong,
-			// 	time_of_planned_date: date.toLocaleString(DateTime.TIME_SIMPLE),
-			// 	location_names: freeDate.stops.map((stop) => stop.location.name),
-			// 	location_cities: freeDate.cities.map((city) => city.name),
-			// 	title: freeDate.title,
-			// 	tastemaker_id: freeDate.tastemaker.user.id,
-			// 	tastemaker_name: freeDate.tastemaker.user.name,
-			// 	tastemaker_username: freeDate.tastemaker.user.username,
-			// })
-			// mixpanel.people.increment({
-			// 	planned_dates: 1,
-			// 	invited_guests: guest?.email ? 1 : 0,
-			// })
-			return json({ success: true, errors: null, formData: result.data })
-		})
+		.with({ __typename: "PlannedDate" }, () =>
+			json({ success: true, errors: null, formData: result.data }),
+		)
 		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) => {
 			const reduceToValidatorError = mapFieldErrorToValidationError(fieldErrors)
 			return json(
@@ -158,12 +132,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
 				{ status: 400 },
 			)
 		})
-		.otherwise(() => {
-			return json(
-				{ success: false, errors: null, formData: null },
-				{ status: 500 },
-			)
-		})
+		.otherwise(() =>
+			json({ success: false, errors: null, formData: null }, { status: 500 }),
+		)
 }
 
 const campaign = "date itinerary success"
@@ -172,7 +143,7 @@ export default function AddToCalendarPage() {
 	const { freeDate, link } = useLoaderData<typeof loader>()
 	const { isLoggedIn } = useViewer()
 	const actionData = useActionData<typeof action>()
-	useOpenedModal("create-date-itinerary")
+	useOpenedModal(isLoggedIn() ? "create-date-itinerary" : "auth")
 	return isLoggedIn() ? (
 		<ValidatedForm validator={validator} method="post">
 			<Modal>

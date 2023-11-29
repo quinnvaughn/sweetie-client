@@ -3,7 +3,6 @@ import { $path } from "remix-routes"
 import { match } from "ts-pattern"
 import { LogoutDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import { mixpanel } from "~/lib"
 
 export async function action({ request }: ActionFunctionArgs) {
 	const { data } = await gqlFetch(request, LogoutDocument)
@@ -15,15 +14,14 @@ export async function action({ request }: ActionFunctionArgs) {
 		.with({ __typename: "Error" }, () => {
 			// TODO: Add toast error.
 		})
-		.with({ __typename: "LogoutResult" }, async () => {
-			// mixpanel.reset()
-			return redirect($path("/"), {
+		.with({ __typename: "LogoutResult" }, async () =>
+			redirect($path("/"), {
 				headers: {
 					"Set-Cookie": `qid=; Path=/; HttpOnly; SameSite=Lax; Max-Age=1; Expires=${new Date(
 						"01/01/2000",
 					).toUTCString()};`,
 				},
-			})
-		})
+			}),
+		)
 		.otherwise(() => null)
 }

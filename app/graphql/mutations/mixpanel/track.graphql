@@ -1,0 +1,3 @@
+mutation Track($input: TrackInput!) {
+  track(input: $input)
+}
