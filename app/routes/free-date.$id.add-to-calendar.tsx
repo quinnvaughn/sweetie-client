@@ -161,7 +161,8 @@ export default function AddToCalendarPage() {
 								{actionData?.formData?.guest?.name
 									? ` and ${actionData?.formData.guest?.name.split(" ")[0]} `
 									: ""}{" "}
-								the itinerary! Check your email for more details.
+								the itinerary! Check your email for more details. Check your
+								spam folder if you don't see it.
 							</p>
 							<p
 								className={css({
