@@ -107,14 +107,15 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 							cities.map((c) => c.name),
 						],
 					},
-					{ name: "description", content: description.slice(0, 200) },
+					{ name: "description", content: description },
+					{ name: "robots", content: "index, follow" },
 					{
 						name: "og:title",
 						content: `${title.trim()} by ${
 							tastemaker.user.name
 						} - Sweetie date idea`,
 					},
-					{ name: "og:description", content: description.slice(0, 200) },
+					{ name: "og:description", content: description },
 					{ name: "og:image", content: thumbnail },
 					{
 						name: "og:url",
@@ -143,10 +144,10 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 					{
 						name: "article:tag",
 						content: [
-							...tags.map((t) => t.name),
+							...tags.map((t) => `${t.name} date idea`),
 							"dating",
 							"date ideas",
-							cities.map((c) => c.name),
+							cities.map((c) => `${c.name} date idea`),
 						],
 					},
 					{

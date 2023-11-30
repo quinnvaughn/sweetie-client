@@ -184,10 +184,18 @@ export const meta: MetaFunction = ({ location }: MetaArgs) => {
 						)} - Get the best date ideas on Sweetie`,
 				),
 		)
+	const description = match(search)
+		.with(P.nullish, () => "Find the best date ideas on Sweetie")
+		.otherwise(
+			(search) =>
+				`${capitalizeFirstWord(
+					removeDateAndDateIdeas(search),
+				)} date ideas - Find the best date ideas on Sweetie`,
+		)
 	return [
-		{
-			title,
-		},
+		{ title },
+		{ name: "description", content: description },
+		{ name: "robots", content: "noindex" },
 	]
 }
 
