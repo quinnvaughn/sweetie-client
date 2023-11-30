@@ -77,7 +77,7 @@ export default function ResetPasswordRoute() {
 							Your password has been successfully reset. You may go home now.
 						</p>
 						<Link
-							className={button({ variant: "black", visual: "outlined" })}
+							className={button({ variant: "tertiary" })}
 							to={$path("/")}
 							replace
 						>

@@ -11,7 +11,8 @@ const buttonFn = /* @__PURE__ */ createRecipe('button', {
     "variant": "primary",
     "css": {
       "border": "1px solid var(--colors-primary)",
-      "backgroundColor": "white"
+      "backgroundColor": "white",
+      "color": "primary"
     }
   },
   {
@@ -19,7 +20,8 @@ const buttonFn = /* @__PURE__ */ createRecipe('button', {
     "variant": "secondary",
     "css": {
       "border": "1px solid var(--colors-secondary)",
-      "backgroundColor": "white"
+      "backgroundColor": "white",
+      "color": "secondary"
     }
   },
   {
@@ -27,7 +29,8 @@ const buttonFn = /* @__PURE__ */ createRecipe('button', {
     "variant": "black",
     "css": {
       "border": "1px solid var(--colors-black)",
-      "backgroundColor": "white"
+      "backgroundColor": "white",
+      "color": "black"
     }
   },
   {
@@ -35,7 +38,8 @@ const buttonFn = /* @__PURE__ */ createRecipe('button', {
     "variant": "tertiary",
     "css": {
       "border": "1px solid var(--colors-tertiary)",
-      "backgroundColor": "white"
+      "backgroundColor": "white",
+      "color": "tertiary"
     }
   }
 ])

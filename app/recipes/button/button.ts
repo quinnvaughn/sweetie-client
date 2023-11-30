@@ -39,6 +39,7 @@ export const buttonRecipe = defineRecipe({
 			css: {
 				border: "1px solid var(--colors-primary)",
 				backgroundColor: "white",
+				color: "primary",
 			},
 		},
 		{
@@ -47,6 +48,7 @@ export const buttonRecipe = defineRecipe({
 			css: {
 				border: "1px solid var(--colors-secondary)",
 				backgroundColor: "white",
+				color: "secondary",
 			},
 		},
 		{
@@ -55,6 +57,7 @@ export const buttonRecipe = defineRecipe({
 			css: {
 				border: "1px solid var(--colors-black)",
 				backgroundColor: "white",
+				color: "black",
 			},
 		},
 		{
@@ -63,6 +66,7 @@ export const buttonRecipe = defineRecipe({
 			css: {
 				border: "1px solid var(--colors-tertiary)",
 				backgroundColor: "white",
+				color: "tertiary",
 			},
 		},
 	],
