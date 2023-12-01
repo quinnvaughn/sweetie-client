@@ -1,9 +1,9 @@
+import { FreeDateList } from "~/features/free-date"
+import { UserProfileFragment } from "~/graphql/generated"
+import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 import { UserBio } from "../user-bio"
 import { UserProfileHeading } from "../user-profile-heading"
-import { UserProfileFragment } from "~/graphql/generated"
-import { FreeDateList } from "~/features/free-date"
-import { css } from "~/styled-system/css"
 
 type Props = {
 	user: UserProfileFragment

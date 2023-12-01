@@ -1,9 +1,10 @@
-import { FreeDateCardFragment } from "~/graphql/generated"
-import { FreeDateCard } from "../free-date-card"
 import { match } from "ts-pattern"
+import { FreeDateCardFragment } from "~/graphql/generated"
 import { css } from "~/styled-system/css"
+import { FreeDateCard } from "../free-date-card"
 
 type Props = {
+	numImagesLoaded?: number
 	noDatesText?: string
 	freeDates: FreeDateCardFragment[]
 	base?: {
@@ -20,7 +21,14 @@ type Props = {
 	}
 }
 
-export function FreeDateList({ freeDates, base, md, xl, noDatesText }: Props) {
+export function FreeDateList({
+	freeDates,
+	base,
+	md,
+	xl,
+	noDatesText,
+	numImagesLoaded = 3,
+}: Props) {
 	return match(freeDates)
 		.when(
 			(freeDates) => freeDates.length === 0,
@@ -48,8 +56,12 @@ export function FreeDateList({ freeDates, base, md, xl, noDatesText }: Props) {
 						},
 					})}
 				>
-					{freeDates.map((node) => (
-						<FreeDateCard key={node.id} date={node} />
+					{freeDates.map((node, i) => (
+						<FreeDateCard
+							loading={i > numImagesLoaded - 1 ? "lazy" : "eager"}
+							key={node.id}
+							date={node}
+						/>
 					))}
 				</div>
 			),

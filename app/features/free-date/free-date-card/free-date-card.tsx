@@ -1,18 +1,19 @@
-import { FreeDateCardFragment } from "~/graphql/generated"
 import { Link } from "@remix-run/react"
-import { css } from "~/styled-system/css"
 import { $path } from "remix-routes"
+import { Image } from "~/features/ui"
+import { UserAvatar } from "~/features/user"
+import { FreeDateCardFragment } from "~/graphql/generated"
+import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
 import { numLines } from "~/styled-system/patterns"
-import { UserAvatar } from "~/features/user"
 import { NSFWTag } from ".."
-import { Image } from "~/features/ui"
 
 type Props = {
 	date: FreeDateCardFragment
+	loading?: "lazy" | "eager"
 }
 
-export function FreeDateCard({ date }: Props) {
+export function FreeDateCard({ date, loading = 'eager'}: Props) {
 	return (
 		<Link
 			className={css({
@@ -27,6 +28,7 @@ export function FreeDateCard({ date }: Props) {
 		>
 			<VStack gap="4" width={"100%"} alignItems="flex-start">
 				<Image
+					loading={loading}
 					src={date.thumbnail}
 					alt={`${date.title} thumbnail`}
 					css={{

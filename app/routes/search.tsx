@@ -209,6 +209,7 @@ export default function SearchRoute() {
 			<ExploreDateIdeas />
 			<SearchBar />
 			<FreeDateList
+				numImagesLoaded={6}
 				freeDates={data.freeDates.edges.map(({ node }) => ({
 					...node,
 				}))}

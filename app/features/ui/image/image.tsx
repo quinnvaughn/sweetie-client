@@ -25,15 +25,27 @@ type Props = {
 	alt: string
 	css?: SystemStyleObject
 	cva?: string
+	loading?: "lazy" | "eager"
 }
 
-export function Image({ src, alt, css: cssProp, cva }: Props) {
+export function Image({
+	src,
+	alt,
+	css: cssProp,
+	cva,
+	loading = "eager",
+}: Props) {
 	const { error, loaded } = useImageLoaded(src)
 
 	return error ? (
 		<div className={cva ? cva : css(errorImage, cssProp)}>Image not found</div>
 	) : loaded ? (
-		<img src={src} alt={alt} className={cva ? cva : css(cssProp)} />
+		<img
+			loading={loading}
+			src={src}
+			alt={alt}
+			className={cva ? cva : css(cssProp)}
+		/>
 	) : (
 		<div className={cva ? cva : css(defaultImage, cssProp)} />
 	)
