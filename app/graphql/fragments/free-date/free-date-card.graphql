@@ -5,9 +5,7 @@ fragment FreeDateCard on FreeDate {
     thumbnail
 	updatedAt
 	nsfw
-	featured
 	description
-	featuredAt
 	tastemaker {
 		id
 		user {
