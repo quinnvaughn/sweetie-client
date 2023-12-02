@@ -48,6 +48,8 @@ export async function gqlFetch<TData = any, TVariables = Record<string, any>>(
 					"Access-Control-Allow-Origin": "*",
 					"User-Agent": request.headers.get("User-Agent") || "",
 					"X-FORWARDED-FOR": request.headers.get("X-FORWARDED-FOR") || "",
+					// pass referer to graphql server
+					Referer: request.headers.get("Referer") || "",
 				},
 				method: "POST",
 			},
