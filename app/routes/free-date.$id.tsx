@@ -498,10 +498,10 @@ export default function FreeDateIdeaRoute() {
 								width: "100%",
 							})}
 						/>
-						<h3 className={css({ textStyle: "h1", fontSize: "20px" })}>
+						{/* <h3 className={css({ textStyle: "h1", fontSize: "20px" })}>
 							Explore more
 						</h3>
-						<FreeDateList freeDates={freeDate.exploreMore} />
+						<FreeDateList freeDates={freeDate.exploreMore} /> */}
 					</VStack>
 				))
 				.otherwise(() => null)}
