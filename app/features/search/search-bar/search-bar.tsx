@@ -1,6 +1,6 @@
 import { useSearchParams } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
-import { useState } from "react"
+import { forwardRef, useState } from "react"
 import { FaSlidersH } from "react-icons/fa/index.js"
 import { FiSearch } from "react-icons/fi/index.js"
 import { $path } from "remix-routes"
@@ -48,7 +48,9 @@ const validator = withZod(
 	}),
 )
 
-export function SearchBar() {
+type Ref = HTMLInputElement
+
+const SearchBar = forwardRef<Ref>(function SearchBar(_p, ref) {
 	const [isVisible, setIsVisible] = useState<"yes" | "no">("no")
 	const [searchParams] = useSearchParams()
 	const timesOfDay = searchParams.getAll("timesOfDay")
@@ -78,6 +80,7 @@ export function SearchBar() {
 				>
 					<HStack gap={4} flex={1} alignItems="center">
 						<input
+							ref={ref}
 							type="search"
 							className={css({
 								padding: "8px",
@@ -213,4 +216,6 @@ export function SearchBar() {
 			</div>
 		</ValidatedForm>
 	)
-}
+})
+
+export { SearchBar }

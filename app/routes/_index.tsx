@@ -1,5 +1,6 @@
 import { DataFunctionArgs, MetaFunction, json } from "@remix-run/node"
 import { useLoaderData } from "@remix-run/react"
+import { useEffect, useRef } from "react"
 import { TrendingFreeDates } from "~/features/free-date"
 import { SearchBar } from "~/features/search"
 import { PageContainer } from "~/features/ui/page-container"
@@ -24,6 +25,8 @@ export type SearchParams = {
 
 export default function HomeRoute() {
 	const data = useLoaderData<typeof loader>()
+	const ref = useRef<HTMLInputElement>(null)
+
 	return (
 		<PageContainer
 			width={{ base: "100%", lg: 1024 }}
@@ -43,8 +46,8 @@ export default function HomeRoute() {
 						Find the best dates to go on in LA
 					</p>
 				</VStack>
-				<SearchBar />
-				<TrendingFreeDates freeDates={data.featuredFreeDates} />
+				<SearchBar ref={ref} />
+				<TrendingFreeDates freeDates={data.featuredFreeDates} ref={ref} />
 			</VStack>
 		</PageContainer>
 	)
