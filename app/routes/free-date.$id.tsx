@@ -8,6 +8,8 @@ import {
 import {
 	Link,
 	Outlet,
+	ShouldRevalidateFunction,
+	ShouldRevalidateFunctionArgs,
 	useFetcher,
 	useLoaderData,
 	useParams,
@@ -48,6 +50,17 @@ import { singularOrPlural } from "~/lib"
 import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
 import { divider, flex } from "~/styled-system/patterns"
+
+export const shouldRevalidate: ShouldRevalidateFunction = ({
+	formAction,
+	currentParams,
+}) => {
+	const id = currentParams.id ?? ""
+	if (formAction === `/free-date/${id}`) {
+		return true
+	}
+	return false
+}
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const { id } = $params("/free-date/:id", params)
@@ -498,10 +511,10 @@ export default function FreeDateIdeaRoute() {
 								width: "100%",
 							})}
 						/>
-						{/* <h3 className={css({ textStyle: "h1", fontSize: "20px" })}>
+						<h3 className={css({ textStyle: "h1", fontSize: "20px" })}>
 							Explore more
 						</h3>
-						<FreeDateList freeDates={freeDate.exploreMore} /> */}
+						<FreeDateList freeDates={freeDate.exploreMore} />
 					</VStack>
 				))
 				.otherwise(() => null)}

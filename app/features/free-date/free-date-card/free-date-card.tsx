@@ -13,7 +13,7 @@ type Props = {
 	loading?: "lazy" | "eager"
 }
 
-export function FreeDateCard({ date, loading = 'eager'}: Props) {
+export function FreeDateCard({ date, loading = "eager" }: Props) {
 	return (
 		<Link
 			className={css({
