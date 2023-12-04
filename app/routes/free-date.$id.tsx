@@ -23,6 +23,8 @@ import { DateStop } from "~/features/date-stop"
 import {
 	DateLocationsMap,
 	EmailItineraryRightSide,
+	FreeDateCard,
+	FreeDateList,
 	NSFWTag,
 	TimeOfTheDay,
 } from "~/features/free-date"
@@ -488,6 +490,18 @@ export default function FreeDateIdeaRoute() {
 						<Mobile>
 							<FloatingAddToCalendar />
 						</Mobile>
+						<div
+							className={divider({
+								color: "gray",
+								thickness: "1px",
+								orientation: "horizontal",
+								width: "100%",
+							})}
+						/>
+						<h3 className={css({ textStyle: "h1", fontSize: "20px" })}>
+							Explore more
+						</h3>
+						<FreeDateList freeDates={freeDate.exploreMore} />
 					</VStack>
 				))
 				.otherwise(() => null)}

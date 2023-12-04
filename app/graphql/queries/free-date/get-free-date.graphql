@@ -30,6 +30,9 @@ query GetFreeDate($id: String!) {
           id
           ...DateStopItem
         }
+        exploreMore {
+          ...FreeDateCard
+        }
       }
       ... on Error {
         message
