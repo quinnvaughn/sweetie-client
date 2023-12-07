@@ -9,7 +9,6 @@ import {
 	Link,
 	Outlet,
 	ShouldRevalidateFunction,
-	ShouldRevalidateFunctionArgs,
 	useFetcher,
 	useLoaderData,
 	useParams,
@@ -19,15 +18,22 @@ import { IoIosCheckmarkCircleOutline } from "react-icons/io/index.js"
 import { $params, $path } from "remix-routes"
 import { ClientOnly } from "remix-utils/client-only"
 import { match } from "ts-pattern"
-import { showShareScreen } from "~/cookies.server"
+import {
+	clearCookie,
+	clearedSignupModal,
+	showShareScreen,
+	showSignupModal,
+	signupModal,
+	timesLookedAtDates,
+} from "~/cookies.server"
 import { FloatingAddToCalendar } from "~/features/date-itinerary"
 import { DateStop } from "~/features/date-stop"
 import {
 	DateLocationsMap,
 	EmailItineraryRightSide,
-	FreeDateCard,
 	FreeDateList,
 	NSFWTag,
+	SignupModal,
 	TimeOfTheDay,
 } from "~/features/free-date"
 import { TastemakerInfo } from "~/features/tastemaker"
@@ -43,7 +49,10 @@ import {
 	TwitterShareButton,
 } from "~/features/ui"
 import { UserAvatar } from "~/features/user"
-import { GetFreeDateDocument } from "~/graphql/generated"
+import {
+	GetFreeDateDocument,
+	ViewerIsLoggedInDocument,
+} from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { useScrolledToBottom, useTrack } from "~/hooks"
 import { singularOrPlural } from "~/lib"
@@ -51,30 +60,50 @@ import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
 import { divider, flex } from "~/styled-system/patterns"
 
-export const shouldRevalidate: ShouldRevalidateFunction = ({
-	formAction,
-	currentParams,
-}) => {
-	const id = currentParams.id ?? ""
-	if (formAction === `/free-date/${id}`) {
-		return true
+export const shouldRevalidate: ShouldRevalidateFunction = ({ formAction }) => {
+	if (formAction === $path("/api/track")) {
+		return false
 	}
-	return false
+	return true
 }
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const { id } = $params("/free-date/:id", params)
 	const { data } = await gqlFetch(request, GetFreeDateDocument, { id })
+	const { data: userData } = await gqlFetch(request, ViewerIsLoggedInDocument)
 
 	if (!data?.freeDate) {
 		throw new Response("Not Found", { status: 404 })
 	}
 	const cookieHeader = request.headers.get("Cookie")
 	const cookie = await showShareScreen.parse(cookieHeader)
-	return json({
-		freeDate: data.freeDate,
-		showShareScreen: cookie ? (cookie.showShareScreen as boolean) : false,
-	})
+	const cookieModal = (await signupModal.parse(cookieHeader)) || {
+		showSignupModal: false,
+		clearedSignupModal: false,
+		timesLookedAtDates: 0,
+	}
+	let cookieTimes = cookieModal.timesLookedAtDates
+	if (!userData?.viewer) {
+		cookieTimes += 1
+	}
+	cookieModal.timesLookedAtDates = cookieTimes
+	cookieModal.showSignupModal = cookieModal.clearedSignupModal
+		? false
+		: cookieTimes >= 3
+	cookieModal.clearedSignupModal = false
+	const headers = new Headers()
+	headers.append("Set-Cookie", await signupModal.serialize(cookieModal))
+
+	return json(
+		{
+			freeDate: data.freeDate,
+			showShareScreen: cookie ? (cookie.showShareScreen as boolean) : false,
+			showSignupModal: cookieModal.showSignupModal,
+		},
+		{
+			headers,
+		},
+	)
 }
 
 export async function action({ request, params }: DataFunctionArgs) {
@@ -188,7 +217,8 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 const campaign = "tastemaker share date"
 
 export default function FreeDateIdeaRoute() {
-	const { freeDate, showShareScreen } = useLoaderData<typeof loader>()
+	const { freeDate, showShareScreen, showSignupModal } =
+		useLoaderData<typeof loader>()
 	const params = useParams()
 	const { id } = $params("/free-date/:id", params)
 	const fetcher = useFetcher()
@@ -328,6 +358,7 @@ export default function FreeDateIdeaRoute() {
 			}}
 		>
 			<Outlet />
+			{showSignupModal && <SignupModal />}
 			{match(freeDate)
 				.with({ __typename: "Error" }, () => (
 					<p className={css({ textStyle: "paragraph" })}>Not Found</p>
@@ -420,7 +451,6 @@ export default function FreeDateIdeaRoute() {
 															textStyle: "paragraph",
 															fontWeight: "bold",
 														})}
-														prefetch="intent"
 														to={$path("/search", {
 															cities: [city.nameAndState],
 														})}

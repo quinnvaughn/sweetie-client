@@ -24,7 +24,8 @@ export function FreeDateCard({ date, loading = "eager" }: Props) {
 			})}
 			to={$path("/free-date/:id", { id: date.id })}
 			target="_blank"
-			prefetch="intent"
+			// TODO: Check if this slows down the page
+			// prefetch="none"
 		>
 			<VStack gap="4" width={"100%"} alignItems="flex-start">
 				<Image

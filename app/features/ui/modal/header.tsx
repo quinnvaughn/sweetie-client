@@ -3,12 +3,21 @@ import { FiX } from "react-icons/fi/index.js"
 import { css } from "~/styled-system/css"
 import { HStack } from "~/styled-system/jsx"
 
-type Props = {
-	title: string
+type LinkProps = {
+	type: "link"
 	to: string
 }
 
-export function ModalHeader({ title, to }: Props) {
+type ButtonProps = {
+	type: "button"
+	onClick: () => void
+}
+
+type Props = {
+	title: string
+} & (LinkProps | ButtonProps)
+
+export function ModalHeader(props: Props) {
 	return (
 		<HStack
 			gap={1}
@@ -29,24 +38,45 @@ export function ModalHeader({ title, to }: Props) {
 					textAlign: "center",
 				})}
 			>
-				{title}
+				{props.title}
 			</h1>
-			<Link
-				className={css({
-					cursor: "pointer",
-					_hover: {
-						opacity: 0.7,
-					},
-				})}
-				to={to}
-				aria-label="Close Modal"
-			>
-				<FiX
-					aria-hidden="true"
-					size={"24px"}
-					className={css({ color: "black" })}
-				/>
-			</Link>
+			{props.type === "link" && (
+				<Link
+					className={css({
+						cursor: "pointer",
+						_hover: {
+							opacity: 0.7,
+						},
+					})}
+					to={props.to}
+					aria-label="Close Modal"
+				>
+					<FiX
+						aria-hidden="true"
+						size={"24px"}
+						className={css({ color: "black" })}
+					/>
+				</Link>
+			)}
+			{props.type === "button" && (
+				<button
+					type="button"
+					className={css({
+						cursor: "pointer",
+						_hover: {
+							opacity: 0.7,
+						},
+					})}
+					onClick={props.onClick}
+					aria-label="Close Modal"
+				>
+					<FiX
+						aria-hidden="true"
+						size={"24px"}
+						className={css({ color: "black" })}
+					/>
+				</button>
+			)}
 		</HStack>
 	)
 }

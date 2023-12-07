@@ -1,3 +1,4 @@
+import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 import {
 	CopyLinkShareButton,
@@ -8,7 +9,6 @@ import {
 	TwitterShareButton,
 	WhatsAppShareButton,
 } from ".."
-import { css } from "~/styled-system/css"
 
 type Props = {
 	to: string
@@ -25,7 +25,7 @@ export function ShareModal({
 }: Props) {
 	return (
 		<Modal>
-			<Modal.Header to={to} title={title} />
+			<Modal.Header type="link" to={to} title={title} />
 			<Modal.Body>
 				<VStack gap={4} width={"100%"} alignItems="center">
 					{aboveText && (

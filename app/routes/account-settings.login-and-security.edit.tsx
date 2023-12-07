@@ -101,6 +101,7 @@ export default function EditRoute() {
 		>
 			<Modal>
 				<Modal.Header
+					type="link"
 					title="Edit password"
 					to={$path("/account-settings/login-and-security")}
 				/>

@@ -109,6 +109,7 @@ export default function EditRoute() {
 		<ValidatedForm id="edit-personal-info" validator={validator} method="post">
 			<Modal>
 				<Modal.Header
+					type="link"
 					title="Edit profile"
 					to={$path("/account-settings/personal-info")}
 				/>

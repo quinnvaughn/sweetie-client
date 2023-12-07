@@ -4,7 +4,7 @@ import { useState } from "react"
 import { $path } from "remix-routes"
 import { ValidatedForm } from "remix-validated-form"
 import { z } from "zod"
-import { Modal, Input } from "~/features/ui"
+import { Input, Modal } from "~/features/ui"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
@@ -51,6 +51,7 @@ export function AuthModal({
 		>
 			<Modal>
 				<Modal.Header
+					type="link"
 					to={onCloseLink}
 					title={authState === "login" ? "Login" : "Register"}
 				/>

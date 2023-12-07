@@ -1,12 +1,12 @@
 import { useFetcher } from "@remix-run/react"
+import { useState } from "react"
 import { $path } from "remix-routes"
+import { ValidatedForm } from "remix-validated-form"
+import { match } from "ts-pattern"
+import { CreateLocationForm, SearchLocationForm } from "~/features/location"
 import { Modal, Tab } from "~/features/ui"
 import { action, createLocationValidator } from "~/routes/api.create-location"
-import { ValidatedForm } from "remix-validated-form"
 import { HStack, VStack } from "~/styled-system/jsx"
-import { match } from "ts-pattern"
-import { useState } from "react"
-import { CreateLocationForm, SearchLocationForm } from "~/features/location"
 
 type Props = {
 	redirectTo: string
@@ -23,7 +23,11 @@ export function AddLocation({ redirectTo }: Props) {
 			fetcher={fetcher}
 		>
 			<Modal>
-				<Modal.Header title="Add Location" to={$path("/free-date/create")} />
+				<Modal.Header
+					type="link"
+					title="Add Location"
+					to={$path("/free-date/create")}
+				/>
 				<Modal.Body>
 					<input type="hidden" name="type" value={status} />
 					<VStack gap={6}>

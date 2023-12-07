@@ -5,6 +5,7 @@ import { $path } from "remix-routes"
 import { ValidatedForm, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
+import { signupModal } from "~/cookies.server"
 import { Input, SubmitButton } from "~/features/ui"
 import { RegisterDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
@@ -44,20 +45,20 @@ export async function action({ request }: DataFunctionArgs) {
 				),
 			})
 		})
-		.with({ __typename: "User" }, () => {
-			if (formData.get("redirectTo")) {
-				return redirect(formData.get("redirectTo") as string, {
-					headers: {
-						"Set-Cookie": response?.headers.get("Set-Cookie") ?? "",
-					},
-				})
-			} else {
-				return redirect("/", {
-					headers: {
-						"Set-Cookie": response?.headers.get("Set-Cookie") ?? "",
-					},
-				})
-			}
+		.with({ __typename: "User" }, async () => {
+			const headers = new Headers()
+			headers.append("Set-Cookie", response?.headers.get("Set-Cookie") ?? "")
+			headers.append(
+				"Set-Cookie",
+				await signupModal.serialize({
+					showSignupModal: false,
+					clearedSignupModal: false,
+					timesLookedAtDates: 0,
+				}),
+			)
+			return redirect((formData.get("redirectTo") as string) ?? "/", {
+				headers,
+			})
 		})
 		.otherwise(() => null)
 }

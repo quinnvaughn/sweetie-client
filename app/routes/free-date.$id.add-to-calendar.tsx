@@ -148,6 +148,7 @@ export default function AddToCalendarPage() {
 		<ValidatedForm validator={validator} method="post">
 			<Modal>
 				<Modal.Header
+					type="link"
 					title={"Add to calendar"}
 					to={$path("/free-date/:id", { id: freeDate.id })}
 				/>
