@@ -8,11 +8,17 @@ export async function action({ request }: DataFunctionArgs) {
 	const headers = new Headers()
 	const cookie = (await signupModal.parse(cookieHeaders)) || {
 		showSignupModal: false,
-		clearedModal: false,
+		clearedSignupModal: true,
+		timesLookedAtDates: 0,
 	}
-	cookie.showSignupModal = false
-	cookie.clearedModal = true
-	headers.append("Set-Cookie", await signupModal.serialize(cookie))
+	headers.append(
+		"Set-Cookie",
+		await signupModal.serialize({
+			...cookie,
+			showSignupModal: false,
+			clearedSignupModal: true,
+		}),
+	)
 	return redirect(
 		$path("/free-date/:id", { id: bodyParams.get("id") as string }),
 		{

@@ -18,14 +18,7 @@ import { IoIosCheckmarkCircleOutline } from "react-icons/io/index.js"
 import { $params, $path } from "remix-routes"
 import { ClientOnly } from "remix-utils/client-only"
 import { match } from "ts-pattern"
-import {
-	clearCookie,
-	clearedSignupModal,
-	showShareScreen,
-	showSignupModal,
-	signupModal,
-	timesLookedAtDates,
-} from "~/cookies.server"
+import { showShareScreen, signupModal } from "~/cookies.server"
 import { FloatingAddToCalendar } from "~/features/date-itinerary"
 import { DateStop } from "~/features/date-stop"
 import {
@@ -60,11 +53,14 @@ import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
 import { divider, flex } from "~/styled-system/patterns"
 
-export const shouldRevalidate: ShouldRevalidateFunction = ({ formAction }) => {
+export const shouldRevalidate: ShouldRevalidateFunction = ({
+	formAction,
+	defaultShouldRevalidate,
+}) => {
 	if (formAction === $path("/api/track")) {
 		return false
 	}
-	return true
+	return defaultShouldRevalidate
 }
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
@@ -83,7 +79,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 		timesLookedAtDates: 0,
 	}
 	let cookieTimes = cookieModal.timesLookedAtDates
-	if (!userData?.viewer) {
+	if (!userData?.viewer && !cookieModal.clearedSignupModal) {
 		cookieTimes += 1
 	}
 	cookieModal.timesLookedAtDates = cookieTimes

@@ -41,6 +41,7 @@ export function SignupModal() {
 	const { id } = $params("/free-date/:id", params)
 	const fetcher = useFetcher<typeof action>()
 	const track = useTrack()
+
 	return (
 		<ValidatedForm
 			validator={authState === "login" ? loginValidator : registerValidator}
@@ -51,13 +52,12 @@ export function SignupModal() {
 				<Modal.Header
 					type="button"
 					title={authState === "login" ? "Login" : "Register"}
-					onClick={() => {
+					onClick={() =>
 						fetcher.submit(
 							{ id },
 							{ action: $path("/api/clear-signup-modal"), method: "POST" },
 						)
-						track('User clicked "close" on the signup modal', {})
-					}}
+					}
 				/>
 				<ModalBody>
 					<VStack gap="4" alignItems={"center"}>
