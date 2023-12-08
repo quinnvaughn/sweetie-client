@@ -50,6 +50,8 @@ export async function gqlFetch<TData = any, TVariables = Record<string, any>>(
 					"X-FORWARDED-FOR": request.headers.get("X-FORWARDED-FOR") || "",
 					// pass referer to graphql server
 					Referer: request.headers.get("Referer") || "",
+					// pass url to graphql server
+					url: request.url,
 				},
 				method: "POST",
 			},
