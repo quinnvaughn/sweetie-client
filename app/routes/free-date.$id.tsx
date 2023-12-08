@@ -13,12 +13,13 @@ import {
 	useLoaderData,
 	useParams,
 } from "@remix-run/react"
+import { useEffect } from "react"
 import { FiX } from "react-icons/fi/index.js"
 import { IoIosCheckmarkCircleOutline } from "react-icons/io/index.js"
 import { $params, $path } from "remix-routes"
 import { ClientOnly } from "remix-utils/client-only"
 import { match } from "ts-pattern"
-import { showShareScreen, signupModal } from "~/cookies.server"
+import { showShareScreen } from "~/cookies.server"
 import { FloatingAddToCalendar } from "~/features/date-itinerary"
 import { DateStop } from "~/features/date-stop"
 import {
@@ -49,6 +50,7 @@ import {
 import { gqlFetch } from "~/graphql/graphql"
 import { useScrolledToBottom, useTrack } from "~/hooks"
 import { singularOrPlural } from "~/lib"
+import { signupStore } from "~/stores"
 import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
 import { divider, flex } from "~/styled-system/patterns"
@@ -73,33 +75,12 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 	}
 	const cookieHeader = request.headers.get("Cookie")
 	const cookie = await showShareScreen.parse(cookieHeader)
-	const cookieModal = (await signupModal.parse(cookieHeader)) || {
-		showSignupModal: false,
-		clearedSignupModal: false,
-		timesLookedAtDates: 0,
-	}
-	let cookieTimes = cookieModal.timesLookedAtDates
-	if (!userData?.viewer && !cookieModal.clearedSignupModal) {
-		cookieTimes += 1
-	}
-	cookieModal.timesLookedAtDates = cookieTimes
-	cookieModal.showSignupModal = cookieModal.clearedSignupModal
-		? false
-		: cookieTimes >= 3
-	cookieModal.clearedSignupModal = false
-	const headers = new Headers()
-	headers.append("Set-Cookie", await signupModal.serialize(cookieModal))
 
-	return json(
-		{
-			freeDate: data.freeDate,
-			showShareScreen: cookie ? (cookie.showShareScreen as boolean) : false,
-			showSignupModal: cookieModal.showSignupModal,
-		},
-		{
-			headers,
-		},
-	)
+	return json({
+		freeDate: data.freeDate,
+		showShareScreen: cookie ? (cookie.showShareScreen as boolean) : false,
+		viewer: userData?.viewer,
+	})
 }
 
 export async function action({ request, params }: DataFunctionArgs) {
@@ -213,12 +194,12 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 const campaign = "tastemaker share date"
 
 export default function FreeDateIdeaRoute() {
-	const { freeDate, showShareScreen, showSignupModal } =
-		useLoaderData<typeof loader>()
+	const { freeDate, showShareScreen, viewer } = useLoaderData<typeof loader>()
 	const params = useParams()
 	const { id } = $params("/free-date/:id", params)
 	const fetcher = useFetcher()
 	const track = useTrack()
+	const { incrementTimesViewedDates, showSignupModal } = signupStore()
 	useScrolledToBottom(() => {
 		if (freeDate.__typename === "FreeDate" && !freeDate.isUserTastemaker) {
 			track("User Scrolled To Bottom", {
@@ -227,6 +208,11 @@ export default function FreeDateIdeaRoute() {
 			})
 		}
 	})
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		incrementTimesViewedDates(!!viewer)
+	}, [viewer])
 
 	return showShareScreen ? (
 		<div className={css({ width: "100%" })}>
