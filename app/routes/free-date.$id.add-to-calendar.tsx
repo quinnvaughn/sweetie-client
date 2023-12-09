@@ -266,11 +266,13 @@ export default function AddToCalendarPage() {
 								name="guest.name"
 								label="Date's name (optional)"
 								placeholder={"Your date's name"}
+								autoComplete="off"
 							/>
 							<Input
 								name="guest.email"
 								label="Date's email (optional)"
 								placeholder={"Your date's email"}
+								autoComplete="off"
 							/>
 							<ClientOnly>
 								{() => (

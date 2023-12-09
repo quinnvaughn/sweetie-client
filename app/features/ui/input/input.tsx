@@ -8,9 +8,17 @@ type Props = {
 	required?: boolean
 	placeholder?: string
 	type?: string
+	autoComplete?: string
 }
 
-export function Input({ name, label, required, placeholder, type }: Props) {
+export function Input({
+	name,
+	label,
+	required,
+	placeholder,
+	type,
+	autoComplete,
+}: Props) {
 	const { error, getInputProps } = useField(name)
 
 	return (
@@ -20,7 +28,7 @@ export function Input({ name, label, required, placeholder, type }: Props) {
 				{required && <span className={css({ textStyle: "error" })}>*</span>}
 			</label>
 			<input
-				{...getInputProps({ id: name })}
+				{...getInputProps({ id: name, autoComplete })}
 				placeholder={placeholder}
 				className={css({
 					width: "100%",
