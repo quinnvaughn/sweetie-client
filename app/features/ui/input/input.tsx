@@ -8,7 +8,6 @@ type Props = {
 	required?: boolean
 	placeholder?: string
 	type?: string
-	defaultValue?: string
 }
 
 export function Input({ name, label, required, placeholder, type }: Props) {

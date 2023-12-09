@@ -11,14 +11,16 @@ import {
 	ShouldRevalidateFunction,
 	useFetcher,
 	useLoaderData,
+	useLocation,
 	useParams,
 } from "@remix-run/react"
-import { useEffect } from "react"
+import { useContext, useEffect } from "react"
 import { FiX } from "react-icons/fi/index.js"
 import { IoIosCheckmarkCircleOutline } from "react-icons/io/index.js"
 import { $params, $path } from "remix-routes"
 import { ClientOnly } from "remix-utils/client-only"
 import { match } from "ts-pattern"
+import { RouterContext } from "~/context"
 import { showShareScreen } from "~/cookies.server"
 import { FloatingAddToCalendar } from "~/features/date-itinerary"
 import { DateStop } from "~/features/date-stop"
@@ -57,9 +59,16 @@ import { divider, flex } from "~/styled-system/patterns"
 
 export const shouldRevalidate: ShouldRevalidateFunction = ({
 	formAction,
+	currentUrl,
 	defaultShouldRevalidate,
 }) => {
 	if (formAction === $path("/api/track")) {
+		return false
+	}
+	if (
+		currentUrl.pathname.includes("share") ||
+		currentUrl.pathname.includes("add-to-calendar")
+	) {
 		return false
 	}
 	return defaultShouldRevalidate
@@ -199,7 +208,9 @@ export default function FreeDateIdeaRoute() {
 	const { id } = $params("/free-date/:id", params)
 	const fetcher = useFetcher()
 	const track = useTrack()
+	const { pathname } = useLocation()
 	const { incrementTimesViewedDates, showSignupModal } = signupStore()
+	const { from } = useContext(RouterContext)
 	useScrolledToBottom(() => {
 		if (freeDate.__typename === "FreeDate" && !freeDate.isUserTastemaker) {
 			track("User Scrolled To Bottom", {
@@ -211,8 +222,8 @@ export default function FreeDateIdeaRoute() {
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		incrementTimesViewedDates(!!viewer)
-	}, [viewer])
+		incrementTimesViewedDates(!!viewer, pathname, from)
+	}, [viewer, pathname, from])
 
 	return showShareScreen ? (
 		<div className={css({ width: "100%" })}>

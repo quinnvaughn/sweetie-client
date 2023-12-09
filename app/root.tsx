@@ -17,6 +17,7 @@ import {
 } from "@remix-run/react"
 import { createPortal } from "react-dom"
 import { ClientOnly } from "remix-utils/client-only"
+import { RouterProvider } from "./context"
 import { PageContainer, ToastContainer } from "./features/ui"
 import { ViewerIsLoggedInDocument } from "./graphql/generated"
 import { gqlFetch } from "./graphql/graphql"
@@ -142,7 +143,9 @@ export default function App() {
 				<Links />
 			</head>
 			<body>
-				<Outlet />
+				<RouterProvider>
+					<Outlet />
+				</RouterProvider>
 				<script
 					// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
 					dangerouslySetInnerHTML={{

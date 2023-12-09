@@ -102,6 +102,7 @@ export type CreateDateItineraryInput = {
   date: Scalars['DateTime']['input'];
   freeDateId: Scalars['String']['input'];
   guest?: InputMaybe<GuestInput>;
+  user?: InputMaybe<UserInput>;
 };
 
 export type CreateDateItineraryPayload = AuthError | Error | FieldErrors | PlannedDate;
@@ -1184,6 +1185,11 @@ export type User = {
   tastemaker?: Maybe<Tastemaker>;
   updatedAt: Scalars['DateTime']['output'];
   username: Scalars['String']['output'];
+};
+
+export type UserInput = {
+  email: Scalars['String']['input'];
+  name: Scalars['String']['input'];
 };
 
 export type UserPayload = Error | User;

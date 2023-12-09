@@ -1,13 +1,13 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node"
-import { useActionData, useLoaderData } from "@remix-run/react"
+import { Link, useActionData, useLoaderData } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
 import { DateTime } from "luxon"
+import { useEffect } from "react"
 import { $params, $path } from "remix-routes"
 import { ClientOnly } from "remix-utils/client-only"
 import { ValidatedForm, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
-import { AuthModal } from "~/features/auth"
 import {
 	CopyLinkShareButton,
 	DatePicker,
@@ -33,6 +33,12 @@ import { VStack } from "~/styled-system/jsx"
 const validator = withZod(
 	z
 		.object({
+			user: z
+				.object({
+					email: z.string().email("Must be a valid email"),
+					name: z.string().min(1, "Must be at least 1 character"),
+				})
+				.optional(),
 			guest: z
 				.object({
 					email: z.string().email("Must be a valid email").or(z.literal("")),
@@ -105,7 +111,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 			{ status: 400 },
 		)
 	}
-	const { guest, date, time, timeZone } = result.data
+	const { guest, date, time, timeZone, user } = result.data
 
 	const formattedTime = formatTime(time)
 
@@ -115,6 +121,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 			.toISO() as string,
 		guest: guest?.email && guest.email.length > 0 ? guest : undefined,
 		freeDateId: id,
+		user,
 	}
 
 	const { data } = await gqlFetch(request, CreateDateItineraryDocument, {
@@ -143,8 +150,19 @@ export default function AddToCalendarPage() {
 	const { freeDate, link } = useLoaderData<typeof loader>()
 	const { isLoggedIn } = useViewer()
 	const actionData = useActionData<typeof action>()
-	useOpenedModal(isLoggedIn() ? "create-date-itinerary" : "auth")
-	return isLoggedIn() ? (
+	useOpenedModal(
+		isLoggedIn()
+			? "create-date-itinerary"
+			: "create-date-itinerary-not-logged-in",
+	)
+
+	useEffect(() => {
+		if (actionData?.success) {
+			document.getElementById("modal-body")?.scrollTo(0, 0)
+		}
+	}, [actionData])
+
+	return (
 		<ValidatedForm validator={validator} method="post">
 			<Modal>
 				<Modal.Header
@@ -152,7 +170,7 @@ export default function AddToCalendarPage() {
 					title={"Add to calendar"}
 					to={$path("/free-date/:id", { id: freeDate.id })}
 				/>
-				<Modal.Body>
+				<Modal.Body id="modal-body">
 					{actionData?.success ? (
 						<VStack gap={4}>
 							<p
@@ -165,6 +183,26 @@ export default function AddToCalendarPage() {
 								the itinerary! Check your email for more details. Check your
 								spam folder if you don't see it.
 							</p>
+							{!isLoggedIn() && (
+								<p
+									className={css({
+										textAlign: "center",
+										textStyle: "paragraph",
+									})}
+								>
+									<Link
+										to={$path("/register")}
+										state={{ email: actionData?.formData?.user?.email }}
+										className={css({
+											textDecoration: "underline",
+											color: "primary",
+										})}
+									>
+										Create an account
+									</Link>{" "}
+									so you don't have to enter your information again.
+								</p>
+							)}
 							<p
 								className={css({
 									fontWeight: "bold",
@@ -210,6 +248,12 @@ export default function AddToCalendarPage() {
 								Adding the date to your calendar from here is free, makes it
 								easy to remember, and saves you time.
 							</p>
+							{!isLoggedIn() && (
+								<>
+									<Input name="user.name" label="Your name" required />
+									<Input name="user.email" label="Your email" required />
+								</>
+							)}
 							<DatePicker name="date" label="Date" required />
 							<TimePicker name="time" label="Start time" required />
 							<p
@@ -243,12 +287,5 @@ export default function AddToCalendarPage() {
 				{!actionData?.success && <Modal.Footer button={{ text: "Email me" }} />}
 			</Modal>
 		</ValidatedForm>
-	) : (
-		<AuthModal
-			onCloseLink={$path("/free-date/:id", { id: freeDate.id })}
-			redirectTo={$path("/free-date/:id/add-to-calendar", {
-				id: freeDate.id,
-			})}
-		/>
 	)
 }

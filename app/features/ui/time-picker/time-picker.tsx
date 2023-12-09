@@ -11,7 +11,7 @@ const input = cva({
 		padding: "8px",
 		width: "75px",
 		textAlign: "right",
-		shadow: 'sm',
+		shadow: "sm",
 		"&[type=number]": {
 			appearance: "textfield",
 		},
@@ -77,7 +77,7 @@ export default function TimePicker({ label, required, time, name }: Props) {
 	const [focused, setFocused] = useState<"hours" | "minutes" | null>(null)
 
 	function changeHour(e: React.ChangeEvent<HTMLInputElement>) {
-		if (e.target.value !== "" && Number.isNaN(e.target.value)) {
+		if (e.target.value !== "" && Number.isNaN(Number(e.target.value))) {
 			return
 		}
 		if (
@@ -102,6 +102,9 @@ export default function TimePicker({ label, required, time, name }: Props) {
 	}
 
 	function changeMins(e: React.ChangeEvent<HTMLInputElement>) {
+		if (e.target.value !== "" && Number.isNaN(Number(e.target.value))) {
+			return
+		}
 		if (Number(e.target.value) > 59 || Number(e.target.value) < 0) {
 			return
 		}

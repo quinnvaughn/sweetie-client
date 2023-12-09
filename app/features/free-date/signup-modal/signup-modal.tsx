@@ -1,12 +1,11 @@
-import { Link, useFetcher, useLocation, useParams } from "@remix-run/react"
+import { Link, useLocation } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
 import { useState } from "react"
-import { $params, $path } from "remix-routes"
+import { $path } from "remix-routes"
 import { ValidatedForm } from "remix-validated-form"
 import { z } from "zod"
 import { Input, Modal } from "~/features/ui"
 import { ModalBody } from "~/features/ui/modal/body"
-import { action } from "~/routes/api.clear-signup-modal"
 import { signupStore } from "~/stores"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
@@ -37,7 +36,6 @@ const registerValidator = withZod(
 export function SignupModal() {
 	const [authState, setAuthState] = useState<AuthState>("register")
 	const { pathname } = useLocation()
-	const params = useParams()
 	const { clearSignupModal } = signupStore()
 
 	return (
@@ -56,7 +54,7 @@ export function SignupModal() {
 					<VStack gap="4" alignItems={"center"}>
 						<p className={css({ textAlign: "center" })}>
 							Hey there! Looks like you're enjoying Sweetie. Create an account
-							so you can add this date to your calendar for free.
+							to save your dates and get access to more features.
 						</p>
 						<Input
 							type="email"

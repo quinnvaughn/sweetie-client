@@ -1,5 +1,5 @@
 import { DataFunctionArgs, redirect } from "@remix-run/node"
-import { Link } from "@remix-run/react"
+import { Link, useLocation } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
 import { $path } from "remix-routes"
 import { ValidatedForm, validationError } from "remix-validated-form"
@@ -55,8 +55,13 @@ export async function action({ request }: DataFunctionArgs) {
 }
 
 export default function RegisterRoute() {
+	const { state } = useLocation()
 	return (
-		<ValidatedForm validator={validator} method="post">
+		<ValidatedForm
+			validator={validator}
+			method="post"
+			defaultValues={{ email: state?.email ?? "", name: "", password: "" }}
+		>
 			<VStack gap="4" alignItems={"center"}>
 				<h1 className={css({ textStyle: "h1" })}>Register</h1>
 				<Input
