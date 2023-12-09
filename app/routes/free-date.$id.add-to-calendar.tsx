@@ -8,17 +8,8 @@ import { ClientOnly } from "remix-utils/client-only"
 import { ValidatedForm, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
-import {
-	CopyLinkShareButton,
-	DatePicker,
-	FacebookShareButton,
-	Input,
-	MessagesShareButton,
-	Modal,
-	TimePicker,
-	TwitterShareButton,
-	WhatsAppShareButton,
-} from "~/features/ui"
+import { SuccessfulEmail } from "~/features/free-date"
+import { DatePicker, Input, Modal, TimePicker } from "~/features/ui"
 import {
 	CreateDateItineraryDocument,
 	CreateDateItineraryInput,
@@ -144,8 +135,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		)
 }
 
-const campaign = "date itinerary success"
-
 export default function AddToCalendarPage() {
 	const { freeDate, link } = useLoaderData<typeof loader>()
 	const { isLoggedIn } = useViewer()
@@ -172,74 +161,11 @@ export default function AddToCalendarPage() {
 				/>
 				<Modal.Body id="modal-body">
 					{actionData?.success ? (
-						<VStack gap={4}>
-							<p
-								className={css({ textAlign: "center", textStyle: "paragraph" })}
-							>
-								We successfully emailed you
-								{actionData?.formData?.guest?.name
-									? ` and ${actionData?.formData.guest?.name.split(" ")[0]} `
-									: ""}{" "}
-								the itinerary! Check your email for more details. Check your
-								spam folder if you don't see it.
-							</p>
-							{!isLoggedIn() && (
-								<p
-									className={css({
-										textAlign: "center",
-										textStyle: "paragraph",
-									})}
-								>
-									<Link
-										to={$path("/register")}
-										state={{ email: actionData?.formData?.user?.email }}
-										className={css({
-											textDecoration: "underline",
-											color: "primary",
-										})}
-									>
-										Create an account
-									</Link>{" "}
-									so you don't have to enter your information again.
-								</p>
-							)}
-							<p
-								className={css({
-									fontWeight: "bold",
-									textAlign: "center",
-									textStyle: "paragraph",
-								})}
-							>
-								Want to share this date idea with your friends?
-							</p>
-							<VStack gap={4}>
-								<CopyLinkShareButton
-									link={link}
-									css={{ width: "250px" }}
-									campaign={campaign}
-								/>
-								<FacebookShareButton
-									link={link}
-									css={{ width: "250px" }}
-									campaign={campaign}
-								/>
-								<TwitterShareButton
-									link={link}
-									css={{ width: "250px" }}
-									campaign={campaign}
-								/>
-								<MessagesShareButton
-									link={link}
-									css={{ width: "250px" }}
-									campaign={campaign}
-								/>
-								<WhatsAppShareButton
-									link={link}
-									css={{ width: "250px" }}
-									campaign={campaign}
-								/>
-							</VStack>
-						</VStack>
+						<SuccessfulEmail
+							link={link}
+							guestName={actionData.formData?.guest?.name}
+							userEmail={actionData.formData?.user?.email}
+						/>
 					) : (
 						<VStack gap={2} justifyContent="center">
 							<p
