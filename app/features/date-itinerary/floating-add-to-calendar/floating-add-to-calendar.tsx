@@ -13,10 +13,10 @@ export function FloatingAddToCalendar() {
 		window.addEventListener("scroll", () => {
 			// check if user is at the bottom of the page
 			// if so, hide the floating button
-			if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-				setShowFloatingButton(false)
-				return
-			}
+			// if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+			// 	setShowFloatingButton(false)
+			// 	return
+			// }
 			const currentScrollY = window.scrollY
 			// user is scrolling down
 			if (currentScrollY > scrollY) {
