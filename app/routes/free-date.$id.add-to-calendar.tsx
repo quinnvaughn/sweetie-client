@@ -1,4 +1,9 @@
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node"
+import {
+	ActionFunctionArgs,
+	LoaderFunctionArgs,
+	MetaFunction,
+	json,
+} from "@remix-run/node"
 import { Link, useActionData, useLoaderData } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
 import { DateTime } from "luxon"
@@ -133,6 +138,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		.otherwise(() =>
 			json({ success: false, errors: null, formData: null }, { status: 500 }),
 		)
+}
+
+export const meta: MetaFunction<typeof loader> = () => {
+	return [{ name: "robots", content: "noindex" }]
 }
 
 export default function AddToCalendarPage() {

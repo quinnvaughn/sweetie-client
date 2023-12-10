@@ -1,8 +1,13 @@
+import { MetaFunction } from "@remix-run/node"
 import { useParams } from "@remix-run/react"
 import { $params, $path } from "remix-routes"
 import { ShareModal } from "~/features/ui"
 
 // TODO: Check if date actually exists.
+
+export const meta: MetaFunction = () => {
+	return [{ name: "robots", content: "noindex" }]
+}
 
 export default function ShareFreeDateRoute() {
 	const params = useParams()
