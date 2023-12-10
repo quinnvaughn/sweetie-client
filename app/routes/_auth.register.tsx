@@ -94,7 +94,7 @@ export default function RegisterRoute() {
 					type="button"
 					to={$path("/login")}
 				>
-					Already logged in?
+					Already registered?
 				</Link>
 			</VStack>
 		</ValidatedForm>

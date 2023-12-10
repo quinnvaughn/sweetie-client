@@ -43,7 +43,10 @@ export default function HomeRoute() {
 						Sweetie
 					</h1>
 					<p className={css({ textStyle: "paragraph", fontSize: "20px" })}>
-						Find the best dates to go on in LA
+						Find the best dates to go on in{" "}
+						<span className={css({ fontWeight: "bold", color: "secondary" })}>
+							Los Angeles
+						</span>
 					</p>
 				</VStack>
 				<SearchBar ref={ref} />
