@@ -11,7 +11,7 @@ export function GoOnThisDateButton() {
 			className={css({
 				padding: "12px",
 				bg: "primary",
-				width: { base: "200px", md: "100%" },
+				width: { base: "100%" },
 				textAlign: "center",
 				color: "white",
 				fontWeight: "bold",

@@ -1,16 +1,16 @@
-import { GoogleMap, MarkerF, useJsApiLoader } from "@react-google-maps/api"
-import { ClientOnly } from "remix-utils/client-only"
-import { Coordinates, DateStopItemFragment } from "~/graphql/generated"
+import { GoogleMap, useJsApiLoader } from "@react-google-maps/api"
+import { DateStopItemFragment } from "~/graphql/generated"
 import { getEnv } from "~/lib"
 import { css } from "~/styled-system/css"
 
 type Props = {
 	stops: DateStopItemFragment[]
+	scrollwheel?: boolean
 }
 
 const env = getEnv()
 
-export function DateLocationsMap({ stops }: Props) {
+export function DateLocationsMap({ stops, scrollwheel = false }: Props) {
 	const { isLoaded } = useJsApiLoader({
 		googleMapsApiKey: env.GOOGLE_MAPS_API_KEY,
 	})
@@ -46,7 +46,7 @@ export function DateLocationsMap({ stops }: Props) {
 				mapTypeControlOptions: {
 					mapTypeIds: ["roadmap"],
 				},
-				scrollwheel: true,
+				scrollwheel,
 				fullscreenControl: false,
 			}}
 			mapContainerStyle={{
