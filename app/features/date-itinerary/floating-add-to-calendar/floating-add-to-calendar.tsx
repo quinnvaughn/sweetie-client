@@ -23,7 +23,8 @@ export function FloatingAddToCalendar() {
 				setScrollY(currentScrollY)
 				setShowFloatingButton(false)
 				return
-			} else {
+				// add a threshold to prevent the button from showing when user is scrolling up a little bit
+			} else if (currentScrollY < scrollY - 100) {
 				setScrollY(currentScrollY)
 				setShowFloatingButton(true)
 				return
