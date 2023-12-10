@@ -11,15 +11,10 @@ export function FloatingAddToCalendar() {
 	// if up, show the floating button
 	useEffect(() => {
 		window.addEventListener("scroll", () => {
-			// check if the user is at the top of the page
-			if (window.scrollY === 0) {
-				setScrollY(0)
-				setShowFloatingButton(true)
-				return
-			}
 			const currentScrollY = window.scrollY
 			// user is scrolling down
-			if (currentScrollY > scrollY) {
+			// add a threshold to prevent the button from hiding when user is scrolling down a little bit
+			if (currentScrollY > scrollY + 100) {
 				setScrollY(currentScrollY)
 				setShowFloatingButton(false)
 				return
