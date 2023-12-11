@@ -1,11 +1,11 @@
 import { DataFunctionArgs, redirect } from "@remix-run/node"
-import { Link, useLocation } from "@remix-run/react"
+import { Link, useFetcher, useLocation } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
 import { $path } from "remix-routes"
 import { ValidatedForm, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
-import { Input, SubmitButton } from "~/features/ui"
+import { Button, Input, SubmitButton } from "~/features/ui"
 import { RegisterDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { css } from "~/styled-system/css"
@@ -56,8 +56,10 @@ export async function action({ request }: DataFunctionArgs) {
 
 export default function RegisterRoute() {
 	const { state } = useLocation()
+	const fetcher = useFetcher<typeof action>()
 	return (
 		<ValidatedForm
+			fetcher={fetcher}
 			validator={validator}
 			method="post"
 			defaultValues={{ email: state?.email ?? "", name: "", password: "" }}
@@ -84,7 +86,9 @@ export default function RegisterRoute() {
 					name="name"
 					placeholder="Please enter your full name"
 				/>
-				<SubmitButton label="Register" />
+				<Button size={"lg"} disabled={fetcher.state === "loading"}>
+					Register
+				</Button>
 				<Link
 					className={css({
 						cursor: "pointer",

@@ -43,7 +43,7 @@ export async function action({ request }: DataFunctionArgs) {
 }
 
 export default function ForgotPasswordRoute() {
-	const actionData = useActionData<typeof action>()
+	const fetcher = useFetcher<typeof action>()
 	return (
 		<PageContainer
 			width={{ base: "100%", lg: "400px" }}
@@ -59,7 +59,7 @@ export default function ForgotPasswordRoute() {
 					Forgot password
 				</h1>
 				<VStack gap={4} width={"100%"} alignItems="flex-start">
-					{!isTypeofFieldError(actionData) && actionData?.success ? (
+					{!isTypeofFieldError(fetcher.data) && fetcher.data?.success ? (
 						<VStack gap={4} alignItems="flex-start" width={"100%"}>
 							<p
 								className={css({ textStyle: "paragraph", textAlign: "center" })}
@@ -70,6 +70,7 @@ export default function ForgotPasswordRoute() {
 						</VStack>
 					) : (
 						<ValidatedForm
+							fetcher={fetcher}
 							method="post"
 							validator={validator}
 							className={css({ width: "100%" })}
@@ -101,13 +102,13 @@ export default function ForgotPasswordRoute() {
 										Login
 									</Link>
 								</VStack>
-								{!isTypeofFieldError(actionData) && actionData?.error && (
+								{!isTypeofFieldError(fetcher.data) && fetcher.data?.error && (
 									<p
 										className={css({
 											textStyle: "error",
 										})}
 									>
-										{actionData.error}
+										{fetcher.data.error}
 									</p>
 								)}
 							</VStack>

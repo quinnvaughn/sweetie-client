@@ -1,3 +1,4 @@
+import { useFetcher } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
 import { FiPlus } from "react-icons/fi/index.js"
 import {
@@ -7,20 +8,19 @@ import {
 } from "remix-validated-form"
 import { z } from "zod"
 import { zfd } from "zod-form-data"
+import { SaveDraftButton } from "~/features/drafts"
 import {
-	Input,
-	Textarea,
-	TagsInput,
-	CheckboxGroup,
-	RadioGroup,
 	Button,
-	SubmitButton,
+	CheckboxGroup,
 	ImageUpload,
+	Input,
+	RadioGroup,
+	TagsInput,
+	Textarea,
 } from "~/features/ui"
 import { css } from "~/styled-system/css"
-import { VStack, HStack } from "~/styled-system/jsx"
+import { HStack, VStack } from "~/styled-system/jsx"
 import { DateStopForm } from ".."
-import { SaveDraftButton } from "~/features/drafts"
 
 const schema = z.object({
 	id: z.string().optional(),
@@ -106,8 +106,14 @@ export function FreeDateForm({ formId, page, error, locationPath }: Props) {
 		formId,
 	})
 	const [id] = useControlField<string>("id", formId)
+	const fetcher = useFetcher()
 	return (
-		<ValidatedForm id={formId} validator={freeDateValidator} method="post">
+		<ValidatedForm
+			fetcher={fetcher}
+			id={formId}
+			validator={freeDateValidator}
+			method="post"
+		>
 			<VStack gap={4} alignItems="flex-start">
 				<HStack
 					gap={1}
@@ -247,15 +253,15 @@ export function FreeDateForm({ formId, page, error, locationPath }: Props) {
 						justifyContent: "flex-end",
 					})}
 				>
-					<SubmitButton
+					<Button
 						size="lg"
 						variant="primary"
-						label={
-							page === "create" || page === "draft"
-								? "Create new date"
-								: "Edit date"
-						}
-					/>
+						disabled={fetcher.state === "loading"}
+					>
+						{page === "create" || page === "draft"
+							? "Create new date"
+							: "Edit date"}
+					</Button>
 				</div>
 				{error && <p className={css({ textStyle: "error" })}>{error}</p>}
 			</VStack>

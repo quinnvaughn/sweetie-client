@@ -1,11 +1,11 @@
 import { DataFunctionArgs, redirect } from "@remix-run/node"
-import { Link } from "@remix-run/react"
+import { Link, useFetcher } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
 import { $path } from "remix-routes"
 import { ValidatedForm, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
-import { Input, SubmitButton } from "~/features/ui"
+import { Button, Input } from "~/features/ui"
 import { LoginDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { css } from "~/styled-system/css"
@@ -54,8 +54,9 @@ export async function action({ request }: DataFunctionArgs) {
 }
 
 export default function LoginRoute() {
+	const fetcher = useFetcher<typeof action>()
 	return (
-		<ValidatedForm validator={validator} method="post">
+		<ValidatedForm fetcher={fetcher} validator={validator} method="post">
 			<VStack gap="4" alignItems={"center"}>
 				<h1 className={css({ textStyle: "h1" })}>Login</h1>
 				<Input
@@ -72,7 +73,9 @@ export default function LoginRoute() {
 					placeholder="Please enter your password"
 					type={"password"}
 				/>
-				<SubmitButton label="Login" />
+				<Button size={"lg"} disabled={fetcher.state === "loading"}>
+					Login
+				</Button>
 				<Link
 					to={$path("/forgot-password")}
 					className={css({

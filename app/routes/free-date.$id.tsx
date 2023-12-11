@@ -71,6 +71,9 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 	) {
 		return false
 	}
+	if (formAction === $path("/login") || formAction === $path("/register")) {
+		return true
+	}
 	return defaultShouldRevalidate
 }
 

@@ -4,7 +4,7 @@ import {
 	json,
 	redirect,
 } from "@remix-run/node"
-import { Link, useActionData } from "@remix-run/react"
+import { Link, useFetcher } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
 import { $path } from "remix-routes"
 import { ValidatedForm, validationError } from "remix-validated-form"
@@ -55,8 +55,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function ResetPasswordRoute() {
-	const actionData = useActionData<typeof action>()
-	const fieldError = isTypeofFieldError(actionData)
+	const fetcher = useFetcher<typeof action>()
 	return (
 		<PageContainer
 			width={{ base: "100%", lg: "400px" }}
@@ -71,7 +70,7 @@ export default function ResetPasswordRoute() {
 				>
 					Reset password
 				</h1>
-				{!fieldError && actionData?.success ? (
+				{!isTypeofFieldError(fetcher.data) && fetcher.data?.success ? (
 					<VStack gap={4} alignItems={"flex-start"} width={"100%"}>
 						<p className={css({ textStyle: "paragraph" })}>
 							Your password has been successfully reset. You may go home now.
@@ -86,6 +85,7 @@ export default function ResetPasswordRoute() {
 					</VStack>
 				) : (
 					<ValidatedForm
+						fetcher={fetcher}
 						validator={validator}
 						method="post"
 						className={css({ width: "100%" })}
@@ -102,8 +102,8 @@ export default function ResetPasswordRoute() {
 						</VStack>
 					</ValidatedForm>
 				)}
-				{!fieldError && actionData?.error && (
-					<p className={css({ textStyle: "error" })}>{actionData?.error}</p>
+				{!isTypeofFieldError(fetcher.data) && fetcher.data?.error && (
+					<p className={css({ textStyle: "error" })}>{fetcher.data?.error}</p>
 				)}
 			</VStack>
 		</PageContainer>

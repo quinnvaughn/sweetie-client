@@ -1,4 +1,4 @@
-import { useSearchParams } from "@remix-run/react"
+import { useFetcher, useSearchParams } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
 import { forwardRef, useState } from "react"
 import { FaSlidersH } from "react-icons/fa/index.js"
@@ -56,7 +56,6 @@ const SearchBar = forwardRef<Ref>(function SearchBar(_p, ref) {
 	const timesOfDay = searchParams.getAll("timesOfDay")
 	const nsfw = searchParams.get("nsfw")
 	const cities = searchParams.getAll("cities")
-
 	return (
 		<ValidatedForm
 			validator={validator}
