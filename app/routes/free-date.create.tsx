@@ -4,7 +4,7 @@ import {
 	json,
 	redirect,
 } from "@remix-run/node"
-import { Outlet, useActionData } from "@remix-run/react"
+import { Outlet, useActionData, useFetcher } from "@remix-run/react"
 import { $path } from "remix-routes"
 import { setFormDefaults, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
@@ -81,7 +81,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function CreateFreeDateRoute() {
-	const actionData = useActionData<typeof action>()
+	const fetcher = useFetcher<typeof action>()
 	return (
 		<PageContainer
 			tastemaker
@@ -90,9 +90,12 @@ export default function CreateFreeDateRoute() {
 		>
 			<Outlet />
 			<FreeDateForm
+				fetcher={fetcher}
 				formId="create-free-date-form"
 				page="create"
-				error={!isTypeofFieldError(actionData) ? actionData?.error ?? "" : ""}
+				error={
+					!isTypeofFieldError(fetcher.data) ? fetcher.data?.error ?? "" : ""
+				}
 				locationPath={$path("/free-date/create/add-location")}
 			/>
 		</PageContainer>

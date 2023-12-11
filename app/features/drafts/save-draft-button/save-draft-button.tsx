@@ -25,6 +25,7 @@ export function SaveDraftButton({ formId }: Props) {
 	return (
 		<VStack gap={1} alignItems="flex-end">
 			<Button
+				disabled={fetcher.state === "submitting"}
 				variant="tertiary"
 				size="sm"
 				onClick={saveDraft}

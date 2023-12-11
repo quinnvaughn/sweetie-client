@@ -58,7 +58,8 @@ const buttonVariantMap = {
   "size": [
     "sm",
     "md",
-    "lg"
+    "lg",
+    "xl"
   ]
 }
 

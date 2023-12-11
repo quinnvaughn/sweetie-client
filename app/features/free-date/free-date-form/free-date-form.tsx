@@ -99,14 +99,20 @@ type Props = {
 	page: "create" | "edit" | "draft"
 	error?: string
 	locationPath: string
+	fetcher: ReturnType<typeof useFetcher>
 }
 
-export function FreeDateForm({ formId, page, error, locationPath }: Props) {
+export function FreeDateForm({
+	formId,
+	page,
+	error,
+	locationPath,
+	fetcher,
+}: Props) {
 	const [stops, { push, remove, move }] = useFieldArray<Stop>("stops", {
 		formId,
 	})
 	const [id] = useControlField<string>("id", formId)
-	const fetcher = useFetcher()
 	return (
 		<ValidatedForm
 			fetcher={fetcher}
@@ -254,9 +260,10 @@ export function FreeDateForm({ formId, page, error, locationPath }: Props) {
 					})}
 				>
 					<Button
-						size="lg"
+						type="submit"
+						size="xl"
 						variant="primary"
-						disabled={fetcher.state === "loading"}
+						disabled={fetcher.state === "submitting"}
 					>
 						{page === "create" || page === "draft"
 							? "Create new date"

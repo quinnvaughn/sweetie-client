@@ -10,7 +10,7 @@ import { $path } from "remix-routes"
 import { ValidatedForm, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
-import { Input, PageContainer, SubmitButton } from "~/features/ui"
+import { Button, Input, PageContainer } from "~/features/ui"
 import { ResetPasswordDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { isTypeofFieldError } from "~/lib"
@@ -98,7 +98,9 @@ export default function ResetPasswordRoute() {
 								label="Password"
 								placeholder="Please enter your new password"
 							/>
-							<SubmitButton label="Reset password" />
+							<Button type="submit" disabled={fetcher.state === "submitting"}>
+								Reset password
+							</Button>
 						</VStack>
 					</ValidatedForm>
 				)}

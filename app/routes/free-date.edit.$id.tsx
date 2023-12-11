@@ -4,12 +4,7 @@ import {
 	json,
 	redirect,
 } from "@remix-run/node"
-import {
-	Outlet,
-	useActionData,
-	useLoaderData,
-	useParams,
-} from "@remix-run/react"
+import { Outlet, useFetcher, useLoaderData, useParams } from "@remix-run/react"
 import { $params, $path } from "remix-routes"
 import { setFormDefaults, validationError } from "remix-validated-form"
 import { P, match } from "ts-pattern"
@@ -107,9 +102,9 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
 export default function EditFreeDateRoute() {
 	const loaderData = useLoaderData<typeof loader>()
-	const actionData = useActionData<typeof action>()
 	const params = useParams()
 	const { id } = $params("/free-date/edit/:id", params)
+	const fetcher = useFetcher<typeof action>()
 	return (
 		<PageContainer
 			tastemaker
@@ -121,10 +116,11 @@ export default function EditFreeDateRoute() {
 				<p className={css({ textStyle: "error" })}>{loaderData.error}</p>
 			) : (
 				<FreeDateForm
+					fetcher={fetcher}
 					locationPath={$path("/free-date/edit/:id/add-location", { id })}
 					formId="edit-free-date-form"
 					page="edit"
-					error={!isTypeofFieldError(actionData) ? actionData?.error : ""}
+					error={!isTypeofFieldError(fetcher.data) ? fetcher.data?.error : ""}
 				/>
 			)}
 		</PageContainer>

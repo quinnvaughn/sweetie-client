@@ -56,7 +56,7 @@ export function AddLocation({ redirectTo }: Props) {
 				<Modal.Footer
 					button={{
 						text: "Create location",
-						disabled: fetcher.state === "loading",
+						disabled: fetcher.state === "submitting",
 					}}
 				/>
 			</Modal>

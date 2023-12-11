@@ -5,7 +5,7 @@ import type { DistributiveOmit, Pretty } from '../types/system-types';
 interface ButtonVariant {
   visual: "solid" | "outlined"
 variant: "primary" | "secondary" | "tertiary" | "black"
-size: "sm" | "md" | "lg"
+size: "sm" | "md" | "lg" | "xl"
 }
 
 type ButtonVariantMap = {

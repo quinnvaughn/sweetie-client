@@ -30,6 +30,7 @@ export const buttonRecipe = defineRecipe({
 			sm: { padding: "8px" },
 			md: { padding: "8px 32px" },
 			lg: { padding: "12px 64px" },
+			xl: { padding: "12px 128px" },
 		},
 	},
 	compoundVariants: [

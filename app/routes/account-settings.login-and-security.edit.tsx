@@ -139,7 +139,7 @@ export default function LoginAndSecurityRoute() {
 				</Modal.Body>
 				<Modal.Footer
 					button={{
-						disabled: fetcher.state === "loading",
+						disabled: fetcher.state === "submitting",
 						text: "Save",
 					}}
 				/>

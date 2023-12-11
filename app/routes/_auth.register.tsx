@@ -86,7 +86,11 @@ export default function RegisterRoute() {
 					name="name"
 					placeholder="Please enter your full name"
 				/>
-				<Button size={"lg"} disabled={fetcher.state === "loading"}>
+				<Button
+					type="submit"
+					size={"xl"}
+					disabled={fetcher.state === "submitting"}
+				>
 					Register
 				</Button>
 				<Link

@@ -73,7 +73,11 @@ export default function LoginRoute() {
 					placeholder="Please enter your password"
 					type={"password"}
 				/>
-				<Button size={"lg"} disabled={fetcher.state === "loading"}>
+				<Button
+					type="submit"
+					size={"xl"}
+					disabled={fetcher.state === "submitting"}
+				>
 					Login
 				</Button>
 				<Link

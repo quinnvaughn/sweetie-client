@@ -152,7 +152,7 @@ export default function EditRoute() {
 				</Modal.Body>
 				<Modal.Footer
 					button={{
-						disabled: fetcher.state === "loading",
+						disabled: fetcher.state === "submitting",
 						text: "Save",
 					}}
 				/>

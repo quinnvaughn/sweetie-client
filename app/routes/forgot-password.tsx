@@ -5,7 +5,7 @@ import { $path } from "remix-routes"
 import { ValidatedForm, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
-import { Input, PageContainer, SubmitButton } from "~/features/ui"
+import { Button, Input, PageContainer, SubmitButton } from "~/features/ui"
 import { RequestPasswordResetDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { isTypeofFieldError, mapFieldErrorToValidationError } from "~/lib"
@@ -88,7 +88,13 @@ export default function ForgotPasswordRoute() {
 									justifyContent="flex-start"
 									width={"100%"}
 								>
-									<SubmitButton label="Send reset link" variant="secondary" />
+									<Button
+										disabled={fetcher.state === "submitting"}
+										type="submit"
+										variant="secondary"
+									>
+										Send reset link
+									</Button>
 									<Link
 										className={css({
 											textStyle: "paragraph",

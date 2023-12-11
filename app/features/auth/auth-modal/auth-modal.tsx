@@ -120,7 +120,7 @@ export function AuthModal({
 				<Modal.Footer
 					button={{
 						text: authState === "login" ? "Login" : "Register",
-						disabled: fetcher.state === "loading",
+						disabled: fetcher.state === "submitting",
 					}}
 				/>
 			</Modal>
