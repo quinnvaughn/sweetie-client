@@ -2,6 +2,8 @@ import { useCombobox } from "downshift"
 import { useState } from "react"
 import { $path } from "remix-routes"
 import { useField } from "remix-validated-form"
+import { useSpinDelay } from "spin-delay"
+import { Spinner } from "~/features/ui"
 import { useCustomFetcher } from "~/hooks"
 import { loader } from "~/routes/api.google-locations"
 import { css, cva } from "~/styled-system/css"
@@ -69,6 +71,7 @@ function splitUpAddress(address: string) {
 
 export function GoogleLocationCombobox({ label, required }: Props) {
 	const fetcher = useCustomFetcher<typeof loader>()
+	const showSpinner = useSpinDelay(fetcher.state === "loading", { delay: 300 })
 	const { getInputProps: getFieldProps } = useField("address.cityText")
 	const { error, clearError } = useField("name")
 	const [selectedValue, setSelectedValue] = useState(defaultValues)
@@ -144,39 +147,46 @@ export function GoogleLocationCombobox({ label, required }: Props) {
 						borderColor: "gray",
 					})}
 				>
-					<input
-						placeholder="Search for a location"
-						className={css({ width: "100%", outline: "none" })}
-						{...getFieldProps({
-							...getInputProps(),
-						})}
-					/>
-					<input type="hidden" name={"name"} value={selectedValue.name ?? ""} />
-					<input
-						type="hidden"
-						name={"website"}
-						value={selectedValue.website ?? ""}
-					/>
-					<input
-						type="hidden"
-						name={"address.postalCode"}
-						value={selectedValue.address.postalCode ?? ""}
-					/>
-					<input
-						type="hidden"
-						name={"address.city"}
-						value={selectedValue.address.city ?? ""}
-					/>
-					<input
-						type="hidden"
-						name={"address.state"}
-						value={selectedValue.address.state ?? ""}
-					/>
-					<input
-						type="hidden"
-						name={"address.street"}
-						value={selectedValue.address.street ?? ""}
-					/>
+					<div className={css({ display: "flex", gap: 0.5, flexGrow: 1 })}>
+						<input
+							placeholder="Search for a location"
+							className={css({ width: "100%", outline: "none" })}
+							{...getFieldProps({
+								...getInputProps(),
+							})}
+						/>
+						{showSpinner && <Spinner />}
+						<input
+							type="hidden"
+							name={"name"}
+							value={selectedValue.name ?? ""}
+						/>
+						<input
+							type="hidden"
+							name={"website"}
+							value={selectedValue.website ?? ""}
+						/>
+						<input
+							type="hidden"
+							name={"address.postalCode"}
+							value={selectedValue.address.postalCode ?? ""}
+						/>
+						<input
+							type="hidden"
+							name={"address.city"}
+							value={selectedValue.address.city ?? ""}
+						/>
+						<input
+							type="hidden"
+							name={"address.state"}
+							value={selectedValue.address.state ?? ""}
+						/>
+						<input
+							type="hidden"
+							name={"address.street"}
+							value={selectedValue.address.street ?? ""}
+						/>
+					</div>
 				</div>
 			</div>
 			<ul

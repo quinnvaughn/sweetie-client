@@ -2,6 +2,8 @@ import { Link } from "@remix-run/react"
 import { useCombobox } from "downshift"
 import { $path } from "remix-routes"
 import { useControlField, useField } from "remix-validated-form"
+import { useSpinDelay } from "spin-delay"
+import { Spinner } from "~/features/ui"
 import { useCustomFetcher } from "~/hooks"
 import { loader } from "~/routes/api.locations"
 import { css, cva } from "~/styled-system/css"
@@ -55,6 +57,7 @@ export function LocationCombobox({
 	locationPath,
 }: Props) {
 	const fetcher = useCustomFetcher<typeof loader>()
+	const showSpinner = useSpinDelay(fetcher.state === "loading", { delay: 300 })
 	const [id, setId] = useControlField<string>(fields.id)
 	const {
 		error,
@@ -120,17 +123,20 @@ export function LocationCombobox({
 						borderColor: "gray",
 					})}
 				>
-					<input
-						placeholder="Search for a location/establishment"
-						className={css({ width: "100%", outline: "none" })}
-						{...getFieldProps({
-							...getInputProps({
-								id: fields.name,
-								name: fields.name,
-							}),
-						})}
-					/>
-					<input type="hidden" name={fields.id} value={id ?? ""} />
+					<div className={css({ display: "flex", gap: 0.5, flexGrow: 1 })}>
+						<input
+							placeholder="Search for a location/establishment"
+							className={css({ width: "100%", outline: "none" })}
+							{...getFieldProps({
+								...getInputProps({
+									id: fields.name,
+									name: fields.name,
+								}),
+							})}
+						/>
+						{showSpinner && <Spinner />}
+						<input type="hidden" name={fields.id} value={id ?? ""} />
+					</div>
 				</div>
 			</div>
 			<ul className={menu({ hidden: !isOpen })} {...getMenuProps()}>
