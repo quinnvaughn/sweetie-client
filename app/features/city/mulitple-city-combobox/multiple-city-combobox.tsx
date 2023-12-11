@@ -1,12 +1,14 @@
 import { useCombobox, useMultipleSelection } from "downshift"
 import { useEffect, useState } from "react"
+import { IoCloseOutline } from "react-icons/io5/index.js"
 import { $path } from "remix-routes"
+import { useSpinDelay } from "spin-delay"
 import { match } from "ts-pattern"
+import { Spinner } from "~/features/ui"
 import { City } from "~/graphql/generated"
 import { useCustomFetcher } from "~/hooks"
 import { loader } from "~/routes/api.cities"
 import { css, cva } from "~/styled-system/css"
-import { IoCloseOutline } from "react-icons/io5/index.js"
 
 const menu = cva({
 	base: {
@@ -53,6 +55,7 @@ export function MultipleCityCombobox({ label, defaultCities }: Props) {
 		defaultCities ?? [],
 	)
 	const cities = fetcher.data?.cities ?? []
+	const showSpinner = useSpinDelay(fetcher.state === "loading", { delay: 300 })
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -187,6 +190,7 @@ export function MultipleCityCombobox({ label, defaultCities }: Props) {
 							{...getInputProps(getDropdownProps({ preventKeyAction: isOpen }))}
 							value={inputValue}
 						/>
+						{showSpinner && <Spinner />}
 						{selectedCities.length > 0 &&
 							selectedCities.map((c) => (
 								<input key={c} type="hidden" name="cities" value={c} />

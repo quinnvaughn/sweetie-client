@@ -2,6 +2,8 @@ import { useCombobox } from "downshift"
 import { useState } from "react"
 import { $path } from "remix-routes"
 import { useField } from "remix-validated-form"
+import { useSpinDelay } from "spin-delay"
+import { Spinner } from "~/features/ui"
 import { City } from "~/graphql/generated"
 import { useCustomFetcher } from "~/hooks"
 import { loader } from "~/routes/api.cities"
@@ -64,6 +66,7 @@ export function SingleCityCombobox({ label, required, fields }: Props) {
 		undefined,
 	)
 	const cities = fetcher.data?.cities ?? []
+	const showSpinner = useSpinDelay(fetcher.state === "loading", { delay: 300 })
 	type NewCity = Pick<City, "nameAndState">
 
 	const { isOpen, getLabelProps, getMenuProps, getInputProps, getItemProps } =
@@ -120,13 +123,17 @@ export function SingleCityCombobox({ label, required, fields }: Props) {
 						borderColor: "gray",
 					})}
 				>
-					<input
-						placeholder="City"
-						className={css({ width: "100%", outline: "none" })}
-						{...getFieldProps({
-							...getInputProps(),
-						})}
-					/>
+					<div className={css({ display: "flex", gap: 0.5, flexGrow: 1 })}>
+						<input
+							placeholder="City"
+							className={css({ width: "100%", outline: "none" })}
+							{...getFieldProps({
+								...getInputProps(),
+							})}
+						/>
+						{showSpinner && <Spinner />}
+					</div>
+
 					<input type="hidden" name={fields.city} value={selectedCity ?? ""} />
 					<input
 						type="hidden"
