@@ -4,12 +4,18 @@ import {
 	MetaFunction,
 	json,
 } from "@remix-run/node"
-import { Link, useActionData, useLoaderData } from "@remix-run/react"
+import {
+	Link,
+	useActionData,
+	useFetcher,
+	useLoaderData,
+} from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
 import { DateTime } from "luxon"
 import { useEffect } from "react"
 import { $params, $path } from "remix-routes"
 import { ClientOnly } from "remix-utils/client-only"
+import { wait } from "remix-utils/timers"
 import { ValidatedForm, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
@@ -126,18 +132,16 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 	return match(data?.createDateItinerary)
 		.with({ __typename: "PlannedDate" }, () =>
-			json({ success: true, errors: null, formData: result.data }),
+			json({ success: true, errors: null }),
 		)
 		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) => {
 			const reduceToValidatorError = mapFieldErrorToValidationError(fieldErrors)
 			return json(
-				{ success: false, errors: reduceToValidatorError, formData: null },
+				{ success: false, errors: reduceToValidatorError },
 				{ status: 400 },
 			)
 		})
-		.otherwise(() =>
-			json({ success: false, errors: null, formData: null }, { status: 500 }),
-		)
+		.otherwise(() => json({ success: false, errors: null }, { status: 500 }))
 }
 
 export const meta: MetaFunction<typeof loader> = () => {
@@ -147,7 +151,7 @@ export const meta: MetaFunction<typeof loader> = () => {
 export default function AddToCalendarPage() {
 	const { freeDate, link } = useLoaderData<typeof loader>()
 	const { isLoggedIn } = useViewer()
-	const actionData = useActionData<typeof action>()
+	const fetcher = useFetcher<typeof action>()
 	useOpenedModal(
 		isLoggedIn()
 			? "create-date-itinerary"
@@ -155,13 +159,13 @@ export default function AddToCalendarPage() {
 	)
 
 	useEffect(() => {
-		if (actionData?.success) {
+		if (fetcher.data?.success) {
 			document.getElementById("modal-body")?.scrollTo(0, 0)
 		}
-	}, [actionData])
+	}, [fetcher.data])
 
 	return (
-		<ValidatedForm validator={validator} method="post">
+		<ValidatedForm validator={validator} method="post" fetcher={fetcher}>
 			<Modal>
 				<Modal.Header
 					type="link"
@@ -169,11 +173,11 @@ export default function AddToCalendarPage() {
 					to={$path("/free-date/:id", { id: freeDate.id })}
 				/>
 				<Modal.Body id="modal-body">
-					{actionData?.success ? (
+					{fetcher.data?.success ? (
 						<SuccessfulEmail
 							link={link}
-							guestName={actionData.formData?.guest?.name}
-							userEmail={actionData.formData?.user?.email}
+							guestName={fetcher.formData?.get("guest.name") as string}
+							userEmail={fetcher.formData?.get("user.email") as string}
 						/>
 					) : (
 						<VStack gap={2} justifyContent="center">
@@ -221,7 +225,14 @@ export default function AddToCalendarPage() {
 						</VStack>
 					)}
 				</Modal.Body>
-				{!actionData?.success && <Modal.Footer button={{ text: "Email me" }} />}
+				{!fetcher.data?.success && (
+					<Modal.Footer
+						button={{
+							text: "Email me",
+							disabled: fetcher.state === "submitting",
+						}}
+					/>
+				)}
 			</Modal>
 		</ValidatedForm>
 	)

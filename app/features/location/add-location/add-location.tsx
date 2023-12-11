@@ -53,7 +53,12 @@ export function AddLocation({ redirectTo }: Props) {
 							.exhaustive()}
 					</VStack>
 				</Modal.Body>
-				<Modal.Footer button={{ text: "Create location" }} />
+				<Modal.Footer
+					button={{
+						text: "Create location",
+						disabled: fetcher.state === "loading",
+					}}
+				/>
 			</Modal>
 		</ValidatedForm>
 	)

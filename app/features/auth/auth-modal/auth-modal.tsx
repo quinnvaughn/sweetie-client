@@ -1,4 +1,4 @@
-import { Link } from "@remix-run/react"
+import { Link, useFetcher } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
 import { useState } from "react"
 import { $path } from "remix-routes"
@@ -42,9 +42,11 @@ export function AuthModal({
 	redirectTo = $path("/"),
 	onCloseLink,
 }: Props) {
+	const fetcher = useFetcher()
 	const [authState, setAuthState] = useState<AuthState>(defaultScreen)
 	return (
 		<ValidatedForm
+			fetcher={fetcher}
 			validator={authState === "login" ? loginValidator : registerValidator}
 			method="post"
 			action={authState === "login" ? $path("/login") : $path("/register")}
@@ -118,6 +120,7 @@ export function AuthModal({
 				<Modal.Footer
 					button={{
 						text: authState === "login" ? "Login" : "Register",
+						disabled: fetcher.state === "loading",
 					}}
 				/>
 			</Modal>

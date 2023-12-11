@@ -5,6 +5,7 @@ import { Button } from ".."
 type Props = {
 	button?: {
 		text: string
+		disabled?: boolean
 	}
 	cancel?: {
 		text: string
@@ -24,8 +25,13 @@ export function ModalFooter({ button: buttonProps, cancel }: Props) {
 		>
 			{cancel ? <Link to={cancel.to}>{cancel.text}</Link> : <div />}
 			{buttonProps && (
-				<Button type="submit" variant={"black"} size={"lg"}>
-					{buttonProps?.text}
+				<Button
+					disabled={buttonProps.disabled}
+					type="submit"
+					variant={"black"}
+					size={"lg"}
+				>
+					{buttonProps.text}
 				</Button>
 			)}
 		</HStack>

@@ -6,6 +6,7 @@ type Props = ButtonVariantProps & {
 	type?: "button" | "submit" | "reset"
 	icon?: React.ReactNode
 	onClick?: () => void
+	disabled?: boolean
 }
 
 export function Button({
@@ -16,9 +17,11 @@ export function Button({
 	children,
 	icon,
 	onClick,
+	disabled,
 }: Props) {
 	return (
 		<button
+			disabled={disabled}
 			type={type}
 			className={button({ variant, size, visual })}
 			onClick={onClick}

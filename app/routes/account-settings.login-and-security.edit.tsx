@@ -4,6 +4,7 @@ import {
 	json,
 	redirect,
 } from "@remix-run/node"
+import { useFetcher } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
 import { $path } from "remix-routes"
 import {
@@ -92,9 +93,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	)
 }
 
-export default function EditRoute() {
+export default function LoginAndSecurityRoute() {
+	const fetcher = useFetcher<typeof action>()
 	return (
 		<ValidatedForm
+			fetcher={fetcher}
 			id="login-and-security-form"
 			validator={validator}
 			method="post"
@@ -136,6 +139,7 @@ export default function EditRoute() {
 				</Modal.Body>
 				<Modal.Footer
 					button={{
+						disabled: fetcher.state === "loading",
 						text: "Save",
 					}}
 				/>
