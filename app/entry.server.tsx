@@ -7,9 +7,9 @@ import type {
 } from "@remix-run/node"
 import { createReadableStreamFromReadable } from "@remix-run/node"
 import { RemixServer } from "@remix-run/react"
+import * as Sentry from "@sentry/node"
 import isbot from "isbot"
 import { renderToPipeableStream } from "react-dom/server"
-import * as Sentry from "@sentry/node"
 
 Sentry.init({
 	dsn: process.env.SENTRY_DSN,

@@ -1,6 +1,6 @@
-import { useFetcher, useSearchParams } from "@remix-run/react"
+import { useSearchParams } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
-import { forwardRef, useEffect, useState } from "react"
+import { forwardRef, useState } from "react"
 import { FaSlidersH } from "react-icons/fa/index.js"
 import { FiSearch } from "react-icons/fi/index.js"
 import { $path } from "remix-routes"
@@ -9,6 +9,7 @@ import { z } from "zod"
 import { zfd } from "zod-form-data"
 import { MultipleCityCombobox } from "~/features/city"
 import { CheckboxGroup, RadioGroup } from "~/features/ui"
+import { useInterval } from "~/hooks"
 import { css, cva } from "~/styled-system/css"
 import { HStack } from "~/styled-system/jsx"
 
@@ -74,19 +75,12 @@ const SearchBar = forwardRef<Ref>(function SearchBar(_p, ref) {
 		suggestions[Math.floor(Math.random() * suggestions.length)],
 	)
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		const interval = setInterval(() => {
-			// pick the next suggestion
-			// if the current suggestion is the last one, then pick the first one
-			const idx = suggestions.indexOf(suggestion)
-			const nextSuggestion =
-				idx === suggestions.length - 1 ? suggestions[0] : suggestions[idx + 1]
-			setSuggestion(nextSuggestion)
-		}, 3000)
-
-		return () => clearInterval(interval)
-	}, [])
+	useInterval(() => {
+		const idx = suggestions.indexOf(suggestion)
+		const nextSuggestion =
+			idx === suggestions.length - 1 ? suggestions[0] : suggestions[idx + 1]
+		setSuggestion(nextSuggestion)
+	}, 3000)
 
 	return (
 		<ValidatedForm
