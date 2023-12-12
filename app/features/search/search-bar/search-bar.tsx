@@ -1,6 +1,6 @@
 import { useFetcher, useSearchParams } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
-import { forwardRef, useState } from "react"
+import { forwardRef, useEffect, useState } from "react"
 import { FaSlidersH } from "react-icons/fa/index.js"
 import { FiSearch } from "react-icons/fi/index.js"
 import { $path } from "remix-routes"
@@ -50,12 +50,43 @@ const validator = withZod(
 
 type Ref = HTMLInputElement
 
+// different kinds of dates
+const suggestions = [
+	"beach",
+	"dancing",
+	"drinks",
+	"music",
+	"hiking",
+	"picnic",
+	"themed",
+	"movie",
+	"upscale",
+	"museum",
+]
+
 const SearchBar = forwardRef<Ref>(function SearchBar(_p, ref) {
 	const [isVisible, setIsVisible] = useState<"yes" | "no">("no")
 	const [searchParams] = useSearchParams()
 	const timesOfDay = searchParams.getAll("timesOfDay")
 	const nsfw = searchParams.get("nsfw")
 	const cities = searchParams.getAll("cities")
+	const [suggestion, setSuggestion] = useState<string>(
+		suggestions[Math.floor(Math.random() * suggestions.length)],
+	)
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			// pick the next suggestion
+			// if the current suggestion is the last one, then pick the first one
+			const idx = suggestions.indexOf(suggestion)
+			const nextSuggestion =
+				idx === suggestions.length - 1 ? suggestions[0] : suggestions[idx + 1]
+			setSuggestion(nextSuggestion)
+		}, 3000)
+
+		return () => clearInterval(interval)
+	}, [suggestion])
+
 	return (
 		<ValidatedForm
 			validator={validator}
@@ -81,6 +112,7 @@ const SearchBar = forwardRef<Ref>(function SearchBar(_p, ref) {
 						<input
 							ref={ref}
 							type="search"
+							autoCapitalize="off"
 							className={css({
 								padding: "8px",
 								width: "100%",
@@ -90,7 +122,7 @@ const SearchBar = forwardRef<Ref>(function SearchBar(_p, ref) {
 								background: "white",
 							})}
 							defaultValue={searchParams.get("query") ?? ""}
-							placeholder="Search for any kind of date..."
+							placeholder={`Search for ${suggestion} dates`}
 							name="query"
 						/>
 						<div
