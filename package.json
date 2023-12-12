@@ -4,7 +4,7 @@
 		"routes": "remix-routes",
 		"build": "remix-routes && remix build",
 		"dev": "concurrently \"remix-routes -w\" \"yarn dev:node\"",
-		"prepare": "panda codegen",
+		"prepare": "panda codegen && husky install",
 		"dev:node": "remix dev",
 		"start": "remix-serve build/index.js",
 		"typecheck": "tsc",
@@ -54,7 +54,8 @@
 		"@types/react": "^18.2.33",
 		"@types/react-dom": "^18.2.14",
 		"concurrently": "^8.2.2",
-		"typescript": "^5.2.2"
+		"typescript": "^5.2.2",
+		"husky": "^8.0.0"
 	},
 	"packageManager": "yarn@1.22.19",
 	"engines": {
