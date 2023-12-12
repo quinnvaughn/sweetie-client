@@ -74,6 +74,7 @@ const SearchBar = forwardRef<Ref>(function SearchBar(_p, ref) {
 		suggestions[Math.floor(Math.random() * suggestions.length)],
 	)
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const interval = setInterval(() => {
 			// pick the next suggestion
@@ -85,7 +86,7 @@ const SearchBar = forwardRef<Ref>(function SearchBar(_p, ref) {
 		}, 3000)
 
 		return () => clearInterval(interval)
-	}, [suggestion])
+	}, [])
 
 	return (
 		<ValidatedForm
