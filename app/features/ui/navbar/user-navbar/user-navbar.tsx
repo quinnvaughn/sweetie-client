@@ -1,9 +1,9 @@
-import { Navbar } from "../navbar"
-import { HStack, VStack } from "~/styled-system/jsx"
+import { useState } from "react"
 import { match } from "ts-pattern"
 import { useViewer } from "~/hooks"
 import { css } from "~/styled-system/css"
-import { useState } from "react"
+import { HStack, VStack } from "~/styled-system/jsx"
+import { Navbar } from "../navbar"
 
 export function UserNavbar() {
 	const { isLoggedIn } = useViewer()
@@ -32,7 +32,7 @@ export function UserNavbar() {
 					<Navbar.Hamburger setIsOpen={setIsOpen}>
 						{isOpen && (
 							<Navbar.HamburgerDropdown>
-								<VStack gap={1}>
+								<VStack gap={2}>
 									{match(isLoggedIn())
 										.with(true, () => <Navbar.LoggedInActions />)
 										.with(false, () => <Navbar.NotLoggedInActions />)

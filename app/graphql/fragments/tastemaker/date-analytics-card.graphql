@@ -3,6 +3,7 @@ fragment DateAnalyticsCard on FreeDate {
           title
           thumbnail
           numPlannedDates
+          favoriteCount
           views {
             id
             viewCount

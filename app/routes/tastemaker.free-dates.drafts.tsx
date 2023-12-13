@@ -44,7 +44,7 @@ export default function FreeDateDraftsRoute() {
 						() => (
 							<HStack gap={4} flexWrap="wrap" justifyContent={"center"}>
 								<p className={css({ textStyle: "paragraph" })}>
-									You have no drafts.
+									You haven't created any drafts yet.
 								</p>
 							</HStack>
 						),

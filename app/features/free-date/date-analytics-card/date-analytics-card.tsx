@@ -28,7 +28,7 @@ export function DateAnalyticsCard({ date }: Props) {
 					<span className={css({ textStyle: "paragraph", fontWeight: "600" })}>
 						{date.title}
 					</span>
-					<HStack gap={2} alignItems="flex-start">
+					<HStack gap={2} alignItems="flex-start" flexWrap={"wrap"}>
 						<span>
 							<span className={css({ fontWeight: "bold" })}>
 								{date.views?.viewCount || 0}
@@ -39,7 +39,17 @@ export function DateAnalyticsCard({ date }: Props) {
 							<span className={css({ fontWeight: "bold" })}>
 								{date.numPlannedDates}
 							</span>{" "}
-							planned dates
+							{singularOrPlural(
+								date.numPlannedDates,
+								"planned date",
+								"planned dates",
+							)}
+						</span>
+						<span>
+							<span className={css({ fontWeight: "bold" })}>
+								{date.favoriteCount}
+							</span>{" "}
+							{singularOrPlural(date.favoriteCount, "favorite", "favorites")}
 						</span>
 					</HStack>
 				</VStack>

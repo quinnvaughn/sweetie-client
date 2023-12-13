@@ -1,0 +1,14 @@
+mutation ToggleFavorite($input: ToggleFavoriteInput!) {
+  toggleFavorite(input: $input) {
+    __typename
+    ... on AuthError {
+      message
+    }
+    ... on Error {
+      message
+    }
+    ... on ToggleFavoriteResult {
+      type
+    }
+  }
+}

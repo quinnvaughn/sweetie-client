@@ -1,4 +1,3 @@
-import { useToast } from "~/hooks"
 import { useEffect, useRef, useState } from "react"
 import { BiSolidErrorAlt } from "react-icons/bi/index.js"
 import { FiX } from "react-icons/fi/index.js"
@@ -7,8 +6,9 @@ import {
 	IoIosInformationCircle,
 	IoIosWarning,
 } from "react-icons/io/index.js"
-import { HStack } from "~/styled-system/jsx"
+import { useToast } from "~/hooks"
 import { css, cva } from "~/styled-system/css"
+import { HStack } from "~/styled-system/jsx"
 
 const container = cva({
 	base: {
@@ -40,7 +40,7 @@ const progressBar = cva({
 	variants: {
 		type: {
 			success: {
-				backgroundColor: "#4caf50",
+				backgroundColor: "#198754",
 			},
 			error: {
 				backgroundColor: "#f44336",
@@ -64,8 +64,8 @@ type TypeInner = {
 
 const types: Record<Type, TypeInner> = {
 	success: {
-		color: "#4caf50",
-		icon: <IoIosCheckmarkCircle size={20} color="#4caf50" />,
+		color: "#198754",
+		icon: <IoIosCheckmarkCircle size={20} color="#198754" />,
 	},
 	error: {
 		color: "#f44336",

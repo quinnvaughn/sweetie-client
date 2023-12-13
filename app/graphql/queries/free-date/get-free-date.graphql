@@ -11,6 +11,7 @@ query GetFreeDate($id: String!) {
         createdAt
         updatedAt
         isUserTastemaker
+        viewerFavorited
         cities {
           id 
           nameAndState

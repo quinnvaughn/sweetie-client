@@ -27,9 +27,9 @@ import { DateStop } from "~/features/date-stop"
 import {
 	DateLocationsMap,
 	EmailItineraryRightSide,
+	FavoriteButton,
 	FreeDateList,
 	NSFWTag,
-	SignupModal,
 	TimeOfTheDay,
 } from "~/features/free-date"
 import { TastemakerInfo } from "~/features/tastemaker"
@@ -41,6 +41,7 @@ import {
 	Mobile,
 	OpenShareModalLink,
 	PageContainer,
+	SignupModal,
 	Tags,
 	TwitterShareButton,
 } from "~/features/ui"
@@ -396,9 +397,16 @@ export default function FreeDateIdeaRoute() {
 									alignItems="flex-start"
 									width={"100%"}
 								>
-									<OpenShareModalLink
-										to={$path("/free-date/:id/share", { id: freeDate.id })}
-									/>
+									<div className={flex({ gap: 2 })}>
+										<OpenShareModalLink
+											to={$path("/free-date/:id/share", { id: freeDate.id })}
+										/>
+										<FavoriteButton
+											favorited={freeDate.viewerFavorited}
+											id={freeDate.id}
+											title={freeDate.title}
+										/>
+									</div>
 									{freeDate.tags.length > 0 && <Tags tags={freeDate.tags} />}
 									<div
 										className={divider({

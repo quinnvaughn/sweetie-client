@@ -1,6 +1,5 @@
 import { Link, useLocation } from "@remix-run/react"
 import { useState } from "react"
-// import { useViewer } from "~/hooks";
 import { $path } from "remix-routes"
 import { css } from "~/styled-system/css"
 import { HStack } from "~/styled-system/jsx"
@@ -21,7 +20,6 @@ const linkAsButton = css({
 
 export function TastemakerNavbar() {
 	const [isOpen, setIsOpen] = useState(false)
-	// const { isLoggedIn, getViewerUsername } = useViewer()
 	const { pathname } = useLocation()
 	const isOnFreeDates = pathname.includes("/tastemaker/free-dates")
 	return (
@@ -96,6 +94,7 @@ export function TastemakerNavbar() {
 								/>
 							)} */}
 								<Navbar.Link to={$path("/account-settings")} text="Account" />
+								<Navbar.Link to={$path("/favorites")} text="Favorites" />
 								<Navbar.ButtonAsLink
 									action={$path("/api/logout")}
 									text="Log out"
@@ -164,6 +163,7 @@ export function TastemakerNavbar() {
 							/>
 						)} */}
 						<Navbar.Link to={$path("/account-settings")} text="Account" />
+						<Navbar.Link to={$path("/favorites")} text="Favorites" />
 						<Navbar.ButtonAsLink action={$path("/api/logout")} text="Log out" />
 					</HStack>
 					{isOnFreeDates && (

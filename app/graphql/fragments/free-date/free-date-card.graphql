@@ -6,6 +6,7 @@ fragment FreeDateCard on FreeDate {
 	updatedAt
 	nsfw
 	description
+	viewerFavorited
 	tastemaker {
 		id
 		user {

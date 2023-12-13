@@ -1,6 +1,6 @@
-import { Toast } from "./toast"
 import { useToast } from "~/hooks"
 import { cva } from "~/styled-system/css"
+import { Toast } from "./toast"
 
 const toast = cva({
 	base: {
@@ -8,17 +8,18 @@ const toast = cva({
 		flexDirection: "column-reverse",
 		rowGap: "12px",
 		position: "fixed",
+		maxWidth: "calc(100% - 40px)",
 		zIndex: 9999,
 	},
 	variants: {
 		position: {
 			"top-right": {
 				top: "16px",
-				right: "16px",
+				right: { base: "20px", md: "16px" },
 			},
 			"top-left": {
 				top: "16px",
-				left: "16px",
+				left: { base: "20px", md: "16px" },
 			},
 			"top-center": {
 				top: "16px",
@@ -27,7 +28,7 @@ const toast = cva({
 			},
 			"bottom-left": {
 				bottom: "16px",
-				left: "16px",
+				left: { base: "20px", md: "16px" },
 			},
 			"bottom-center": {
 				bottom: "16px",
@@ -36,7 +37,7 @@ const toast = cva({
 			},
 			"bottom-right": {
 				bottom: "16px",
-				right: "16px",
+				right: { base: "20px", md: "16px" },
 			},
 		},
 	},

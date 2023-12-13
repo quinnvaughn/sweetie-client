@@ -1,6 +1,6 @@
+import { $path } from "remix-routes"
 import { useViewer } from "~/hooks"
 import { Navbar } from "."
-import { $path } from "remix-routes"
 
 export function LoggedInActions() {
 	const { isLoggedIn } = useViewer()
@@ -18,6 +18,7 @@ export function LoggedInActions() {
 				<Navbar.Link to={"/admin/dashboard/free-dates"} text="Admin" />
 			)}
 			<Navbar.Link to={"/account-settings"} text="Account" />
+			<Navbar.Link to={$path("/favorites")} text="Favorites" />
 			<Navbar.ButtonAsLink action={$path("/api/logout")} text="Log out" />
 		</>
 	)

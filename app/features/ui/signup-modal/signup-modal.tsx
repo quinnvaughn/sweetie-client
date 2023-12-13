@@ -38,6 +38,7 @@ export function SignupModal() {
 	const { pathname } = useLocation()
 	const { clearSignupModal } = signupStore()
 	const fetcher = useFetcher()
+
 	return (
 		<ValidatedForm
 			validator={authState === "login" ? loginValidator : registerValidator}
