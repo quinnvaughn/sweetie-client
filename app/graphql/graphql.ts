@@ -43,7 +43,6 @@ export async function gqlFetch<TData = any, TVariables = Record<string, any>>(
 				credentials: "include",
 				body: JSON.stringify(requestBody),
 				headers: {
-					...request.headers,
 					cookie: request.headers.get("cookie") || "",
 					"Content-Type": "application/json",
 					"Access-Control-Allow-Origin": "*",
