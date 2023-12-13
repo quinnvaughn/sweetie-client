@@ -14,6 +14,7 @@ import {
 	useLocation,
 	useParams,
 } from "@remix-run/react"
+import isbot from "isbot"
 import { useContext, useEffect } from "react"
 import { FiX } from "react-icons/fi/index.js"
 import { IoIosCheckmarkCircleOutline } from "react-icons/io/index.js"
@@ -93,6 +94,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 		freeDate: data.freeDate,
 		showShareScreen: cookie ? (cookie.showShareScreen as boolean) : false,
 		viewer: userData?.viewer,
+		isBot: isbot(request.headers.get("user-agent")),
 	})
 }
 
@@ -207,7 +209,8 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 const campaign = "tastemaker share date"
 
 export default function FreeDateIdeaRoute() {
-	const { freeDate, showShareScreen, viewer } = useLoaderData<typeof loader>()
+	const { freeDate, showShareScreen, viewer, isBot } =
+		useLoaderData<typeof loader>()
 	const params = useParams()
 	const { id } = $params("/free-date/:id", params)
 	const fetcher = useFetcher()
@@ -226,8 +229,8 @@ export default function FreeDateIdeaRoute() {
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		incrementTimesViewedDates(!!viewer, pathname, from)
-	}, [viewer, pathname, from])
+		!isBot && incrementTimesViewedDates(!!viewer, pathname, from)
+	}, [viewer, pathname, from, isBot])
 
 	return showShareScreen ? (
 		<div className={css({ width: "100%" })}>
@@ -355,7 +358,7 @@ export default function FreeDateIdeaRoute() {
 			}}
 		>
 			<Outlet />
-			{showSignupModal && <SignupModal />}
+			{!isBot && showSignupModal && <SignupModal />}
 			{match(freeDate)
 				.with({ __typename: "Error" }, () => (
 					<p className={css({ textStyle: "paragraph" })}>Not Found</p>
