@@ -1,23 +1,14 @@
-import {
-	DataFunctionArgs,
-	LoaderFunctionArgs,
-	MetaFunction,
-	json,
-	redirect,
-} from "@remix-run/node"
+import { LoaderFunctionArgs, MetaFunction, json } from "@remix-run/node"
 import {
 	Link,
 	Outlet,
 	ShouldRevalidateFunction,
-	useFetcher,
 	useLoaderData,
 	useLocation,
 	useParams,
 } from "@remix-run/react"
 import isbot from "isbot"
 import { useContext, useEffect } from "react"
-import { FiX } from "react-icons/fi/index.js"
-import { IoIosCheckmarkCircleOutline } from "react-icons/io/index.js"
 import { $params, $path } from "remix-routes"
 import { ClientOnly } from "remix-utils/client-only"
 import { match } from "ts-pattern"
@@ -33,20 +24,17 @@ import {
 	NSFWTag,
 	TimeOfTheDay,
 } from "~/features/free-date"
+import { ShareDateScreen } from "~/features/free-date/share-date-screen/share-date-screen"
 import { TastemakerInfo } from "~/features/tastemaker"
 import {
-	CopyLinkShareButton,
 	Desktop,
-	FacebookShareButton,
 	Image,
 	Mobile,
 	OpenShareModalLink,
 	PageContainer,
 	SignupModal,
 	Tags,
-	TwitterShareButton,
 } from "~/features/ui"
-import { UserAvatar } from "~/features/user"
 import {
 	GetFreeDateDocument,
 	ViewerIsLoggedInDocument,
@@ -95,19 +83,6 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 		showShareScreen: cookie ? (cookie.showShareScreen as boolean) : false,
 		viewer: userData?.viewer,
 		isBot: isbot(request.headers.get("user-agent")),
-	})
-}
-
-export async function action({ request, params }: DataFunctionArgs) {
-	const { id } = $params("/free-date/:id", params)
-	const cookieHeader = request.headers.get("Cookie")
-	const cookie = await showShareScreen.parse(cookieHeader)
-	cookie.showShareScreen = false
-
-	return redirect($path("/free-date/:id", { id }), {
-		headers: {
-			"Set-Cookie": await showShareScreen.serialize(cookie),
-		},
 	})
 }
 
@@ -206,14 +181,11 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	}
 }
 
-const campaign = "tastemaker share date"
-
 export default function FreeDateIdeaRoute() {
 	const { freeDate, showShareScreen, viewer, isBot } =
 		useLoaderData<typeof loader>()
 	const params = useParams()
 	const { id } = $params("/free-date/:id", params)
-	const fetcher = useFetcher()
 	const track = useTrack()
 	const { pathname } = useLocation()
 	const { incrementTimesViewedDates, showSignupModal } = signupStore()
@@ -232,122 +204,8 @@ export default function FreeDateIdeaRoute() {
 		!isBot && incrementTimesViewedDates(!!viewer, pathname, from)
 	}, [viewer, pathname, from, isBot])
 
-	return showShareScreen ? (
-		<div className={css({ width: "100%" })}>
-			<div
-				className={flex({
-					justifyContent: "space-between",
-					alignItems: "center",
-					width: "100%",
-					borderBottom: "1px solid",
-					borderBottomColor: "gray",
-					padding: {
-						base: "20px 8px",
-						md: "8px",
-					},
-				})}
-			>
-				<fetcher.Form method="post">
-					<button
-						type="submit"
-						className={css({
-							background: "none",
-							border: "none",
-							cursor: "pointer",
-							_hover: {
-								opacity: 0.7,
-							},
-						})}
-					>
-						<FiX size={"24px"} className={css({ color: "black" })} />
-					</button>
-				</fetcher.Form>
-				<p
-					className={css({
-						fontWeight: "bold",
-						fontSize: { base: "18px", md: "24px" },
-					})}
-				>
-					Share your date:
-				</p>
-				<div aria-hidden={true} className={css({ opacity: "0" })}>
-					Back
-				</div>
-			</div>
-			<div
-				className={css({
-					display: "flex",
-					justifyContent: "center",
-					width: "100%",
-				})}
-			>
-				<VStack
-					alignItems="flex-start"
-					justifyContent={"flex-start"}
-					gap={4}
-					paddingY={"20px"}
-					width={"300px"}
-				>
-					{match(freeDate)
-						.with({ __typename: "FreeDate" }, (date) => (
-							<VStack gap="4" width={"100%"} alignItems="flex-start">
-								<Image
-									src={date.thumbnail}
-									alt={`${date.title} thumbnail`}
-									css={{
-										aspectRatio: "20/19",
-										objectFit: "cover",
-										borderRadius: "8px",
-										backgroundColor: "gray",
-									}}
-								/>
-								<VStack gap="2" alignItems={"flex-start"} width={"100%"}>
-									<p className={css({ lineHeight: 1, fontWeight: "600" })}>
-										{date.title}
-									</p>
-									<HStack gap={1} alignItems="center">
-										<UserAvatar
-											size={"sm"}
-											user={{
-												name: date.tastemaker.user.name,
-												avatar: date.tastemaker.user.profile?.avatar,
-											}}
-										/>
-										<p className={css({ color: "grayText" })}>
-											{date.tastemaker.user.name}
-										</p>
-									</HStack>
-								</VStack>
-							</VStack>
-						))
-						.otherwise(() => null)}
-					<div
-						className={css({
-							display: "flex",
-							width: "100%",
-							justifyContent: "center",
-						})}
-					>
-						<IoIosCheckmarkCircleOutline
-							className={css({ color: "primary" })}
-							size={30}
-						/>
-					</div>
-					<p
-						className={css({
-							textStyle: "paragraph",
-							fontWeight: "bold",
-							textAlign: "center",
-						})}
-					>
-						You successfully created your date! Make sure to share it.
-					</p>
-					<CopyLinkShareButton campaign={campaign} css={{ width: "100%" }} />
-					<FacebookShareButton campaign={campaign} css={{ width: "100%" }} />
-					<TwitterShareButton campaign={campaign} css={{ width: "100%" }} />
-				</VStack>
-			</div>
-		</div>
+	return showShareScreen && freeDate.__typename === "FreeDate" ? (
+		<ShareDateScreen freeDate={freeDate} />
 	) : (
 		<PageContainer
 			width={{ sm: "100%", md: 750, lg: 900, xl: 1100 }}

@@ -1,0 +1,34 @@
+fragment GetFreeDate on FreeDate {
+    id
+        title
+        description
+        thumbnail
+        retired
+        nsfw
+        createdAt
+        updatedAt
+        isUserTastemaker
+        viewerFavorited
+        cities {
+          id 
+          nameAndState
+          name
+        }
+        tags {
+          ...Tags
+        }
+        timesOfDay {
+          id
+          name
+        }
+        tastemaker {
+          ...TastemakerInfo
+        }
+        stops {
+          id
+          ...DateStopItem
+        }
+        exploreMore {
+          ...FreeDateCard
+        }
+}

@@ -2,38 +2,7 @@ query GetFreeDate($id: String!) {
     freeDate(id: $id) {
       __typename
       ... on FreeDate {
-        id
-        title
-        description
-        thumbnail
-        retired
-        nsfw
-        createdAt
-        updatedAt
-        isUserTastemaker
-        viewerFavorited
-        cities {
-          id 
-          nameAndState
-          name
-        }
-        tags {
-          ...Tags
-        }
-        timesOfDay {
-          id
-          name
-        }
-        tastemaker {
-          ...TastemakerInfo
-        }
-        stops {
-          id
-          ...DateStopItem
-        }
-        exploreMore {
-          ...FreeDateCard
-        }
+        ...GetFreeDate
       }
       ... on Error {
         message

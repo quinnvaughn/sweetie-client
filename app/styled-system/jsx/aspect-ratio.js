@@ -1,12 +1,9 @@
-import { createElement, forwardRef } from "react"
-import { styled } from "./factory.js"
-import { getAspectRatioStyle } from "../patterns/aspect-ratio.js"
+import { createElement, forwardRef } from 'react'
+import { styled } from './factory.js';
+import { getAspectRatioStyle } from '../patterns/aspect-ratio.js';
 
-export const AspectRatio = /* @__PURE__ */ forwardRef(function AspectRatio(
-	props,
-	ref,
-) {
-	const { ratio, ...restProps } = props
-	const styleProps = getAspectRatioStyle({ ratio })
-	return createElement(styled.div, { ref, ...styleProps, ...restProps })
+export const AspectRatio = /* @__PURE__ */ forwardRef(function AspectRatio(props, ref) {
+  const { ratio, ...restProps } = props
+const styleProps = getAspectRatioStyle({ratio})
+return createElement(styled.div, { ref, ...styleProps, ...restProps })
 })

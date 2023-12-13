@@ -1,6 +1,5 @@
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api"
 import { DateStopItemFragment } from "~/graphql/generated"
-import { getEnv } from "~/lib"
 import { css } from "~/styled-system/css"
 
 type Props = {
@@ -8,11 +7,10 @@ type Props = {
 	scrollwheel?: boolean
 }
 
-const env = getEnv()
-
 export function DateLocationsMap({ stops, scrollwheel = false }: Props) {
 	const { isLoaded } = useJsApiLoader({
-		googleMapsApiKey: env.GOOGLE_MAPS_API_KEY,
+		// will always be window.
+		googleMapsApiKey: window.ENV.GOOGLE_MAPS_API_KEY,
 	})
 	return isLoaded ? (
 		<GoogleMap
@@ -59,7 +57,7 @@ export function DateLocationsMap({ stops, scrollwheel = false }: Props) {
 		<div
 			className={css({
 				width: "100%",
-				height: "300px",
+				height: "400px",
 				borderRadius: "8px",
 				bg: "gray",
 			})}
