@@ -68,7 +68,7 @@ export function TravelTime({ travel }: Props) {
 								"miles",
 							)}
 						</span>
-						{" for "}
+						{" in "}
 						<span>
 							{convertSecondsToMinutes(travel.duration)}{" "}
 							{singularOrPlural(
