@@ -46,6 +46,7 @@ export function FloatingAddToCalendar() {
 				gap: 2,
 				flexDirection: "column",
 				alignItems: "center",
+				zIndex: 10,
 			})}
 		>
 			<div className={flex({ justifyContent: "center", width: "100%" })}>

@@ -3,17 +3,22 @@ fragment DateStopItem on DateStop {
     title
     order
     content
+    travel {
+      distance 
+      duration 
+      mode
+    }
     location {
       id
       name
       website
-	  address {
-		id
-		formattedAddress
-		coordinates {
-			lat
-			lng
-		}
-	  }
+      address {
+        id
+        formattedAddress
+        coordinates {
+          lat
+          lng
+        }
+      }
     }
   }
