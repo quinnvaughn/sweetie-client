@@ -1,6 +1,6 @@
-import { DataFunctionArgs, MetaFunction, json } from "@remix-run/node"
+import { DataFunctionArgs, json } from "@remix-run/node"
 import { useLoaderData } from "@remix-run/react"
-import { useEffect, useRef } from "react"
+import { useRef } from "react"
 import { TrendingFreeDates } from "~/features/free-date"
 import { SearchBar } from "~/features/search"
 import { PageContainer } from "~/features/ui/page-container"
@@ -23,10 +23,12 @@ export type SearchParams = {
 	nsfw?: boolean
 }
 
+const code =
+	"4/0AfJohXkqPn-aFO0QljBPLcUaFR4Buq61DM0C3JX9McnJ2Zo0TfYlOG4pu23LC-i712CYKg"
+
 export default function HomeRoute() {
 	const data = useLoaderData<typeof loader>()
 	const ref = useRef<HTMLInputElement>(null)
-
 	return (
 		<PageContainer
 			width={{ base: "100%", lg: 1024 }}

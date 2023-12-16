@@ -1,0 +1,11 @@
+mutation LoginWithGoogle($input: LoginWithGoogleInput!) {
+  loginWithGoogle(input: $input) {
+    __typename
+    ... on User {
+      id 
+    }
+    ... on Error {
+      message
+    }
+  }
+}

@@ -5,6 +5,7 @@ declare global {
 			GOOGLE_MAPS_API_KEY: string
 			GRAPHQL_ENDPOINT: string
 			FRONTEND_URL: string
+			GOOGLE_CLIENT_ID: string
 		}
 	}
 }

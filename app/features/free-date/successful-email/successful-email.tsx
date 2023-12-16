@@ -17,17 +17,30 @@ type Props = {
 	guestName?: string
 	userEmail?: string
 	link: string
+	authorizedCalendar: boolean
 }
 
-export function SuccessfulEmail({ guestName, userEmail, link }: Props) {
+export function SuccessfulEmail({
+	guestName,
+	userEmail,
+	link,
+	authorizedCalendar,
+}: Props) {
 	const { isLoggedIn } = useViewer()
 	return (
 		<VStack gap={4}>
 			<p className={css({ textAlign: "center", textStyle: "paragraph" })}>
-				We successfully emailed you
-				{guestName ? ` and ${guestName.split(" ")[0]} ` : ""} the itinerary!
+				{authorizedCalendar
+					? `We successfully added the date to your calendar${
+							guestName
+								? ` and emailed ${guestName.split(" ")[0]} the itinerary`
+								: ""
+					  }!`
+					: `We successfully emailed you ${
+							guestName ? ` and ${guestName.split(" ")[0]} ` : ""
+					  } the itinerary!
 				Check your email for more details. Check your spam folder if you don't
-				see it.
+				see it.`}
 			</p>
 			{!isLoggedIn() && (
 				<p

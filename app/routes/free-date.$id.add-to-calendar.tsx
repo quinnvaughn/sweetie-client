@@ -4,22 +4,16 @@ import {
 	MetaFunction,
 	json,
 } from "@remix-run/node"
-import {
-	Link,
-	useActionData,
-	useFetcher,
-	useLoaderData,
-} from "@remix-run/react"
+import { useFetcher, useLoaderData } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
 import { DateTime } from "luxon"
 import { useEffect } from "react"
 import { $params, $path } from "remix-routes"
 import { ClientOnly } from "remix-utils/client-only"
-import { wait } from "remix-utils/timers"
 import { ValidatedForm, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
-import { SuccessfulEmail } from "~/features/free-date"
+import { AddGoogleCalendar, SuccessfulEmail } from "~/features/free-date"
 import { DatePicker, Input, Modal, TimePicker } from "~/features/ui"
 import {
 	CreateDateItineraryDocument,
@@ -132,16 +126,25 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 	return match(data?.createDateItinerary)
 		.with({ __typename: "PlannedDate" }, () =>
-			json({ success: true, errors: null }),
+			json({ success: true, errors: null, formData: result.data }),
 		)
 		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) => {
 			const reduceToValidatorError = mapFieldErrorToValidationError(fieldErrors)
 			return json(
-				{ success: false, errors: reduceToValidatorError },
+				{
+					success: false,
+					errors: reduceToValidatorError,
+					formData: result.data,
+				},
 				{ status: 400 },
 			)
 		})
-		.otherwise(() => json({ success: false, errors: null }, { status: 500 }))
+		.otherwise(() =>
+			json(
+				{ success: false, errors: null, formData: result.data },
+				{ status: 500 },
+			),
+		)
 }
 
 export const meta: MetaFunction<typeof loader> = () => {
@@ -164,29 +167,36 @@ export default function AddToCalendarPage() {
 		}
 	}, [fetcher.data])
 
+	const authorizedCalendar = freeDate.viewerAuthorizedGoogleCalendar
+
 	return (
 		<ValidatedForm validator={validator} method="post" fetcher={fetcher}>
 			<Modal>
 				<Modal.Header
 					type="link"
-					title={"Add to calendar"}
+					title={
+						authorizedCalendar ? "Add to calendar" : "Email me the itinerary"
+					}
 					to={$path("/free-date/:id", { id: freeDate.id })}
 				/>
 				<Modal.Body id="modal-body">
 					{fetcher.data?.success ? (
 						<SuccessfulEmail
+							authorizedCalendar={authorizedCalendar}
 							link={link}
-							guestName={fetcher.formData?.get("guest.name") as string}
-							userEmail={fetcher.formData?.get("user.email") as string}
+							guestName={fetcher.data?.formData?.guest?.name}
+							userEmail={fetcher.data?.formData?.user?.email}
 						/>
 					) : (
 						<VStack gap={2} justifyContent="center">
 							<p
 								className={css({ textStyle: "paragraph", textAlign: "center" })}
 							>
-								Adding the date to your calendar from here is free, makes it
-								easy to remember, and saves you time.
+								{!authorizedCalendar
+									? "Save time by adding your calendar. We'll automatically add the date to your calendar instead of emailing you."
+									: "We'll add the date to your calendar directly to save you time. If you add a guest, we'll email them the itinerary."}
 							</p>
+							{!authorizedCalendar && <AddGoogleCalendar />}
 							{!isLoggedIn() && (
 								<>
 									<Input name="user.name" label="Your name" required />
@@ -195,12 +205,16 @@ export default function AddToCalendarPage() {
 							)}
 							<DatePicker name="date" label="Date" required />
 							<TimePicker name="time" label="Start time" required />
-							<p
-								className={css({ textStyle: "paragraph", textAlign: "center" })}
-							>
-								You can also send this itinerary to your date so they can add it
-								to their calendar too. This is completely optional.
-							</p>
+							{!freeDate.viewerAuthorizedGoogleCalendar && (
+								<p
+									className={css({
+										textStyle: "paragraph",
+										textAlign: "center",
+									})}
+								>
+									If you add a guest, we'll email them the itinerary.
+								</p>
+							)}
 							<Input
 								name="guest.name"
 								label="Date's name (optional)"
@@ -228,7 +242,7 @@ export default function AddToCalendarPage() {
 				{!fetcher.data?.success && (
 					<Modal.Footer
 						button={{
-							text: "Email me",
+							text: authorizedCalendar ? "Add to calendar" : "Email me",
 							disabled: fetcher.state === "submitting",
 						}}
 					/>

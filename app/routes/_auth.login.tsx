@@ -1,15 +1,19 @@
+import { useGoogleLogin } from "@react-oauth/google"
 import { DataFunctionArgs, redirect } from "@remix-run/node"
 import { Link, useFetcher } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
+import { FcGoogle } from "react-icons/fc/index.js"
 import { $path } from "remix-routes"
 import { ValidatedForm, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
+import { LoginWithGoogleButton } from "~/features/auth"
 import { Button, Input } from "~/features/ui"
 import { LoginDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
+import { action as googleAction } from "./api.login-with-google"
 
 const validator = withZod(
 	z.object({
@@ -55,10 +59,13 @@ export async function action({ request }: DataFunctionArgs) {
 
 export default function LoginRoute() {
 	const fetcher = useFetcher<typeof action>()
+
 	return (
 		<ValidatedForm fetcher={fetcher} validator={validator} method="post">
 			<VStack gap="4" alignItems={"center"}>
 				<h1 className={css({ textStyle: "h1" })}>Login</h1>
+				<LoginWithGoogleButton />
+				<p className={css({ textStyle: "paragraph" })}>or</p>
 				<Input
 					type="email"
 					label="Email"

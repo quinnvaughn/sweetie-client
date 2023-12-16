@@ -9,6 +9,7 @@ fragment GetFreeDate on FreeDate {
         updatedAt
         isUserTastemaker
         viewerFavorited
+        viewerAuthorizedGoogleCalendar
         cities {
           id 
           nameAndState

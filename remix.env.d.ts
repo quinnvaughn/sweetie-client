@@ -7,5 +7,6 @@ interface Window {
 		GRAPHQL_ENDPOINT: string
 		FRONTEND_URL: string
 		NODE_ENV: "development" | "production" | "test"
+		GOOGLE_CLIENT_ID: string
 	}
 }

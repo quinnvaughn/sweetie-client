@@ -16,6 +16,7 @@
 		"@graphql-codegen/client-preset": "^4.1.0",
 		"@graphql-typed-document-node/core": "^3.2.0",
 		"@react-google-maps/api": "^2.19.2",
+		"@react-oauth/google": "^0.12.1",
 		"@remix-run/express": "^2.2.0",
 		"@remix-run/node": "^2.2.0",
 		"@remix-run/react": "^2.2.0",
@@ -54,8 +55,8 @@
 		"@types/react": "^18.2.33",
 		"@types/react-dom": "^18.2.14",
 		"concurrently": "^8.2.2",
-		"typescript": "^5.2.2",
-		"husky": "^8.0.0"
+		"husky": "^8.0.0",
+		"typescript": "^5.2.2"
 	},
 	"packageManager": "yarn@1.22.19",
 	"engines": {

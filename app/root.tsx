@@ -1,3 +1,4 @@
+import { GoogleOAuthProvider } from "@react-oauth/google"
 import {
 	DataFunctionArgs,
 	LinksFunction,
@@ -22,6 +23,7 @@ import { PageContainer, ToastContainer } from "./features/ui"
 import { ViewerIsLoggedInDocument } from "./graphql/generated"
 import { gqlFetch } from "./graphql/graphql"
 import styles from "./index.css"
+import { getEnv } from "./lib"
 import { css } from "./styled-system/css"
 import { VStack } from "./styled-system/jsx"
 
@@ -56,6 +58,7 @@ export async function loader({ request }: DataFunctionArgs) {
 			GRAPHQL_ENDPOINT: env.GRAPHQL_ENDPOINT,
 			FRONTEND_URL: env.FRONTEND_URL,
 			NODE_ENV: env.NODE_ENV,
+			GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
 		},
 	})
 }
@@ -132,6 +135,8 @@ export const meta: MetaFunction = () => {
 	]
 }
 
+const env = getEnv()
+
 export default function App() {
 	const data = useLoaderData<typeof loader>()
 	return (
@@ -143,9 +148,11 @@ export default function App() {
 				<Links />
 			</head>
 			<body>
-				<RouterProvider>
-					<Outlet />
-				</RouterProvider>
+				<GoogleOAuthProvider clientId={env.GOOGLE_CLIENT_ID}>
+					<RouterProvider>
+						<Outlet />
+					</RouterProvider>
+				</GoogleOAuthProvider>
 				<script
 					// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
 					dangerouslySetInnerHTML={{
