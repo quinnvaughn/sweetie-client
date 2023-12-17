@@ -42,6 +42,32 @@ export const textStyles = defineTextStyles({
 			color: "black",
 		},
 	},
+	h2: {
+		description: "The heading 2 text style - used in h2",
+		value: {
+			fontFamily: "roboto",
+			fontWeight: "700",
+			fontSize: "32px",
+			lineHeight: "40px",
+			letterSpacing: "0",
+			textDecoration: "None",
+			textTransform: "None",
+			color: "black",
+		},
+	},
+	h3: {
+		description: "The heading 3 text style - used in h3",
+		value: {
+			fontFamily: "roboto",
+			fontWeight: "700",
+			fontSize: "24px",
+			lineHeight: "32px",
+			letterSpacing: "0",
+			textDecoration: "None",
+			textTransform: "None",
+			color: "black",
+		},
+	},
 	error: {
 		description: "The error text style - used in error messages",
 		value: {
