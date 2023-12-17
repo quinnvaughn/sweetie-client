@@ -3,7 +3,6 @@ import { useFetcher, useLocation } from "@remix-run/react"
 import { useEffect, useState } from "react"
 import { FcGoogle } from "react-icons/fc/index.js"
 import { $path } from "remix-routes"
-import { useViewer } from "~/hooks"
 import { action } from "~/routes/api.login-with-google"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
@@ -11,7 +10,6 @@ import { VStack } from "~/styled-system/jsx"
 export function AddGoogleCalendar() {
 	const { pathname } = useLocation()
 	const fetcher = useFetcher<typeof action>()
-	const { isLoggedIn } = useViewer()
 	const login = useGoogleLogin({
 		onSuccess: (tokenResponse) => {
 			fetcher.submit(
@@ -21,7 +19,7 @@ export function AddGoogleCalendar() {
 		},
 		flow: "auth-code",
 		ux_mode: "popup",
-		scope: "openid https://www.googleapis.com/auth/calendar",
+		scope: "https://www.googleapis.com/auth/calendar.events",
 	})
 	const [error, setError] = useState<string | null>(null)
 
@@ -53,10 +51,7 @@ export function AddGoogleCalendar() {
 						gap: 1,
 					})}
 				>
-					<FcGoogle size={20} />{" "}
-					<span>
-						{isLoggedIn() ? "Add your calendar" : "Login and add your calendar"}
-					</span>
+					<FcGoogle size={20} /> <span>Connect your Google Calendar</span>
 				</div>
 			</button>
 			{error && <p className={css({ textStyle: "error" })}>{error}</p>}

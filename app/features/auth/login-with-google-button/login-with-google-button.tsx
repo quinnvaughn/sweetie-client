@@ -21,7 +21,6 @@ export function LoginWithGoogleButton({ type = "login" }: Props) {
 		},
 		flow: "auth-code",
 		ux_mode: "popup",
-		scope: "openid https://www.googleapis.com/auth/calendar.events",
 	})
 	const [error, setError] = useState<string | null>(null)
 
