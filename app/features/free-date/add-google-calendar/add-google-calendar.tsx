@@ -1,7 +1,7 @@
 import { useGoogleLogin } from "@react-oauth/google"
 import { useFetcher, useLocation } from "@remix-run/react"
 import { useEffect, useState } from "react"
-import { FcGoogle } from "react-icons/fc/index.js"
+import { SiGooglecalendar } from "react-icons/si/index.js"
 import { $path } from "remix-routes"
 import { action } from "~/routes/api.login-with-google"
 import { css } from "~/styled-system/css"
@@ -51,7 +51,8 @@ export function AddGoogleCalendar() {
 						gap: 1,
 					})}
 				>
-					<FcGoogle size={20} /> <span>Connect your Google Calendar</span>
+					<SiGooglecalendar size={20} className={css({ color: "#4285F4" })} />{" "}
+					<span>Connect to Google Calendar</span>
 				</div>
 			</button>
 			{error && <p className={css({ textStyle: "error" })}>{error}</p>}
