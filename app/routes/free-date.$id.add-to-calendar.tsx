@@ -4,23 +4,24 @@ import {
 	MetaFunction,
 	json,
 } from "@remix-run/node"
-import {
-	Link,
-	useActionData,
-	useFetcher,
-	useLoaderData,
-} from "@remix-run/react"
+import { useFetcher, useLoaderData } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
 import { DateTime } from "luxon"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { $params, $path } from "remix-routes"
 import { ClientOnly } from "remix-utils/client-only"
-import { wait } from "remix-utils/timers"
 import { ValidatedForm, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
+import { zfd } from "zod-form-data"
 import { SuccessfulEmail } from "~/features/free-date"
-import { DatePicker, Input, Modal, TimePicker } from "~/features/ui"
+import {
+	CheckboxAndInputs,
+	DatePicker,
+	Input,
+	Modal,
+	TimePicker,
+} from "~/features/ui"
 import {
 	CreateDateItineraryDocument,
 	CreateDateItineraryInput,
@@ -28,7 +29,7 @@ import {
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { useOpenedModal, useViewer } from "~/hooks"
-import { formatTime, getEnv, mapFieldErrorToValidationError } from "~/lib"
+import { formatTime, getEnv, mapFieldErrorToValidationError, omit } from "~/lib"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
@@ -43,6 +44,7 @@ const validator = withZod(
 				.optional(),
 			guest: z
 				.object({
+					add: zfd.checkbox({ trueValue: "true" }),
 					email: z.string().email("Must be a valid email").or(z.literal("")),
 					name: z
 						.string()
@@ -53,17 +55,18 @@ const validator = withZod(
 				.refine(
 					(data) => {
 						if (
-							data?.email &&
-							data?.email.length > 0 &&
-							data?.name.length === 0
+							data?.add &&
+							data?.name &&
+							data?.name.length > 0 &&
+							data?.email.length === 0
 						) {
 							return false
 						}
 						return true
 					},
 					{
-						path: ["name"],
-						message: "Must provide a name if you provide an email",
+						path: ["email"],
+						message: "Must provide an email if you provide a name",
 					},
 				),
 			date: z.string(),
@@ -121,7 +124,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		date: DateTime.fromFormat(`${date} ${formattedTime}`, "yyyy-MM-dd hh:mm a")
 			.setZone(timeZone)
 			.toISO() as string,
-		guest: guest?.email && guest.email.length > 0 ? guest : undefined,
+		guest:
+			guest?.email && guest.email.length > 0 ? omit(guest, "add") : undefined,
 		freeDateId: id,
 		user,
 	}
@@ -165,11 +169,29 @@ export default function AddToCalendarPage() {
 	}, [fetcher.data])
 
 	return (
-		<ValidatedForm validator={validator} method="post" fetcher={fetcher}>
+		<ValidatedForm
+			defaultValues={{
+				date: new Date().toISOString().split("T")[0],
+				time: undefined,
+				guest: {
+					add: false,
+					name: "",
+					email: "",
+				},
+				timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+				user: {
+					name: "",
+					email: "",
+				},
+			}}
+			validator={validator}
+			method="post"
+			fetcher={fetcher}
+		>
 			<Modal>
 				<Modal.Header
 					type="link"
-					title={"Add to calendar"}
+					title={"Email me the date itinerary"}
 					to={$path("/free-date/:id", { id: freeDate.id })}
 				/>
 				<Modal.Body id="modal-body">
@@ -180,12 +202,12 @@ export default function AddToCalendarPage() {
 							userEmail={fetcher.formData?.get("user.email") as string}
 						/>
 					) : (
-						<VStack gap={2} justifyContent="center">
+						<VStack gap={3} justifyContent="center">
 							<p
 								className={css({ textStyle: "paragraph", textAlign: "center" })}
 							>
-								Adding the date to your calendar from here is free, makes it
-								easy to remember, and saves you time.
+								Don't let the perfect date slip away! Email yourself this date
+								itinerary for free and make every moment count.
 							</p>
 							{!isLoggedIn() && (
 								<>
@@ -195,23 +217,23 @@ export default function AddToCalendarPage() {
 							)}
 							<DatePicker name="date" label="Date" required />
 							<TimePicker name="time" label="Start time" required />
-							<p
-								className={css({ textStyle: "paragraph", textAlign: "center" })}
-							>
-								You can also send this itinerary to your date so they can add it
-								to their calendar too. This is completely optional.
-							</p>
-							<Input
-								name="guest.name"
-								label="Date's name (optional)"
-								placeholder={"Your date's name"}
-								autoComplete="off"
-							/>
-							<Input
-								name="guest.email"
-								label="Date's email (optional)"
-								placeholder={"Your date's email"}
-								autoComplete="off"
+							<CheckboxAndInputs
+								checkboxLabel="Send an email to your guest with the date itinerary?"
+								checkboxName="guest.add"
+								inputs={[
+									{
+										label: "Guest's name",
+										name: "guest.name",
+										placeholder: "Your guest's name",
+										autoComplete: "off",
+									},
+									{
+										label: "Guest's email",
+										name: "guest.email",
+										placeholder: "Your guest's email",
+										autoComplete: "off",
+									},
+								]}
 							/>
 							<ClientOnly>
 								{() => (

@@ -20,7 +20,6 @@ export function Input({
 	autoComplete,
 }: Props) {
 	const { error, getInputProps } = useField(name)
-
 	return (
 		<VStack gap={1} alignItems="flex-start" width={"100%"}>
 			<label htmlFor={name}>
