@@ -1,0 +1,15 @@
+mutation RemoveDefaultGuest {
+  removeDefaultGuest {
+    __typename
+    ... on AuthError {
+      message
+    }
+    ... on Error {
+      message
+    }
+    ... on DefaultGuest {
+      name
+      email
+    }
+  }
+}

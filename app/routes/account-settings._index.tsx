@@ -1,6 +1,7 @@
 import { LoaderFunctionArgs, redirect } from "@remix-run/node"
 import { Link } from "@remix-run/react"
 import { AiOutlineIdcard } from "react-icons/ai/index.js"
+import { BsCalendar2DateFill } from "react-icons/bs/index.js"
 import { MdSecurity } from "react-icons/md/index.js"
 import { $path } from "remix-routes"
 import { PageContainer } from "~/features/ui"
@@ -78,6 +79,17 @@ export default function AccountSettingsRoute() {
 						icon={<MdSecurity size={24} className={css({ color: "black" })} />}
 						title="Login and Security"
 						description="Update your password"
+					/>
+					<AccountSettingsLink
+						to={$path("/account-settings/date-settings")}
+						icon={
+							<BsCalendar2DateFill
+								size={24}
+								className={css({ color: "black" })}
+							/>
+						}
+						title="Date Settings"
+						description="Update your settings related to dates"
 					/>
 					{/* <AccountSettingsLink
 						to={ROUTES.ACCOUNT_SETTINGS.PAYMENT.path}

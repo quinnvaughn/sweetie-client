@@ -1,0 +1,8 @@
+query ViewerHasDefaultGuest {
+  viewer {
+    defaultGuest {
+      name
+      email
+    }
+  }
+}

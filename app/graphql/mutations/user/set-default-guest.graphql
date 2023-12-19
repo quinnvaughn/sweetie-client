@@ -1,0 +1,21 @@
+mutation SetDefaultGuest($input: SetDefaultGuestInput!) {
+  setDefaultGuest(input: $input) {
+    __typename
+    ... on AuthError {
+      message
+    }
+    ... on Error {
+      message
+    }
+    ... on FieldErrors {
+      fieldErrors {
+        message
+        field
+      }
+    }
+    ... on DefaultGuest {
+      name
+      email
+    }
+  }
+}
