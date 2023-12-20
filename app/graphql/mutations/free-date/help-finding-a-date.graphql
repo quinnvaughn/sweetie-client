@@ -1,0 +1,14 @@
+mutation HelpFindingADate($input: HelpFindingADateInput!) {
+  helpFindingADate(input: $input) {
+    __typename
+    ... on FieldErrors {
+      fieldErrors {
+        message
+        field
+      }
+    }
+    ... on HelpFindingADateResult {
+      data
+    }
+  }
+}
