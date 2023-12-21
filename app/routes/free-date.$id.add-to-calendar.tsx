@@ -153,9 +153,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	)
 
 	const input: CreateDateItineraryInput = {
-		date: DateTime.fromFormat(`${date} ${formattedTime}`, "yyyy-MM-dd hh:mm a")
-			.setZone(timeZone)
-			.toISO() as string,
+		date: DateTime.fromFormat(
+			`${date} ${formattedTime}`,
+			"yyyy-MM-dd hh:mm a",
+		).toISO() as string,
 		timeZone,
 		guest:
 			guest?.sendToDefaultGuest && viewerData?.viewer?.defaultGuest
