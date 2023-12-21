@@ -210,7 +210,6 @@ export default function AddToCalendarPage() {
 					email: defaultGuest?.email ?? "",
 					sendToDefaultGuest: defaultGuest !== null,
 				},
-				timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 				user: {
 					name: "",
 					email: "",
