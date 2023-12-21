@@ -387,6 +387,12 @@ export type DeclinedCustomDateEvent = IBaseCustomDateEvent & {
 	eventType: CustomDateType
 }
 
+export type DefaultGuest = {
+	__typename: "DefaultGuest"
+	email: Scalars["String"]["output"]
+	name?: Maybe<Scalars["String"]["output"]>
+}
+
 export type DeleteFreeDateDraftInput = {
 	id: Scalars["String"]["input"]
 }
@@ -566,6 +572,22 @@ export type GuestInput = {
 	name?: InputMaybe<Scalars["String"]["input"]>
 }
 
+export type HelpFindingADateInput = {
+	email?: InputMaybe<Scalars["String"]["input"]>
+	lookingFor: Scalars["String"]["input"]
+	name?: InputMaybe<Scalars["String"]["input"]>
+}
+
+export type HelpFindingADatePayload =
+	| Error
+	| FieldErrors
+	| HelpFindingADateResult
+
+export type HelpFindingADateResult = {
+	__typename: "HelpFindingADateResult"
+	data: Scalars["Boolean"]["output"]
+}
+
 export type IBaseCustomDateEvent = {
 	date: CustomDate
 	eventType: CustomDateType
@@ -650,12 +672,14 @@ export type Mutation = {
 	deleteFreeDateDraft: DeleteFreeDateDraftPayload
 	deleteImage: DeleteImagePayload
 	generatePresignedUrl: GeneratePresignedUrlPayload
+	helpFindingADate: HelpFindingADatePayload
 	login: LoginPayload
 	loginWithGoogle: LoginWithGooglePayload
 	logout: LogoutPayload
 	makeChangesOnSuggestion: MakeChangesOnSuggestionPayload
 	register: RegisterPayload
 	removeCreditCard: RemoveCreditCardPayload
+	removeDefaultGuest: RemoveDefaultGuestPayload
 	requestChangesOnCustomDateSuggestion: RequestChangesOnCustomDateSuggestionPayload
 	requestCustomDate: RequestCustomDatePayload
 	requestPasswordReset: RequestPasswordResetPayload
@@ -667,6 +691,7 @@ export type Mutation = {
 	saveFreeDateDraft: SaveFreeDateDraftPayload
 	sendCustomDateMessage: SendCustomDateMessagePayload
 	setDefaultCreditCard: SetDefaultCreditCardPayload
+	setDefaultGuest: SetDefaultGuestPayload
 	suggestCustomDate: SuggestCustomDatePayload
 	suggestDate: SuggestDatePayload
 	toggleFavorite: ToggleFavoritePayload
@@ -711,6 +736,10 @@ export type MutationDeleteImageArgs = {
 
 export type MutationGeneratePresignedUrlArgs = {
 	input: GeneratePresignedUrlInput
+}
+
+export type MutationHelpFindingADateArgs = {
+	input: HelpFindingADateInput
 }
 
 export type MutationLoginArgs = {
@@ -775,6 +804,10 @@ export type MutationSendCustomDateMessageArgs = {
 
 export type MutationSetDefaultCreditCardArgs = {
 	input: CreditCardInput
+}
+
+export type MutationSetDefaultGuestArgs = {
+	input: SetDefaultGuestInput
 }
 
 export type MutationSuggestCustomDateArgs = {
@@ -943,6 +976,8 @@ export type RegisterPayload = AlreadyLoggedInError | Error | FieldErrors | User
 
 export type RemoveCreditCardPayload = AuthError | CreditCard | Error
 
+export type RemoveDefaultGuestPayload = AuthError | DefaultGuest | Error
+
 export type RequestChangesOnCustomDateSuggestionInput = {
 	stops: Array<CustomDateSuggestionStopRequestedChangeInput>
 	suggestionId: Scalars["String"]["input"]
@@ -1080,6 +1115,17 @@ export type SendCustomDateMessagePayload =
 	| FieldErrors
 
 export type SetDefaultCreditCardPayload = AuthError | CreditCard | Error
+
+export type SetDefaultGuestInput = {
+	email: Scalars["String"]["input"]
+	name?: InputMaybe<Scalars["String"]["input"]>
+}
+
+export type SetDefaultGuestPayload =
+	| AuthError
+	| DefaultGuest
+	| Error
+	| FieldErrors
 
 export type SetupIntent = {
 	__typename: "SetupIntent"
@@ -1244,6 +1290,7 @@ export type User = {
 	authorizedGoogleCalendar: Scalars["Boolean"]["output"]
 	createdAt: Scalars["DateTime"]["output"]
 	creditCards: Array<CreditCard>
+	defaultGuest?: Maybe<DefaultGuest>
 	drafts: Array<FreeDateDraft>
 	email: Scalars["String"]["output"]
 	favoritedDates: Array<FreeDate>
@@ -1767,6 +1814,25 @@ export type CreateFreeDateMutation = {
 		  }
 }
 
+export type HelpFindingADateMutationVariables = Exact<{
+	input: HelpFindingADateInput
+}>
+
+export type HelpFindingADateMutation = {
+	__typename: "Mutation"
+	helpFindingADate:
+		| { __typename: "Error" }
+		| {
+				__typename: "FieldErrors"
+				fieldErrors: Array<{
+					__typename: "FieldError"
+					message: string
+					field: string
+				}>
+		  }
+		| { __typename: "HelpFindingADateResult"; data: boolean }
+}
+
 export type RetireFreeDateMutationVariables = Exact<{
 	input: RetireFreeDateInput
 }>
@@ -1988,6 +2054,38 @@ export type DeleteFreeDateDraftMutation = {
 				thumbnail?: string | null
 				updatedAt: string
 				author: { __typename: "User"; id: string; name: string; email: string }
+		  }
+}
+
+export type RemoveDefaultGuestMutationVariables = Exact<{
+	[key: string]: never
+}>
+
+export type RemoveDefaultGuestMutation = {
+	__typename: "Mutation"
+	removeDefaultGuest:
+		| { __typename: "AuthError"; message: string }
+		| { __typename: "DefaultGuest"; name?: string | null; email: string }
+		| { __typename: "Error"; message: string }
+}
+
+export type SetDefaultGuestMutationVariables = Exact<{
+	input: SetDefaultGuestInput
+}>
+
+export type SetDefaultGuestMutation = {
+	__typename: "Mutation"
+	setDefaultGuest:
+		| { __typename: "AuthError"; message: string }
+		| { __typename: "DefaultGuest"; name?: string | null; email: string }
+		| { __typename: "Error"; message: string }
+		| {
+				__typename: "FieldErrors"
+				fieldErrors: Array<{
+					__typename: "FieldError"
+					message: string
+					field: string
+				}>
 		  }
 }
 
@@ -2609,6 +2707,22 @@ export type GetViewerInfoQuery = {
 			bio?: string | null
 			avatar?: string | null
 			link?: string | null
+		} | null
+	} | null
+}
+
+export type ViewerHasDefaultGuestQueryVariables = Exact<{
+	[key: string]: never
+}>
+
+export type ViewerHasDefaultGuestQuery = {
+	__typename: "Query"
+	viewer?: {
+		__typename: "User"
+		defaultGuest?: {
+			__typename: "DefaultGuest"
+			name?: string | null
+			email: string
 		} | null
 	} | null
 }
@@ -4876,6 +4990,102 @@ export const CreateFreeDateDocument = {
 	CreateFreeDateMutation,
 	CreateFreeDateMutationVariables
 >
+export const HelpFindingADateDocument = {
+	kind: "Document",
+	definitions: [
+		{
+			kind: "OperationDefinition",
+			operation: "mutation",
+			name: { kind: "Name", value: "HelpFindingADate" },
+			variableDefinitions: [
+				{
+					kind: "VariableDefinition",
+					variable: {
+						kind: "Variable",
+						name: { kind: "Name", value: "input" },
+					},
+					type: {
+						kind: "NonNullType",
+						type: {
+							kind: "NamedType",
+							name: { kind: "Name", value: "HelpFindingADateInput" },
+						},
+					},
+				},
+			],
+			selectionSet: {
+				kind: "SelectionSet",
+				selections: [
+					{
+						kind: "Field",
+						name: { kind: "Name", value: "helpFindingADate" },
+						arguments: [
+							{
+								kind: "Argument",
+								name: { kind: "Name", value: "input" },
+								value: {
+									kind: "Variable",
+									name: { kind: "Name", value: "input" },
+								},
+							},
+						],
+						selectionSet: {
+							kind: "SelectionSet",
+							selections: [
+								{ kind: "Field", name: { kind: "Name", value: "__typename" } },
+								{
+									kind: "InlineFragment",
+									typeCondition: {
+										kind: "NamedType",
+										name: { kind: "Name", value: "FieldErrors" },
+									},
+									selectionSet: {
+										kind: "SelectionSet",
+										selections: [
+											{
+												kind: "Field",
+												name: { kind: "Name", value: "fieldErrors" },
+												selectionSet: {
+													kind: "SelectionSet",
+													selections: [
+														{
+															kind: "Field",
+															name: { kind: "Name", value: "message" },
+														},
+														{
+															kind: "Field",
+															name: { kind: "Name", value: "field" },
+														},
+													],
+												},
+											},
+										],
+									},
+								},
+								{
+									kind: "InlineFragment",
+									typeCondition: {
+										kind: "NamedType",
+										name: { kind: "Name", value: "HelpFindingADateResult" },
+									},
+									selectionSet: {
+										kind: "SelectionSet",
+										selections: [
+											{ kind: "Field", name: { kind: "Name", value: "data" } },
+										],
+									},
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<
+	HelpFindingADateMutation,
+	HelpFindingADateMutationVariables
+>
 export const RetireFreeDateDocument = {
 	kind: "Document",
 	definitions: [
@@ -6032,6 +6242,209 @@ export const DeleteFreeDateDraftDocument = {
 } as unknown as DocumentNode<
 	DeleteFreeDateDraftMutation,
 	DeleteFreeDateDraftMutationVariables
+>
+export const RemoveDefaultGuestDocument = {
+	kind: "Document",
+	definitions: [
+		{
+			kind: "OperationDefinition",
+			operation: "mutation",
+			name: { kind: "Name", value: "RemoveDefaultGuest" },
+			selectionSet: {
+				kind: "SelectionSet",
+				selections: [
+					{
+						kind: "Field",
+						name: { kind: "Name", value: "removeDefaultGuest" },
+						selectionSet: {
+							kind: "SelectionSet",
+							selections: [
+								{ kind: "Field", name: { kind: "Name", value: "__typename" } },
+								{
+									kind: "InlineFragment",
+									typeCondition: {
+										kind: "NamedType",
+										name: { kind: "Name", value: "AuthError" },
+									},
+									selectionSet: {
+										kind: "SelectionSet",
+										selections: [
+											{
+												kind: "Field",
+												name: { kind: "Name", value: "message" },
+											},
+										],
+									},
+								},
+								{
+									kind: "InlineFragment",
+									typeCondition: {
+										kind: "NamedType",
+										name: { kind: "Name", value: "Error" },
+									},
+									selectionSet: {
+										kind: "SelectionSet",
+										selections: [
+											{
+												kind: "Field",
+												name: { kind: "Name", value: "message" },
+											},
+										],
+									},
+								},
+								{
+									kind: "InlineFragment",
+									typeCondition: {
+										kind: "NamedType",
+										name: { kind: "Name", value: "DefaultGuest" },
+									},
+									selectionSet: {
+										kind: "SelectionSet",
+										selections: [
+											{ kind: "Field", name: { kind: "Name", value: "name" } },
+											{ kind: "Field", name: { kind: "Name", value: "email" } },
+										],
+									},
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<
+	RemoveDefaultGuestMutation,
+	RemoveDefaultGuestMutationVariables
+>
+export const SetDefaultGuestDocument = {
+	kind: "Document",
+	definitions: [
+		{
+			kind: "OperationDefinition",
+			operation: "mutation",
+			name: { kind: "Name", value: "SetDefaultGuest" },
+			variableDefinitions: [
+				{
+					kind: "VariableDefinition",
+					variable: {
+						kind: "Variable",
+						name: { kind: "Name", value: "input" },
+					},
+					type: {
+						kind: "NonNullType",
+						type: {
+							kind: "NamedType",
+							name: { kind: "Name", value: "SetDefaultGuestInput" },
+						},
+					},
+				},
+			],
+			selectionSet: {
+				kind: "SelectionSet",
+				selections: [
+					{
+						kind: "Field",
+						name: { kind: "Name", value: "setDefaultGuest" },
+						arguments: [
+							{
+								kind: "Argument",
+								name: { kind: "Name", value: "input" },
+								value: {
+									kind: "Variable",
+									name: { kind: "Name", value: "input" },
+								},
+							},
+						],
+						selectionSet: {
+							kind: "SelectionSet",
+							selections: [
+								{ kind: "Field", name: { kind: "Name", value: "__typename" } },
+								{
+									kind: "InlineFragment",
+									typeCondition: {
+										kind: "NamedType",
+										name: { kind: "Name", value: "AuthError" },
+									},
+									selectionSet: {
+										kind: "SelectionSet",
+										selections: [
+											{
+												kind: "Field",
+												name: { kind: "Name", value: "message" },
+											},
+										],
+									},
+								},
+								{
+									kind: "InlineFragment",
+									typeCondition: {
+										kind: "NamedType",
+										name: { kind: "Name", value: "Error" },
+									},
+									selectionSet: {
+										kind: "SelectionSet",
+										selections: [
+											{
+												kind: "Field",
+												name: { kind: "Name", value: "message" },
+											},
+										],
+									},
+								},
+								{
+									kind: "InlineFragment",
+									typeCondition: {
+										kind: "NamedType",
+										name: { kind: "Name", value: "FieldErrors" },
+									},
+									selectionSet: {
+										kind: "SelectionSet",
+										selections: [
+											{
+												kind: "Field",
+												name: { kind: "Name", value: "fieldErrors" },
+												selectionSet: {
+													kind: "SelectionSet",
+													selections: [
+														{
+															kind: "Field",
+															name: { kind: "Name", value: "message" },
+														},
+														{
+															kind: "Field",
+															name: { kind: "Name", value: "field" },
+														},
+													],
+												},
+											},
+										],
+									},
+								},
+								{
+									kind: "InlineFragment",
+									typeCondition: {
+										kind: "NamedType",
+										name: { kind: "Name", value: "DefaultGuest" },
+									},
+									selectionSet: {
+										kind: "SelectionSet",
+										selections: [
+											{ kind: "Field", name: { kind: "Name", value: "name" } },
+											{ kind: "Field", name: { kind: "Name", value: "email" } },
+										],
+									},
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<
+	SetDefaultGuestMutation,
+	SetDefaultGuestMutationVariables
 >
 export const UpdatePasswordDocument = {
 	kind: "Document",
@@ -8641,6 +9054,44 @@ export const GetViewerInfoDocument = {
 		},
 	],
 } as unknown as DocumentNode<GetViewerInfoQuery, GetViewerInfoQueryVariables>
+export const ViewerHasDefaultGuestDocument = {
+	kind: "Document",
+	definitions: [
+		{
+			kind: "OperationDefinition",
+			operation: "query",
+			name: { kind: "Name", value: "ViewerHasDefaultGuest" },
+			selectionSet: {
+				kind: "SelectionSet",
+				selections: [
+					{
+						kind: "Field",
+						name: { kind: "Name", value: "viewer" },
+						selectionSet: {
+							kind: "SelectionSet",
+							selections: [
+								{
+									kind: "Field",
+									name: { kind: "Name", value: "defaultGuest" },
+									selectionSet: {
+										kind: "SelectionSet",
+										selections: [
+											{ kind: "Field", name: { kind: "Name", value: "name" } },
+											{ kind: "Field", name: { kind: "Name", value: "email" } },
+										],
+									},
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	],
+} as unknown as DocumentNode<
+	ViewerHasDefaultGuestQuery,
+	ViewerHasDefaultGuestQueryVariables
+>
 export const CustomDateDocument = {
 	kind: "Document",
 	definitions: [

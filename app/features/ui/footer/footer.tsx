@@ -29,7 +29,19 @@ export function Footer() {
 						© {DateTime.now().year} trysweetie.com
 					</p>
 					<HStack gap={2}>
-						<Link to={$path("/privacy-policy")}>Privacy Policy</Link>
+						<Link
+							className={css({
+								color: "black",
+								textDecoration: "none",
+								fontWeight: "bold",
+								_hover: {
+									textDecoration: "underline",
+								},
+							})}
+							to={$path("/privacy-policy")}
+						>
+							Privacy Policy
+						</Link>
 						<a
 							className={css({
 								color: "black",

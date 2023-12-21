@@ -1,6 +1,25 @@
 import { useField } from "remix-validated-form"
-import { css } from "~/styled-system/css"
+import { css, cva } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
+
+const inputStyle = cva({
+	base: {
+		width: "100%",
+		borderRadius: "8px",
+		border: "1px solid",
+		borderColor: "gray",
+		padding: "8px",
+		backgroundColor: "white",
+		boxShadow: "sm",
+	},
+	variants: {
+		error: {
+			true: {
+				border: "1px solid red !important",
+			},
+		},
+	},
+})
 
 type Props = {
 	name: string
@@ -20,7 +39,6 @@ export function Input({
 	autoComplete,
 }: Props) {
 	const { error, getInputProps } = useField(name)
-
 	return (
 		<VStack gap={1} alignItems="flex-start" width={"100%"}>
 			<label htmlFor={name}>
@@ -30,14 +48,7 @@ export function Input({
 			<input
 				{...getInputProps({ id: name, autoComplete })}
 				placeholder={placeholder}
-				className={css({
-					width: "100%",
-					borderRadius: "8px",
-					border: "1px solid",
-					borderColor: "gray",
-					padding: "8px",
-					shadow: "sm",
-				})}
+				className={inputStyle({ error: !!error })}
 				name={name}
 				type={type}
 			/>

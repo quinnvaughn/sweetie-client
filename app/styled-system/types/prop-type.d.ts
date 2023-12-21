@@ -681,6 +681,11 @@ interface PropertyValueTypes {
 		| "paragraph"
 		| "caption"
 		| "h1"
+<<<<<<< HEAD
+=======
+		| "h2"
+		| "h3"
+>>>>>>> main
 		| "error"
 }
 

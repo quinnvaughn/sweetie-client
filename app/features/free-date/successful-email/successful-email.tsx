@@ -1,46 +1,40 @@
 import { Link } from "@remix-run/react"
 import { $path } from "remix-routes"
-import {
-	CopyLinkShareButton,
-	FacebookShareButton,
-	MessagesShareButton,
-	TwitterShareButton,
-	WhatsAppShareButton,
-} from "~/features/ui"
 import { useViewer } from "~/hooks"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
-const campaign = "date itinerary success"
-
 type Props = {
 	guestName?: string
+	guestEmail?: string
 	userEmail?: string
-	link: string
-	authorizedCalendar: boolean
+	addedGuest?: boolean
+	hasDefaultGuest?: boolean
+	sendToDefaultGuest?: boolean
 }
 
 export function SuccessfulEmail({
 	guestName,
+	guestEmail,
 	userEmail,
-	link,
-	authorizedCalendar,
+	addedGuest,
+	hasDefaultGuest,
+	sendToDefaultGuest,
 }: Props) {
 	const { isLoggedIn } = useViewer()
 	return (
 		<VStack gap={4}>
 			<p className={css({ textAlign: "center", textStyle: "paragraph" })}>
-				{authorizedCalendar
-					? `We successfully added the date to your calendar${
-							guestName
-								? ` and emailed ${guestName.split(" ")[0]} the itinerary`
-								: ""
-					  }!`
-					: `We successfully emailed you ${
-							guestName ? ` and ${guestName.split(" ")[0]} ` : ""
-					  } the itinerary!
-				Check your email for more details. Check your spam folder if you don't
-				see it.`}
+				We successfully emailed you
+				{hasDefaultGuest && sendToDefaultGuest
+					? guestName
+						? ` and ${guestName.split(" ")[0]} `
+						: "and your date"
+					: guestName
+					? ` and ${guestName.split(" ")[0]} `
+					: ""}{" "}
+				the itinerary! Check your email for more details. Check your spam folder
+				if you don't see it.
 			</p>
 			{!isLoggedIn() && (
 				<p
@@ -62,42 +56,28 @@ export function SuccessfulEmail({
 					so you don't have to enter your information again.
 				</p>
 			)}
-			<p
-				className={css({
-					fontWeight: "bold",
-					textAlign: "center",
-					textStyle: "paragraph",
-				})}
-			>
-				Want to share this date idea with your friends?
-			</p>
-			<VStack gap={4}>
-				<CopyLinkShareButton
-					link={link}
-					css={{ width: "250px" }}
-					campaign={campaign}
-				/>
-				<FacebookShareButton
-					link={link}
-					css={{ width: "250px" }}
-					campaign={campaign}
-				/>
-				<TwitterShareButton
-					link={link}
-					css={{ width: "250px" }}
-					campaign={campaign}
-				/>
-				<MessagesShareButton
-					link={link}
-					css={{ width: "250px" }}
-					campaign={campaign}
-				/>
-				<WhatsAppShareButton
-					link={link}
-					css={{ width: "250px" }}
-					campaign={campaign}
-				/>
-			</VStack>
+			{/** We let a user add a default guest to future dates. */}
+			{addedGuest && !hasDefaultGuest && isLoggedIn() && (
+				<p
+					className={css({
+						textAlign: "center",
+						textStyle: "paragraph",
+					})}
+				>
+					Want to save time?{" "}
+					<Link
+						to={$path("/account-settings/date-settings/add-guest")}
+						state={{ email: guestEmail, name: guestName }}
+						className={css({
+							textDecoration: "underline",
+							color: "primary",
+						})}
+					>
+						Add your guest as a default
+					</Link>{" "}
+					to future dates.
+				</p>
+			)}
 		</VStack>
 	)
 }

@@ -9,20 +9,31 @@ import { withZod } from "@remix-validated-form/with-zod"
 import { DateTime } from "luxon"
 import { useEffect } from "react"
 import { $params, $path } from "remix-routes"
-import { ClientOnly } from "remix-utils/client-only"
 import { ValidatedForm, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
-import { AddGoogleCalendar, SuccessfulEmail } from "~/features/free-date"
-import { DatePicker, Input, Modal, TimePicker } from "~/features/ui"
+import { zfd } from "zod-form-data"
+import {
+	AddGoogleCalendar,
+	SendToDefaultGuest,
+	SuccessfulEmail,
+} from "~/features/free-date"
+import {
+	CheckboxAndInputs,
+	DatePicker,
+	Input,
+	Modal,
+	TimePicker,
+} from "~/features/ui"
 import {
 	CreateDateItineraryDocument,
 	CreateDateItineraryInput,
 	GetFreeDateDocument,
+	ViewerHasDefaultGuestDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { useOpenedModal, useViewer } from "~/hooks"
-import { formatTime, getEnv, mapFieldErrorToValidationError } from "~/lib"
+import { formatTime, mapFieldErrorToValidationError, omit } from "~/lib"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
@@ -37,6 +48,8 @@ const validator = withZod(
 				.optional(),
 			guest: z
 				.object({
+					sendToDefaultGuest: zfd.checkbox({ trueValue: "true" }),
+					add: zfd.checkbox({ trueValue: "true" }),
 					email: z.string().email("Must be a valid email").or(z.literal("")),
 					name: z
 						.string()
@@ -46,18 +59,32 @@ const validator = withZod(
 				.optional()
 				.refine(
 					(data) => {
+						// if they have add checked, they must provide an email
+						if (data?.add && data?.email.length === 0) {
+							return false
+						}
+						return true
+					},
+					{
+						path: ["email"],
+						message: "Must provide an email if you add a guest",
+					},
+				)
+				.refine(
+					(data) => {
 						if (
-							data?.email &&
-							data?.email.length > 0 &&
-							data?.name.length === 0
+							data?.add &&
+							data?.name &&
+							data?.name.length > 0 &&
+							data?.email.length === 0
 						) {
 							return false
 						}
 						return true
 					},
 					{
-						path: ["name"],
-						message: "Must provide a name if you provide an email",
+						path: ["email"],
+						message: "Must provide an email if you provide a name",
 					},
 				),
 			date: z.string(),
@@ -75,8 +102,6 @@ const validator = withZod(
 		}),
 )
 
-const env = getEnv()
-
 export async function loader({ request, params }: LoaderFunctionArgs) {
 	const { id } = $params("/free-date/:id/add-to-calendar", params)
 	const { data } = await gqlFetch(request, GetFreeDateDocument, { id })
@@ -87,12 +112,13 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 	if (!(data.freeDate.__typename === "FreeDate")) {
 		throw new Response("Not Found", { status: 404 })
 	}
-	const link = `${env.FRONTEND_URL}${$path("/free-date/:id", {
-		id: data.freeDate.id,
-	})}`
+	const { data: viewerData } = await gqlFetch(
+		request,
+		ViewerHasDefaultGuestDocument,
+	)
 	return json({
 		freeDate: data.freeDate,
-		link,
+		defaultGuest: viewerData?.viewer?.defaultGuest,
 	})
 }
 
@@ -111,11 +137,21 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 	const formattedTime = formatTime(time)
 
+	const { data: viewerData } = await gqlFetch(
+		request,
+		ViewerHasDefaultGuestDocument,
+	)
+
 	const input: CreateDateItineraryInput = {
 		date: DateTime.fromFormat(`${date} ${formattedTime}`, "yyyy-MM-dd hh:mm a")
 			.setZone(timeZone)
 			.toISO() as string,
-		guest: guest?.email && guest.email.length > 0 ? guest : undefined,
+		guest:
+			guest?.sendToDefaultGuest && viewerData?.viewer?.defaultGuest
+				? omit(viewerData.viewer.defaultGuest, "__typename")
+				: guest?.email && guest.email.length > 0
+				? omit(guest, "add", "sendToDefaultGuest")
+				: undefined,
 		freeDateId: id,
 		user,
 	}
@@ -131,19 +167,12 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) => {
 			const reduceToValidatorError = mapFieldErrorToValidationError(fieldErrors)
 			return json(
-				{
-					success: false,
-					errors: reduceToValidatorError,
-					formData: result.data,
-				},
+				{ success: false, errors: reduceToValidatorError, formData: null },
 				{ status: 400 },
 			)
 		})
 		.otherwise(() =>
-			json(
-				{ success: false, errors: null, formData: result.data },
-				{ status: 500 },
-			),
+			json({ success: false, errors: null, formData: null }, { status: 500 }),
 		)
 }
 
@@ -152,7 +181,7 @@ export const meta: MetaFunction<typeof loader> = () => {
 }
 
 export default function AddToCalendarPage() {
-	const { freeDate, link } = useLoaderData<typeof loader>()
+	const { freeDate, defaultGuest } = useLoaderData<typeof loader>()
 	const { isLoggedIn } = useViewer()
 	const fetcher = useFetcher<typeof action>()
 	useOpenedModal(
@@ -170,31 +199,55 @@ export default function AddToCalendarPage() {
 	const authorizedCalendar = freeDate.viewerAuthorizedGoogleCalendar
 
 	return (
-		<ValidatedForm validator={validator} method="post" fetcher={fetcher}>
+		<ValidatedForm
+			defaultValues={{
+				date: new Date().toISOString().split("T")[0],
+				time: undefined,
+				guest: {
+					add: false,
+					name: defaultGuest?.name ?? "",
+					email: defaultGuest?.email ?? "",
+					sendToDefaultGuest: defaultGuest !== null,
+				},
+				timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+				user: {
+					name: "",
+					email: "",
+				},
+			}}
+			validator={validator}
+			method="post"
+			fetcher={fetcher}
+		>
 			<Modal>
 				<Modal.Header
 					type="link"
 					title={
-						authorizedCalendar ? "Add to calendar" : "Email me the itinerary"
+						fetcher.data?.success
+							? "Successfully emailed!"
+							: "Email me the date itinerary"
 					}
 					to={$path("/free-date/:id", { id: freeDate.id })}
 				/>
 				<Modal.Body id="modal-body">
 					{fetcher.data?.success ? (
 						<SuccessfulEmail
-							authorizedCalendar={authorizedCalendar}
-							link={link}
+							guestEmail={fetcher.data?.formData?.guest?.email}
+							addedGuest={fetcher.data?.formData?.guest?.add}
+							hasDefaultGuest={defaultGuest !== null}
+							sendToDefaultGuest={
+								fetcher.data?.formData?.guest?.sendToDefaultGuest ?? false
+							}
 							guestName={fetcher.data?.formData?.guest?.name}
 							userEmail={fetcher.data?.formData?.user?.email}
 						/>
 					) : (
-						<VStack gap={2} justifyContent="center">
+						<VStack gap={3} justifyContent="center">
 							<p
 								className={css({ textStyle: "paragraph", textAlign: "center" })}
 							>
-								{!authorizedCalendar
-									? "Save time by adding your calendar. We'll automatically add the date to your calendar instead of emailing you."
-									: "We'll add the date to your calendar directly to save you time. If you add a guest, we'll email them the itinerary."}
+								Don't let the perfect date slip away! Email yourself this date
+								itinerary for free and make every moment count.
 							</p>
 							{!authorizedCalendar && <AddGoogleCalendar />}
 							{!isLoggedIn() && (
@@ -205,37 +258,47 @@ export default function AddToCalendarPage() {
 							)}
 							<DatePicker name="date" label="Date" required />
 							<TimePicker name="time" label="Start time" required />
-							{!freeDate.viewerAuthorizedGoogleCalendar && (
-								<p
-									className={css({
-										textStyle: "paragraph",
-										textAlign: "center",
-									})}
-								>
-									If you add a guest, we'll email them the itinerary.
-								</p>
+							{defaultGuest !== null && defaultGuest !== undefined ? (
+								<SendToDefaultGuest
+									guest={{
+										email: {
+											name: "guest.email",
+											value: defaultGuest.email,
+										},
+										name: {
+											name: "guest.name",
+											value: defaultGuest.name ?? "",
+										},
+									}}
+									name="guest.sendToDefaultGuest"
+									label="Send to your default guest?"
+								/>
+							) : (
+								<CheckboxAndInputs
+									checkboxLabel="Send an email to your guest with the date itinerary?"
+									checkboxName="guest.add"
+									inputs={[
+										{
+											label: "Guest's email",
+											name: "guest.email",
+											placeholder: "Your guest's email",
+											required: true,
+											autoComplete: "off",
+										},
+										{
+											label: "Guest's name",
+											name: "guest.name",
+											placeholder: "Your guest's name",
+											autoComplete: "off",
+										},
+									]}
+								/>
 							)}
-							<Input
-								name="guest.name"
-								label="Date's name (optional)"
-								placeholder={"Your date's name"}
-								autoComplete="off"
+							<input
+								type="hidden"
+								name="timeZone"
+								value={Intl.DateTimeFormat().resolvedOptions().timeZone}
 							/>
-							<Input
-								name="guest.email"
-								label="Date's email (optional)"
-								placeholder={"Your date's email"}
-								autoComplete="off"
-							/>
-							<ClientOnly>
-								{() => (
-									<input
-										type="hidden"
-										name="timeZone"
-										value={Intl.DateTimeFormat().resolvedOptions().timeZone}
-									/>
-								)}
-							</ClientOnly>
 						</VStack>
 					)}
 				</Modal.Body>

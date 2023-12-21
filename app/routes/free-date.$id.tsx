@@ -21,6 +21,7 @@ import {
 	EmailItineraryRightSide,
 	FavoriteButton,
 	FreeDateList,
+	GetHelpFindingADate,
 	NSFWTag,
 	TimeOfTheDay,
 } from "~/features/free-date"
@@ -52,7 +53,10 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 	currentUrl,
 	defaultShouldRevalidate,
 }) => {
-	if (formAction === $path("/api/track")) {
+	if (
+		formAction === $path("/api/track") ||
+		formAction === $path("/api/help-finding-a-date")
+	) {
 		return false
 	}
 	if (
@@ -398,6 +402,15 @@ export default function FreeDateIdeaRoute() {
 						<Mobile>
 							<FloatingAddToCalendar />
 						</Mobile>
+						<div
+							className={divider({
+								color: "gray",
+								thickness: "1px",
+								orientation: "horizontal",
+								width: "100%",
+							})}
+						/>
+						<GetHelpFindingADate />
 						<div
 							className={divider({
 								color: "gray",

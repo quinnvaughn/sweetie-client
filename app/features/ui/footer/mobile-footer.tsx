@@ -1,4 +1,6 @@
+import { Link } from "@remix-run/react"
 import { DateTime } from "luxon"
+import { $path } from "remix-routes"
 import { css } from "~/styled-system/css"
 import { HStack } from "~/styled-system/jsx"
 import { SocialLinks } from "../social-links"
@@ -21,6 +23,19 @@ export function MobileFooter() {
 				<p className={css({ textStyle: "paragraph" })}>
 					© {DateTime.now().year} trysweetie.com
 				</p>
+				<Link
+					className={css({
+						color: "black",
+						textDecoration: "none",
+						fontWeight: "bold",
+						_hover: {
+							textDecoration: "underline",
+						},
+					})}
+					to={$path("/privacy-policy")}
+				>
+					Privacy Policy
+				</Link>
 				<a
 					className={css({
 						color: "black",

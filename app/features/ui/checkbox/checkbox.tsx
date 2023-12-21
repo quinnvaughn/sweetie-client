@@ -1,3 +1,4 @@
+import { css } from "~/styled-system/css"
 import { HStack } from "~/styled-system/jsx"
 
 type Props = Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> & {
@@ -7,7 +8,11 @@ type Props = Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> & {
 export function Checkbox({ label, ...props }: Props) {
 	return (
 		<HStack gap={1} alignItems="center">
-			<input {...props} type="checkbox" />
+			<input
+				{...props}
+				type="checkbox"
+				className={css({ _hover: { cursor: "pointer" } })}
+			/>
 			<label>{label}</label>
 		</HStack>
 	)
