@@ -145,10 +145,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 	console.log(
 		"date",
-		DateTime.fromFormat(
-			`${date} ${formattedTime}`,
-			"yyyy-MM-dd hh:mm a",
-		).toISO() as string,
+		DateTime.fromFormat(`${date} ${formattedTime}`, "yyyy-MM-dd hh:mm a").toUTC(
+			DateTime.local().setZone(timeZone).offset,
+		),
 	)
 
 	const input: CreateDateItineraryInput = {
