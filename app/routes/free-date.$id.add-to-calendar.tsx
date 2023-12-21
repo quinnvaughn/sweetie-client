@@ -143,13 +143,12 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		ViewerHasDefaultGuestDocument,
 	)
 
-	console.log({ timeZone })
-
 	console.log(
 		"date",
-		DateTime.fromFormat(`${date} ${formattedTime}`, "yyyy-MM-dd hh:mm a")
-			.setZone(timeZone)
-			.toISO() as string,
+		DateTime.fromFormat(
+			`${date} ${formattedTime}`,
+			"yyyy-MM-dd hh:mm a",
+		).toISO() as string,
 	)
 
 	const input: CreateDateItineraryInput = {
