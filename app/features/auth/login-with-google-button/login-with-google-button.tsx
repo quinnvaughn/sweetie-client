@@ -21,6 +21,7 @@ export function LoginWithGoogleButton({ type = "login" }: Props) {
 		},
 		flow: "auth-code",
 		ux_mode: "popup",
+		include_granted_scopes: false,
 	})
 	const [error, setError] = useState<string | null>(null)
 

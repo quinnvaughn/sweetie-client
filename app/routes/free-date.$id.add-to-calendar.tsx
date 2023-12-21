@@ -92,7 +92,7 @@ const validator = withZod(
 				.string()
 				.regex(
 					/^(1[0-2]|0?[1-9]):[0-5][0-9] (AM|PM)$/,
-					"Must be a valid time format",
+					"Must be a valid time (e.g. 7:00 PM)",
 				),
 			timeZone: z.string(),
 		})
@@ -224,7 +224,11 @@ export default function AddToCalendarPage() {
 					type="link"
 					title={
 						fetcher.data?.success
-							? "Successfully emailed!"
+							? authorizedCalendar
+								? "Added to your calendar!"
+								: "Emailed!"
+							: authorizedCalendar
+							? "Add to my calendar"
 							: "Email me the date itinerary"
 					}
 					to={$path("/free-date/:id", { id: freeDate.id })}
@@ -232,6 +236,7 @@ export default function AddToCalendarPage() {
 				<Modal.Body id="modal-body">
 					{fetcher.data?.success ? (
 						<SuccessfulEmail
+							authorizedGoogleCalendar={authorizedCalendar}
 							guestEmail={fetcher.data?.formData?.guest?.email}
 							addedGuest={fetcher.data?.formData?.guest?.add}
 							hasDefaultGuest={defaultGuest !== null}
@@ -246,8 +251,9 @@ export default function AddToCalendarPage() {
 							<p
 								className={css({ textStyle: "paragraph", textAlign: "center" })}
 							>
-								Don't let the perfect date slip away! Email yourself this date
-								itinerary for free and make every moment count.
+								{!authorizedCalendar
+									? "Level up your dates! Connect Google Calendar for a seamless experience, or email it to yourself—your move!"
+									: "Ready to roll! Your connected calendar means adding this date idea and future plans is just one click away."}
 							</p>
 							{!authorizedCalendar && <AddGoogleCalendar />}
 							{!isLoggedIn() && (

@@ -29,6 +29,11 @@ const input = cva({
 				outline: "none",
 			},
 		},
+		error: {
+			true: {
+				border: "1px solid red !important",
+			},
+		},
 	},
 })
 
@@ -72,7 +77,7 @@ export default function TimePicker({ label, required, time, name }: Props) {
 	const [amPm, setAmPm] = useState<"AM" | "PM">(time?.amPm || "PM")
 	const minuteRef = useRef<HTMLInputElement>(null)
 	const [value, setValue] = useState<string>("")
-	const { getInputProps, error } = useField(name)
+	const { getInputProps, error, validate } = useField(name)
 
 	const [focused, setFocused] = useState<"hours" | "minutes" | null>(null)
 
@@ -121,8 +126,17 @@ export default function TimePicker({ label, required, time, name }: Props) {
 		if (Number(minutes) > 59 || Number(minutes) < 0) {
 			return
 		}
+		if (minutes.length === 1) {
+			setValue("")
+			return
+		}
 		setValue(`${hours}:${minutes} ${amPm}`)
 	}, [hours, minutes, amPm])
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		validate()
+	}, [value])
 
 	return (
 		<VStack
@@ -137,7 +151,7 @@ export default function TimePicker({ label, required, time, name }: Props) {
 			</label>
 			<HStack gap={2} alignItems="center">
 				<input
-					className={input({ focused: focused === "hours" })}
+					className={input({ focused: focused === "hours", error: !!error })}
 					type="text"
 					inputMode="numeric"
 					placeholder="6"
@@ -154,7 +168,7 @@ export default function TimePicker({ label, required, time, name }: Props) {
 				/>
 				<p className={css({ textStyle: "paragraph", fontSize: "20px" })}>:</p>
 				<input
-					className={input({ focused: focused === "minutes" })}
+					className={input({ focused: focused === "minutes", error: !!error })}
 					type="text"
 					inputMode="numeric"
 					placeholder="00"

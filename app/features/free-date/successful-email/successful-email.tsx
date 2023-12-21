@@ -11,6 +11,7 @@ type Props = {
 	addedGuest?: boolean
 	hasDefaultGuest?: boolean
 	sendToDefaultGuest?: boolean
+	authorizedGoogleCalendar?: boolean
 }
 
 export function SuccessfulEmail({
@@ -20,21 +21,34 @@ export function SuccessfulEmail({
 	addedGuest,
 	hasDefaultGuest,
 	sendToDefaultGuest,
+	authorizedGoogleCalendar,
 }: Props) {
 	const { isLoggedIn } = useViewer()
 	return (
 		<VStack gap={4}>
 			<p className={css({ textAlign: "center", textStyle: "paragraph" })}>
-				We successfully emailed you
-				{hasDefaultGuest && sendToDefaultGuest
-					? guestName
+				{authorizedGoogleCalendar
+					? `We successfully added the date to your calendar${
+							hasDefaultGuest && sendToDefaultGuest
+								? guestName
+									? ` and emailed ${guestName.split(" ")[0]}`
+									: "and emailed your date"
+								: guestName
+								? ` and emailed ${guestName.split(" ")[0]}`
+								: ""
+					  }!`
+					: `We successfully emailed you
+				${
+					hasDefaultGuest && sendToDefaultGuest
+						? guestName
+							? ` and ${guestName.split(" ")[0]} `
+							: "and your date"
+						: guestName
 						? ` and ${guestName.split(" ")[0]} `
-						: "and your date"
-					: guestName
-					? ` and ${guestName.split(" ")[0]} `
-					: ""}{" "}
+						: ""
+				}
 				the itinerary! Check your email for more details. Check your spam folder
-				if you don't see it.
+				if you don't see it.`}
 			</p>
 			{!isLoggedIn() && (
 				<p
