@@ -9,6 +9,7 @@ import { withZod } from "@remix-validated-form/with-zod"
 import { DateTime } from "luxon"
 import { useEffect } from "react"
 import { $params, $path } from "remix-routes"
+import { ClientOnly } from "remix-utils/client-only"
 import { ValidatedForm, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
@@ -300,11 +301,15 @@ export default function AddToCalendarPage() {
 									]}
 								/>
 							)}
-							<input
-								type="hidden"
-								name="timeZone"
-								value={Intl.DateTimeFormat().resolvedOptions().timeZone}
-							/>
+							<ClientOnly>
+								{() => (
+									<input
+										type="hidden"
+										name="timeZone"
+										value={Intl.DateTimeFormat().resolvedOptions().timeZone}
+									/>
+								)}
+							</ClientOnly>
 						</VStack>
 					)}
 				</Modal.Body>
