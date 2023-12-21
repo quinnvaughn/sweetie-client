@@ -135,6 +135,9 @@ export default function TimePicker({ label, required, time, name }: Props) {
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
+		if (value === "") {
+			return
+		}
 		validate()
 	}, [value])
 
