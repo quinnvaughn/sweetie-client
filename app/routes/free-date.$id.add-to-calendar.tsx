@@ -147,6 +147,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		date: DateTime.fromFormat(`${date} ${formattedTime}`, "yyyy-MM-dd hh:mm a")
 			.setZone(timeZone)
 			.toISO() as string,
+		timeZone,
 		guest:
 			guest?.sendToDefaultGuest && viewerData?.viewer?.defaultGuest
 				? omit(viewerData.viewer.defaultGuest, "__typename")
@@ -305,7 +306,7 @@ export default function AddToCalendarPage() {
 									<input
 										type="hidden"
 										name="timeZone"
-										value={Intl.DateTimeFormat().resolvedOptions().timeZone}
+										value={DateTime.local().zoneName as string}
 									/>
 								)}
 							</ClientOnly>
