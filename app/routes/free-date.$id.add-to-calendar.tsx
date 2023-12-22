@@ -147,6 +147,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		date: DateTime.fromFormat(`${date} ${formattedTime}`, "yyyy-MM-dd hh:mm a")
 			.setZone(timeZone, { keepLocalTime: true })
 			.toISO() as string,
+		timeZone,
 		guest:
 			guest?.sendToDefaultGuest && viewerData?.viewer?.defaultGuest
 				? omit(viewerData.viewer.defaultGuest, "__typename")
