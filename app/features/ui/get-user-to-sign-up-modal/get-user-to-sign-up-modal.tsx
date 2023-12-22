@@ -1,10 +1,11 @@
-import { Link } from "@remix-run/react"
+import { Link, useLocation } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
 import { useEffect, useState } from "react"
 import { useFetcher } from "react-router-dom"
 import { $path } from "remix-routes"
 import { ValidatedForm } from "remix-validated-form"
 import { z } from "zod"
+import { CustomLoginWithGoogleButton } from "~/features/auth"
 import { isTypeofFieldError } from "~/lib"
 import { action } from "~/routes/api.custom-signup"
 import { css } from "~/styled-system/css"
@@ -67,10 +68,12 @@ export function GetUserToSignUpModal({
 			<Modal>
 				<Modal.Header type="button" onClick={onClose} title={headingText} />
 				<Modal.Body>
-					<VStack gap="4" alignItems={"center"}>
+					<VStack gap={2} alignItems={"center"}>
 						{bodyText && (
 							<p className={css({ textAlign: "center" })}>{bodyText}</p>
 						)}
+						<CustomLoginWithGoogleButton type={authState} fetcher={fetcher} />
+						<p className={css({ textAlign: "center" })}>or</p>
 						<Input
 							type="email"
 							label="Email"

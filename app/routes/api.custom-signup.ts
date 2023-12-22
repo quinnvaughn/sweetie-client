@@ -3,7 +3,11 @@ import { withZod } from "@remix-validated-form/with-zod"
 import { validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
-import { LoginDocument, RegisterDocument } from "~/graphql/generated"
+import {
+	LoginDocument,
+	LoginWithGoogleDocument,
+	RegisterDocument,
+} from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 
 const registerValidator = withZod(
@@ -106,6 +110,35 @@ export async function action({ request }: DataFunctionArgs) {
 				.otherwise(() =>
 					json({ success: false, message: "Something happened." }),
 				)
+		})
+		.with("google", async () => {
+			const code = formData.get("code") as string
+			if (!code) {
+				return json({ message: "Missing code", success: false })
+			}
+			const { data, response } = await gqlFetch(
+				request,
+				LoginWithGoogleDocument,
+				{
+					input: {
+						code,
+					},
+				},
+			)
+
+			return match(data?.loginWithGoogle)
+				.with({ __typename: "Error" }, ({ message }) => {
+					return json({ message, success: false })
+				})
+				.with({ __typename: "User" }, async () => {
+					const headers = new Headers()
+					headers.append(
+						"Set-Cookie",
+						response?.headers.get("Set-Cookie") ?? "",
+					)
+					return json({ success: true, message: null }, { headers })
+				})
+				.otherwise(() => json({ message: "Unknown error", success: false }))
 		})
 		.otherwise(() => json({ success: false, message: "Invalid type" }))
 }

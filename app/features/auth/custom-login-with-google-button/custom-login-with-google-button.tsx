@@ -3,27 +3,21 @@ import { useFetcher } from "@remix-run/react"
 import { useEffect, useState } from "react"
 import { FcGoogle } from "react-icons/fc/index.js"
 import { $path } from "remix-routes"
-import { action } from "~/routes/api.login-with-google"
+import { isTypeofFieldError } from "~/lib"
 import { css } from "~/styled-system/css"
 
 type Props = {
-	type?: "register" | "login"
-	redirectTo?: string
-	// for when we want a button action to fire that doesn't redirect
-	noRedirect?: boolean
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	fetcher: ReturnType<typeof useFetcher<any>>
+	type: "login" | "register"
 }
 
-export function LoginWithGoogleButton({
-	type = "login",
-	redirectTo = "/",
-	noRedirect = false,
-}: Props) {
-	const fetcher = useFetcher<typeof action>()
+export function CustomLoginWithGoogleButton({ fetcher, type }: Props) {
 	const login = useGoogleLogin({
 		onSuccess: (tokenResponse) => {
 			fetcher.submit(
-				{ code: tokenResponse.code, redirectTo, noRedirect },
-				{ method: "post", action: $path("/api/login-with-google") },
+				{ code: tokenResponse.code, type: "google" },
+				{ method: "post", action: $path("/api/custom-signup") },
 			)
 		},
 		flow: "auth-code",
@@ -33,8 +27,8 @@ export function LoginWithGoogleButton({
 	const [error, setError] = useState<string | null>(null)
 
 	useEffect(() => {
-		if (fetcher.data?.error) {
-			setError(fetcher.data.error)
+		if (!isTypeofFieldError(fetcher.data) && fetcher.data?.message) {
+			setError(fetcher.data.message)
 		}
 	}, [fetcher.data])
 

@@ -4,6 +4,7 @@ import { useState } from "react"
 import { $path } from "remix-routes"
 import { ValidatedForm } from "remix-validated-form"
 import { z } from "zod"
+import { LoginWithGoogleButton } from "~/features/auth"
 import { Input, Modal } from "~/features/ui"
 import { ModalBody } from "~/features/ui/modal/body"
 import { signupStore } from "~/stores"
@@ -49,15 +50,20 @@ export function SignupModal() {
 			<Modal>
 				<Modal.Header
 					type="button"
-					title={authState === "login" ? "Login" : "Register"}
+					title={authState === "login" ? "Login" : "Create an account"}
 					onClick={() => clearSignupModal()}
 				/>
 				<ModalBody>
-					<VStack gap="4" alignItems={"center"}>
+					<VStack gap={2} alignItems={"center"}>
 						<p className={css({ textAlign: "center" })}>
 							Hey there! Looks like you're enjoying Sweetie. Create an account
 							to save your dates and get access to more features.
 						</p>
+						<LoginWithGoogleButton
+							redirectTo={pathname}
+							type={authState === "login" ? "login" : "register"}
+						/>
+						<p className={css({ textAlign: "center" })}>or</p>
 						<Input
 							type="email"
 							label="Email"
@@ -102,7 +108,7 @@ export function SignupModal() {
 								type="button"
 								onClick={() => setAuthState("register")}
 							>
-								Register
+								Create an account
 							</button>
 						) : (
 							<button
