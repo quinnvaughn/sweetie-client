@@ -178,8 +178,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		)
 }
 
-export const meta: MetaFunction<typeof loader> = () => {
-	return [{ name: "robots", content: "noindex" }]
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	return [
+		{ title: `Add ${data?.freeDate.title ?? ""} to your calendar` },
+		{ name: "robots", content: "noindex" },
+	]
 }
 
 export default function AddToCalendarPage() {
