@@ -1,12 +1,15 @@
 import { match } from "ts-pattern"
 import { FreeDateCardFragment } from "~/graphql/generated"
 import { css } from "~/styled-system/css"
+import { VStack } from "~/styled-system/jsx"
+import { GetHelpFindingADate } from ".."
 import { FreeDateCard } from "../free-date-card"
 
 type Props = {
 	numImagesLoaded?: number
 	noDatesText?: string
 	freeDates: FreeDateCardFragment[]
+	showContactUsLink?: boolean
 	base?: {
 		gap?: number
 		gridTemplateColumns?: string
@@ -28,14 +31,22 @@ export function FreeDateList({
 	xl,
 	noDatesText,
 	numImagesLoaded = 3,
+	showContactUsLink,
 }: Props) {
 	return match(freeDates)
 		.when(
 			(freeDates) => freeDates.length === 0,
 			() => (
-				<p className={css({ textStyle: "paragraph" })}>
-					{noDatesText ?? "No dates found. Maybe try a different search?"}
-				</p>
+				<VStack
+					gap={showContactUsLink ? 4 : 0}
+					alignItems={"center"}
+					width={"100%"}
+				>
+					<p className={css({ textStyle: "paragraph" })}>
+						{noDatesText ?? "No dates found. Maybe try a different search?"}
+					</p>
+					{showContactUsLink && <GetHelpFindingADate />}
+				</VStack>
 			),
 		)
 		.when(
