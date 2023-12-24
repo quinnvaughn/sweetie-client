@@ -1,7 +1,7 @@
 import { useLoaderData } from "@remix-run/react"
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/server-runtime"
 import { $path } from "remix-routes"
-import { PlannedDateList } from "~/features/planned-date"
+import { PlannedDateList, PlannedDateSection } from "~/features/planned-date"
 import { PageContainer } from "~/features/ui"
 import {
 	PlannedDateListDocument,
@@ -19,12 +19,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	}
 
 	const { data } = await gqlFetch(request, PlannedDateListDocument)
-	if (!data?.viewer?.plannedDates) return json({ plannedDates: [] })
-	return json({ plannedDates: data?.viewer?.plannedDates })
+	return json({
+		upcoming: data?.viewer?.upcomingPlannedDates ?? [],
+		previous: data?.viewer?.previousPlannedDates ?? [],
+	})
 }
 
 export default function DatesRoute() {
-	const { plannedDates } = useLoaderData<typeof loader>()
+	const { upcoming, previous } = useLoaderData<typeof loader>()
 	return (
 		<PageContainer
 			width={{ base: "100%", lg: 1024 }}
@@ -39,7 +41,8 @@ export default function DatesRoute() {
 				>
 					My Planned Dates
 				</h1>
-				<PlannedDateList plannedDates={plannedDates} />
+				<PlannedDateSection title={"upcoming"} plannedDates={upcoming} />
+				<PlannedDateSection title={"previous"} plannedDates={previous} />
 			</VStack>
 		</PageContainer>
 	)

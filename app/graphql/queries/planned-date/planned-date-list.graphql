@@ -1,6 +1,9 @@
 query PlannedDateList {
     viewer {
-        plannedDates {
+        upcomingPlannedDates {
+            ...PlannedDateCard
+        }
+        previousPlannedDates {
             ...PlannedDateCard
         }
     }
