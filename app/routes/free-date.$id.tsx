@@ -5,7 +5,6 @@ import {
 	ShouldRevalidateFunction,
 	useLoaderData,
 	useLocation,
-	useParams,
 } from "@remix-run/react"
 import isbot from "isbot"
 import { useContext, useEffect } from "react"
@@ -188,8 +187,6 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 export default function FreeDateIdeaRoute() {
 	const { freeDate, showShareScreen, viewer, isBot } =
 		useLoaderData<typeof loader>()
-	const params = useParams()
-	const { id } = $params("/free-date/:id", params)
 	const track = useTrack()
 	const { pathname } = useLocation()
 	const { incrementTimesViewedDates, showSignupModal } = signupStore()
@@ -198,7 +195,8 @@ export default function FreeDateIdeaRoute() {
 		if (freeDate.__typename === "FreeDate" && !freeDate.isUserTastemaker) {
 			track("User Scrolled To Bottom", {
 				of: "Free Date Page",
-				free_date_id: id,
+				title: freeDate.title,
+				tastemaker_name: freeDate.tastemaker.user.name,
 			})
 		}
 	})
