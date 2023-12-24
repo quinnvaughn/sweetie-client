@@ -1,0 +1,10 @@
+fragment PlannedDateCard on PlannedDate {
+  freeDate {
+    ...FreeDateCard
+  }
+  id
+  plannedTime
+  guest {
+    name
+  }
+}

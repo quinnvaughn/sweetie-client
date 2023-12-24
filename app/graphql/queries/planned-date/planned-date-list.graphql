@@ -1,0 +1,7 @@
+query PlannedDateList {
+    viewer {
+        plannedDates {
+            ...PlannedDateCard
+        }
+    }
+}
