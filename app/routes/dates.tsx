@@ -1,7 +1,7 @@
 import { useLoaderData } from "@remix-run/react"
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/server-runtime"
 import { $path } from "remix-routes"
-import { PlannedDateList, PlannedDateSection } from "~/features/planned-date"
+import { PlannedDateSection } from "~/features/planned-date"
 import { PageContainer } from "~/features/ui"
 import {
 	PlannedDateListDocument,
