@@ -33,7 +33,7 @@ import {
 	ViewerHasDefaultGuestDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import { useOpenedModal, useViewer } from "~/hooks"
+import { useTrack, useViewer } from "~/hooks"
 import { formatTime, mapFieldErrorToValidationError, omit } from "~/lib"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
@@ -189,11 +189,16 @@ export default function AddToCalendarPage() {
 	const { freeDate, defaultGuest } = useLoaderData<typeof loader>()
 	const { isLoggedIn } = useViewer()
 	const fetcher = useFetcher<typeof action>()
-	useOpenedModal(
-		isLoggedIn()
-			? "create-date-itinerary"
-			: "create-date-itinerary-not-logged-in",
-	)
+	const track = useTrack()
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		track("User Opened Add to Calendar Modal", {
+			title: freeDate.title,
+			tastemaker_name: freeDate.tastemaker.user.name,
+			loggedIn: isLoggedIn(),
+		})
+	}, [])
 
 	useEffect(() => {
 		if (fetcher.data?.success) {
