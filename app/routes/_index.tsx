@@ -45,7 +45,7 @@ export default function HomeRoute() {
 						Sweetie
 					</h1>
 					<p className={css({ textStyle: "paragraph", fontSize: "20px" })}>
-						Your personal date concierge for{" "}
+						Your personal date concierge in{" "}
 						<span className={css({ fontWeight: "bold", color: "secondary" })}>
 							Los Angeles
 						</span>
