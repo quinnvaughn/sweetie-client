@@ -73,12 +73,14 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 		.with({ __typename: "Error" }, ({ message }) => json({ error: message }))
 		.with(
 			{ __typename: "FreeDate" },
-			({ description, nsfw, stops, tags, thumbnail, title }) => json({
+			({ description, nsfw, stops, tags, thumbnail, title, recommendedTime }) =>
+				json({
 					error: null,
 					...setFormDefaults<FreeDateFormValues>("edit-free-date-form", {
 						description,
 						thumbnail,
 						nsfw: nsfw ? "true" : "false",
+						recommendedTime,
 						stops: stops.map(({ title, content, location }) => ({
 							title,
 							content,

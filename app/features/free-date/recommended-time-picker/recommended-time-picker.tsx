@@ -1,5 +1,5 @@
 import { DateTime } from "luxon"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { useControlField } from "remix-validated-form"
 import { TimePicker } from "~/features/ui"
 import { css, cva } from "~/styled-system/css"
@@ -34,20 +34,15 @@ const tabStyle = cva({
 
 type Props = {
 	name: string
-	defaultValue: string
 	label: string
 	required?: boolean
 }
 
-export function RecommendedTimePicker({
-	name,
-	defaultValue,
-	label,
-	required,
-}: Props) {
+export function RecommendedTimePicker({ name, label, required }: Props) {
 	const [recommendedTime, setRecommendedTime] = useControlField<string>(name)
 	// recommendedTime is in the format of "HH:MM AM/PM"
 	// remove the AM/PM
+	const defaultValue = useRef(recommendedTime).current
 	const [time, amPM] = defaultValue.split(" ")
 	const [hour, minute] = time.split(":")
 	const formattedDate = new Date()

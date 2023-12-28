@@ -16,6 +16,7 @@ export const schema = z.object({
 	tagText: z.string().optional(),
 	title: z.string().optional(),
 	description: z.string().optional(),
+	recommendedTime: z.string().optional(),
 	tags: zfd.repeatableOfType(z.string()).optional(),
 	stops: z
 		.array(

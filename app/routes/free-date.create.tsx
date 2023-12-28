@@ -71,6 +71,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 			thumbnail: "",
 			description: "",
 			nsfw: "false",
+			recommendedTime: "6:30 PM",
 			stops: [{ content: "", title: "", location: { id: "", name: "" } }],
 			title: "",
 			tags: [],

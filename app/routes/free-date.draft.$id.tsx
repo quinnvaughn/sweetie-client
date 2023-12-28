@@ -77,31 +77,41 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 		.with(P.nullish, () => json({ error: "Free date not found." }))
 		.with({ __typename: "AuthError" }, () => redirect($path("/login")))
 		.with({ __typename: "Error" }, ({ message }) => json({ error: message }))
-		.otherwise(({ id, nsfw, stops, tags, description, thumbnail, title }) =>
-			json({
-				error: null,
+		.otherwise(
+			({
 				id,
-				...setFormDefaults<FreeDateFormValues>("draft-free-date-form", {
+				nsfw,
+				stops,
+				tags,
+				description,
+				thumbnail,
+				title,
+				recommendedTime,
+			}) => json({
+					error: null,
 					id,
-					description: description ?? "",
-					thumbnail: thumbnail ?? "",
-					nsfw: nsfw ? "true" : "false",
-					stops:
-						stops.length > 0
-							? stops.map(({ title, content, location }) => ({
-									title: title ?? "",
-									content: content ?? "",
-									location: {
-										id: location?.id ?? "",
-										name: location?.name ?? "",
-									},
-							  }))
-							: [{ content: "", location: { id: "", name: "" }, title: "" }],
-					tags: tags.map(({ name }) => name),
-					tagText: "",
-					title: title ?? "",
+					...setFormDefaults<FreeDateFormValues>("draft-free-date-form", {
+						id,
+						description: description ?? "",
+						thumbnail: thumbnail ?? "",
+						recommendedTime: recommendedTime ?? "6:30 PM",
+						nsfw: nsfw ? "true" : "false",
+						stops:
+							stops.length > 0
+								? stops.map(({ title, content, location }) => ({
+										title: title ?? "",
+										content: content ?? "",
+										location: {
+											id: location?.id ?? "",
+											name: location?.name ?? "",
+										},
+								  }))
+								: [{ content: "", location: { id: "", name: "" }, title: "" }],
+						tags: tags.map(({ name }) => name),
+						tagText: "",
+						title: title ?? "",
+					}),
 				}),
-			}),
 		)
 }
 

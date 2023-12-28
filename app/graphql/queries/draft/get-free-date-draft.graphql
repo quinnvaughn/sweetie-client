@@ -16,6 +16,7 @@ query GetFreeDateDraft($id: String!) {
 				tags {
 					...Tags
 				}
+                recommendedTime
                 stops {
                     id
                     order

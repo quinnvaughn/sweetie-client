@@ -10,6 +10,7 @@ query GetEditFreeDate($id: String!) {
         tags {
           ...Tags
         }
+        recommendedTime
         tastemaker {
           ...TastemakerInfo
         }

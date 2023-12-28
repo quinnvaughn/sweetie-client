@@ -7,11 +7,9 @@ import {
 	useFieldArray,
 } from "remix-validated-form"
 import { z } from "zod"
-import { zfd } from "zod-form-data"
 import { SaveDraftButton } from "~/features/drafts"
 import {
 	Button,
-	CheckboxGroup,
 	ImageUpload,
 	Input,
 	RadioGroup,
@@ -20,7 +18,7 @@ import {
 } from "~/features/ui"
 import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
-import { DateStopForm } from ".."
+import { DateStopForm, RecommendedTimePicker } from ".."
 
 const schema = z.object({
 	id: z.string().optional(),
@@ -42,16 +40,7 @@ const schema = z.object({
 		.string()
 		.min(10, "Description must be at least 10 characters.")
 		.max(10000, "Description must be no more than 10,000 characters."),
-	recommendedTime: z.string().refine(
-		(s) => {
-			const split = s.split(":")
-			if (split.length !== 2) return false
-			const [hours, minutes] = split
-			if (hours?.length !== 2 || minutes?.length !== 2) return false
-			return true
-		},
-		{ message: "Recommended time must be in the format HH:MM." },
-	),
+	recommendedTime: z.string(),
 	tags: z
 		.array(z.string())
 		.or(z.string())
@@ -169,6 +158,18 @@ export function FreeDateForm({
 						whatever you want.
 					</p>
 					<TagsInput label="Tags" tagsName="tags" textName="tagText" />
+				</VStack>
+				<VStack gap={4} alignItems="flex-start">
+					<p className={css({ textStyle: "paragraph", fontWeight: "bold" })}>
+						When is the best time to go on this date? We automatically add times
+						both half an hour before and after the time you select.
+					</p>
+					<RecommendedTimePicker
+						// defaultValue="6:30 PM"
+						label="Recommended time"
+						name="recommendedTime"
+						required
+					/>
 				</VStack>
 				<VStack gap={4} alignItems="flex-start">
 					<p className={css({ textStyle: "paragraph", fontWeight: "bold" })}>
