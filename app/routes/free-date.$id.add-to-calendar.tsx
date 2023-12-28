@@ -16,16 +16,11 @@ import { z } from "zod"
 import { zfd } from "zod-form-data"
 import {
 	AddGoogleCalendar,
+	RecommendedTimePicker,
 	SendToDefaultGuest,
 	SuccessfulEmail,
 } from "~/features/free-date"
-import {
-	CheckboxAndInputs,
-	DatePicker,
-	Input,
-	Modal,
-	TimePicker,
-} from "~/features/ui"
+import { CheckboxAndInputs, DatePicker, Input, Modal } from "~/features/ui"
 import {
 	CreateDateItineraryDocument,
 	CreateDateItineraryInput,
@@ -34,7 +29,12 @@ import {
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { useTrack, useViewer } from "~/hooks"
-import { formatTime, mapFieldErrorToValidationError, omit } from "~/lib"
+import {
+	formatTime,
+	isTypeofFieldError,
+	mapFieldErrorToValidationError,
+	omit,
+} from "~/lib"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
@@ -89,12 +89,7 @@ const validator = withZod(
 					},
 				),
 			date: z.string(),
-			time: z
-				.string()
-				.regex(
-					/^(1[0-2]|0?[1-9]):[0-5][0-9] (AM|PM)$/,
-					"Must be a valid time (e.g. 7:00 PM)",
-				),
+			time: z.string(),
 			timeZone: z.string(),
 		})
 		.refine((data) => DateTime.fromISO(data.date).isValid, {
@@ -129,10 +124,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	const result = await validator.validate(formData)
 
 	if (result.error) {
-		return json(
-			{ success: false, errors: validationError(result.error), formData: null },
-			{ status: 400 },
-		)
+		return validationError(result.error)
 	}
 	const { guest, date, time, timeZone, user } = result.data
 
@@ -141,6 +133,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	const { data: viewerData } = await gqlFetch(
 		request,
 		ViewerHasDefaultGuestDocument,
+	)
+
+	console.log(
+		"date",
+		DateTime.fromFormat(`${date} ${formattedTime}`, "yyyy-MM-dd hh:mm a")
+			.setZone(timeZone, { keepLocalTime: true })
+			.toISO() as string,
 	)
 
 	const input: CreateDateItineraryInput = {
@@ -201,7 +200,7 @@ export default function AddToCalendarPage() {
 	}, [])
 
 	useEffect(() => {
-		if (fetcher.data?.success) {
+		if (!isTypeofFieldError(fetcher.data) && fetcher.data?.success) {
 			document.getElementById("modal-body")?.scrollTo(0, 0)
 		}
 	}, [fetcher.data])
@@ -212,7 +211,7 @@ export default function AddToCalendarPage() {
 		<ValidatedForm
 			defaultValues={{
 				date: new Date().toISOString().split("T")[0],
-				time: undefined,
+				time: freeDate.recommendedTime,
 				guest: {
 					add: false,
 					name: defaultGuest?.name ?? "",
@@ -232,7 +231,7 @@ export default function AddToCalendarPage() {
 				<Modal.Header
 					type="link"
 					title={
-						fetcher.data?.success
+						!isTypeofFieldError(fetcher.data) && fetcher.data?.success
 							? authorizedCalendar
 								? "Added to your calendar!"
 								: "Emailed!"
@@ -243,7 +242,7 @@ export default function AddToCalendarPage() {
 					to={$path("/free-date/:id", { id: freeDate.id })}
 				/>
 				<Modal.Body id="modal-body">
-					{fetcher.data?.success ? (
+					{!isTypeofFieldError(fetcher.data) && fetcher.data?.success ? (
 						<SuccessfulEmail
 							authorizedGoogleCalendar={authorizedCalendar}
 							guestEmail={fetcher.data?.formData?.guest?.email}
@@ -272,7 +271,13 @@ export default function AddToCalendarPage() {
 								</>
 							)}
 							<DatePicker name="date" label="Date" required />
-							<TimePicker name="time" label="Start time" required />
+							<RecommendedTimePicker
+								defaultValue={freeDate.recommendedTime}
+								required
+								label="Start time"
+								name="time"
+							/>
+							{/* <TimePicker name="time" label="Start time" required /> */}
 							{defaultGuest !== null && defaultGuest !== undefined ? (
 								<SendToDefaultGuest
 									guest={{
@@ -321,7 +326,7 @@ export default function AddToCalendarPage() {
 						</VStack>
 					)}
 				</Modal.Body>
-				{!fetcher.data?.success && (
+				{!isTypeofFieldError(fetcher.data) && !fetcher.data?.success && (
 					<Modal.Footer
 						button={{
 							text: authorizedCalendar ? "Add to calendar" : "Email me",

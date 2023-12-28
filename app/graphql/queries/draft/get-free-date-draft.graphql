@@ -16,10 +16,6 @@ query GetFreeDateDraft($id: String!) {
 				tags {
 					...Tags
 				}
-                timesOfDay {
-                    id 
-                    name
-                }
                 stops {
                     id
                     order

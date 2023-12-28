@@ -1,5 +1,7 @@
+import { useSelect } from "downshift"
 import { useEffect, useRef, useState } from "react"
-import { useField } from "remix-validated-form"
+import { FaChevronDown, FaChevronUp } from "react-icons/fa/index.js"
+import { useControlField, useField } from "remix-validated-form"
 import { css, cva } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
 
@@ -67,79 +69,21 @@ type Props = {
 	time?: {
 		hours: string
 		minutes: string
-		amPm: "AM" | "PM"
 	}
 }
 
 export default function TimePicker({ label, required, time, name }: Props) {
-	const [hours, setHours] = useState(time?.hours || "")
-	const [minutes, setMinutes] = useState(time?.minutes || "")
-	const [amPm, setAmPm] = useState<"AM" | "PM">(time?.amPm || "PM")
-	const minuteRef = useRef<HTMLInputElement>(null)
-	const [value, setValue] = useState<string>("")
-	const { getInputProps, error, validate } = useField(name)
-
-	const [focused, setFocused] = useState<"hours" | "minutes" | null>(null)
-
-	function changeHour(e: React.ChangeEvent<HTMLInputElement>) {
-		if (e.target.value !== "" && Number.isNaN(Number(e.target.value))) {
-			return
-		}
-		if (
-			Number(e.target.value) > 12 ||
-			(Number(e.target.value) < 1 && e.target.value !== "")
-		) {
-			return
-		}
-		setHours(e.target.value)
-		// if the number starts with anything higher than 1, we want to focus on the minutes
-		if (e.target.value.length === 1 && Number(e.target.value) > 1) {
-			minuteRef.current?.focus()
-			minuteRef.current?.setSelectionRange(0, minutes.length)
-			setFocused("minutes")
-		}
-		// If the number is 10, 11, or 12, we want to focus on the minutes
-		if (e.target.value.length === 2) {
-			minuteRef.current?.focus()
-			minuteRef.current?.setSelectionRange(0, minutes.length)
-			setFocused("minutes")
-		}
-	}
-
-	function changeMins(e: React.ChangeEvent<HTMLInputElement>) {
-		if (e.target.value !== "" && Number.isNaN(Number(e.target.value))) {
-			return
-		}
-		if (Number(e.target.value) > 59 || Number(e.target.value) < 0) {
-			return
-		}
-		setMinutes(e.target.value)
-	}
-
-	useEffect(() => {
-		if (hours === "" || minutes === "") {
-			return
-		}
-		if (Number(hours) > 12 || Number(hours) < 1) {
-			return
-		}
-		if (Number(minutes) > 59 || Number(minutes) < 0) {
-			return
-		}
-		if (minutes.length === 1) {
-			setValue("")
-			return
-		}
-		setValue(`${hours}:${minutes} ${amPm}`)
-	}, [hours, minutes, amPm])
+	const [hours, setHours] = useState(time?.hours || "12")
+	const [minutes, setMinutes] = useState(time?.minutes || "00")
+	const [amPm, setAmPm] = useState<"AM" | "PM">(
+		time?.hours ? (time.hours > "12" ? "PM" : "AM") : "PM",
+	)
+	const [value, setValue] = useControlField<string>(name)
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		if (value === "") {
-			return
-		}
-		validate()
-	}, [value])
+		setValue(`${hours}:${minutes} ${amPm}`)
+	}, [hours, minutes, amPm])
 
 	return (
 		<VStack
@@ -152,58 +96,143 @@ export default function TimePicker({ label, required, time, name }: Props) {
 				{label}{" "}
 				{required && <span className={css({ textStyle: "error" })}>*</span>}
 			</label>
-			<HStack gap={2} alignItems="center">
-				<input
-					className={input({ focused: focused === "hours", error: !!error })}
-					type="text"
-					inputMode="numeric"
-					placeholder="6"
-					min={1}
-					max={12}
-					onFocus={() => {
-						setFocused("hours")
-					}}
-					onBlur={() => {
-						setFocused(null)
-					}}
-					value={hours}
-					onChange={changeHour}
+			<HStack gap={1} justifyContent={"flex-start"}>
+				<Select
+					onChange={setHours}
+					options={Array.from({ length: 12 }, (_, i) =>
+						i + 1 < 10 ? `0${i + 1}` : (i + 1).toString(),
+					)}
+					defaultValue={hours}
 				/>
-				<p className={css({ textStyle: "paragraph", fontSize: "20px" })}>:</p>
-				<input
-					className={input({ focused: focused === "minutes", error: !!error })}
-					type="text"
-					inputMode="numeric"
-					placeholder="00"
-					ref={minuteRef}
-					min={0}
-					max={59}
-					onFocus={() => {
-						setFocused("minutes")
-					}}
-					onBlur={() => {
-						setFocused(null)
-					}}
-					value={minutes}
-					onChange={changeMins}
+				<Select
+					onChange={setMinutes}
+					options={Array.from({ length: 12 }, (_, i) =>
+						i * 5 < 10 ? `0${i * 5}` : (i * 5).toString(),
+					)}
+					defaultValue={minutes}
 				/>
-				<button
-					className={toggle({ active: amPm === "AM" })}
-					type="button"
-					onClick={() => setAmPm("AM")}
-				>
-					AM
-				</button>
-				<button
-					className={toggle({ active: amPm === "PM" })}
-					type="button"
-					onClick={() => setAmPm("PM")}
-				>
-					PM
-				</button>
+				<Select
+					onChange={(value) => setAmPm(value as "AM" | "PM")}
+					options={["AM", "PM"]}
+					defaultValue={amPm}
+				/>
 			</HStack>
-			{error && <span className={css({ textStyle: "error" })}>{error}</span>}
-			<input {...getInputProps()} type="hidden" name={name} value={value} />
+			<input type="hidden" name={name} value={value} />
 		</VStack>
+	)
+}
+
+type SelectProps = {
+	onChange: (item: string) => void
+	options: string[]
+	defaultValue: string
+}
+
+const dropdownItem = cva({
+	base: {
+		paddingY: "8px",
+		paddingX: "12px",
+		display: "flex",
+		flexDirection: "column",
+		cursor: "pointer",
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	variants: {
+		highlighted: {
+			true: {
+				backgroundColor: "rgb(232, 232, 232)",
+			},
+		},
+		selected: {
+			true: {
+				fontWeight: "bold",
+			},
+		},
+	},
+})
+
+function Select({ onChange, options, defaultValue }: SelectProps) {
+	const {
+		isOpen,
+		selectedItem,
+		getToggleButtonProps,
+		getItemProps,
+		getMenuProps,
+		highlightedIndex,
+	} = useSelect({
+		items: options,
+		defaultSelectedItem: defaultValue,
+		onSelectedItemChange: ({ selectedItem }) => {
+			if (selectedItem) {
+				onChange(selectedItem)
+			}
+		},
+	})
+
+	return (
+		<div>
+			<div
+				className={css({
+					display: "flex",
+					flexDirection: "column",
+					gap: 1,
+					width: "60px",
+				})}
+			>
+				<div
+					className={css({
+						padding: "8px",
+						backgroundColor: "white",
+						justifyContent: "space-between",
+						cursor: "pointer",
+						border: "1px solid",
+						borderColor: "gray",
+						borderRadius: "4px",
+						display: "flex",
+						alignItems: "center",
+						gap: 1,
+					})}
+					{...getToggleButtonProps()}
+				>
+					<span>{selectedItem}</span>
+					{isOpen ? (
+						<FaChevronUp className={css({ color: "black" })} size={14} />
+					) : (
+						<FaChevronDown className={css({ color: "black" })} size={14} />
+					)}
+				</div>
+			</div>
+			<ul
+				className={css({
+					position: "absolute",
+					backgroundColor: "white",
+					boxShadow: "md",
+					maxHeight: "200px",
+					overflowY: "scroll",
+					overflowX: "hidden",
+					padding: "0px",
+					zIndex: 10,
+					width: "60px",
+					borderRadius: "4px",
+					scrollbar: "hidden",
+				})}
+				{...getMenuProps()}
+			>
+				{isOpen &&
+					options.map((item, index) => (
+						<li
+							className={dropdownItem({
+								highlighted: highlightedIndex === index,
+								selected: selectedItem === item,
+							})}
+							key={item}
+							{...getItemProps({ item, index })}
+						>
+							<span>{item}</span>
+						</li>
+					))}
+			</ul>
+		</div>
 	)
 }

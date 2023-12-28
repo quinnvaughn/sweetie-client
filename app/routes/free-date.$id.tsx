@@ -357,24 +357,6 @@ export default function FreeDateIdeaRoute() {
 								>
 									{freeDate.description}
 								</em>
-								<VStack gap={4} alignItems="flex-start">
-									<h3
-										className={css({
-											fontSize: 20,
-											textStyle: "paragraph",
-											fontWeight: "bold",
-										})}
-									>
-										{`Recommended time${
-											freeDate.timesOfDay.length > 1 ? "s" : ""
-										} of the day`}
-									</h3>
-									<HStack gap={2} justifyContent="flex-start">
-										{freeDate.timesOfDay.map((time) => (
-											<TimeOfTheDay name={time.name} key={time.id} />
-										))}
-									</HStack>
-								</VStack>
 								<VStack gap={4} alignItems={"flex-start"}>
 									<ClientOnly>
 										{() => <DateLocationsMap stops={freeDate.stops} />}

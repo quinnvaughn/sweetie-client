@@ -6,9 +6,8 @@ import { FiSearch } from "react-icons/fi/index.js"
 import { $path } from "remix-routes"
 import { ValidatedForm } from "remix-validated-form"
 import { z } from "zod"
-import { zfd } from "zod-form-data"
 import { MultipleCityCombobox } from "~/features/city"
-import { CheckboxGroup, RadioGroup } from "~/features/ui"
+import { RadioGroup } from "~/features/ui"
 import { useInterval } from "~/hooks"
 import { css, cva } from "~/styled-system/css"
 import { HStack } from "~/styled-system/jsx"
@@ -39,9 +38,6 @@ const visible = cva({
 const validator = withZod(
 	z.object({
 		query: z.string().optional(),
-		timesOfDay: zfd.repeatable(
-			z.array(zfd.text()).min(1, "Must select at least one time of day."),
-		),
 		cities: z.array(z.string()).optional().or(z.string().optional()),
 		nsfw: z.union([z.literal("on"), z.literal("off")], {
 			required_error: "NSFW is required.",
@@ -68,7 +64,6 @@ const suggestions = [
 const SearchBar = forwardRef<Ref>(function SearchBar(_p, ref) {
 	const [isVisible, setIsVisible] = useState<"yes" | "no">("no")
 	const [searchParams] = useSearchParams()
-	const timesOfDay = searchParams.getAll("timesOfDay")
 	const nsfw = searchParams.get("nsfw")
 	const cities = searchParams.getAll("cities")
 	const [suggestion, setSuggestion] = useState<string>(
@@ -200,40 +195,6 @@ const SearchBar = forwardRef<Ref>(function SearchBar(_p, ref) {
 								defaultChecked:
 									nsfw === "off" || nsfw === null || nsfw === undefined
 										? true
-										: false,
-							},
-						]}
-					/>
-					<CheckboxGroup
-						label="Times of day"
-						name="timesOfDay"
-						options={[
-							{
-								label: "Morning",
-								value: "morning",
-								defaultChecked:
-									timesOfDay.length > 0 ? timesOfDay.includes("morning") : true,
-							},
-							{
-								label: "Afternoon",
-								value: "afternoon",
-								defaultChecked:
-									timesOfDay.length > 0
-										? timesOfDay.includes("afternoon")
-										: true,
-							},
-							{
-								label: "Evening",
-								value: "evening",
-								defaultChecked:
-									timesOfDay.length > 0 ? timesOfDay.includes("evening") : true,
-							},
-							{
-								label: "Late Night",
-								value: "late night",
-								defaultChecked:
-									timesOfDay.length > 0
-										? timesOfDay.includes("late night")
 										: false,
 							},
 						]}

@@ -42,19 +42,16 @@ const schema = z.object({
 		.string()
 		.min(10, "Description must be at least 10 characters.")
 		.max(10000, "Description must be no more than 10,000 characters."),
-	timesOfDay: zfd
-		.repeatable(
-			z.array(zfd.text()).min(1, "Must select at least one time of day."),
-		)
-		.refine(
-			(data) => {
-				// not sure why I have to do this, but it works
-				if (!data) return false
-				if (data.length < 1) return false
-				return true
-			},
-			{ message: "Must select at least one time of day." },
-		),
+	recommendedTime: z.string().refine(
+		(s) => {
+			const split = s.split(":")
+			if (split.length !== 2) return false
+			const [hours, minutes] = split
+			if (hours?.length !== 2 || minutes?.length !== 2) return false
+			return true
+		},
+		{ message: "Recommended time must be in the format HH:MM." },
+	),
 	tags: z
 		.array(z.string())
 		.or(z.string())
@@ -172,26 +169,6 @@ export function FreeDateForm({
 						whatever you want.
 					</p>
 					<TagsInput label="Tags" tagsName="tags" textName="tagText" />
-				</VStack>
-				<VStack gap={4} alignItems="flex-start">
-					<p className={css({ textStyle: "paragraph", fontWeight: "bold" })}>
-						Select the times of day that your date is best suited for.
-					</p>
-					<CheckboxGroup
-						required
-						label="Times of day"
-						name={"timesOfDay"}
-						options={[
-							{ label: "Morning", value: "morning", defaultChecked: true },
-							{
-								label: "Afternoon",
-								value: "afternoon",
-								defaultChecked: true,
-							},
-							{ label: "Evening", value: "evening", defaultChecked: true },
-							{ label: "Late night", value: "late night" },
-						]}
-					/>
 				</VStack>
 				<VStack gap={4} alignItems="flex-start">
 					<p className={css({ textStyle: "paragraph", fontWeight: "bold" })}>

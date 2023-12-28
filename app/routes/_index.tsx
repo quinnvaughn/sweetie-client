@@ -16,16 +16,6 @@ export async function loader({ request }: DataFunctionArgs) {
 	})
 }
 
-export type SearchParams = {
-	city?: string
-	text?: string
-	timesOfDay?: string[]
-	nsfw?: boolean
-}
-
-const code =
-	"4/0AfJohXkqPn-aFO0QljBPLcUaFR4Buq61DM0C3JX9McnJ2Zo0TfYlOG4pu23LC-i712CYKg"
-
 export default function HomeRoute() {
 	const data = useLoaderData<typeof loader>()
 	const ref = useRef<HTMLInputElement>(null)

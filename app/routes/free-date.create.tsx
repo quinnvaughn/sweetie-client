@@ -72,7 +72,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 			description: "",
 			nsfw: "false",
 			stops: [{ content: "", title: "", location: { id: "", name: "" } }],
-			timesOfDay: ["morning", "afternoon", "evening"],
 			title: "",
 			tags: [],
 			tagText: "",

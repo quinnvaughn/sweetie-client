@@ -20,19 +20,14 @@ const SearchParamsSchema = z.object({
 	query: z.string().optional(),
 	cities: z.array(z.string()).optional(),
 	nsfw: z.enum(["on", "off"]).optional(),
-	timesOfDay: z
-		.array(z.enum(["morning", "afternoon", "evening", "late night"]))
-		.optional(),
 })
 
 export type SearchParams = z.infer<typeof SearchParamsSchema>
 
 export async function loader({ request }: DataFunctionArgs) {
 	const urlParams = request.url.split("?")[1]
-	const { cities, nsfw, query, timesOfDay } = queryString.parse(
-		urlParams,
-	) as SearchParams
-	const order = ["query", "cities", "nsfw", "timesOfDay"]
+	const { cities, nsfw, query } = queryString.parse(urlParams) as SearchParams
+	const order = ["query", "cities", "nsfw"]
 	const parsedParams = {
 		query:
 			query === defaults.query
@@ -54,14 +49,6 @@ export async function loader({ request }: DataFunctionArgs) {
 				: nsfw === "on"
 				? "on"
 				: null,
-		timesOfDay: timesOfDay
-			? // if time of day only has one value, then it will be a string, so we need to convert it to an array
-			  Array.isArray(timesOfDay)
-				? defaults.timesOfDay.every((val, idx) => val === timesOfDay[idx])
-					? null
-					: timesOfDay
-				: [timesOfDay]
-			: null,
 	}
 	// can only search if there is at least one city or a query
 	if (!parsedParams.cities && !parsedParams.query) {
@@ -82,7 +69,6 @@ export async function loader({ request }: DataFunctionArgs) {
 		nsfw: parsedParams.nsfw,
 		query: parsedParams.query,
 		cities: parsedParams.cities,
-		timesOfDay: parsedParams.timesOfDay,
 	})
 
 	return json(data)
@@ -91,7 +77,6 @@ export async function loader({ request }: DataFunctionArgs) {
 const defaults = {
 	query: "",
 	cities: [],
-	timesOfDay: ["morning", "afternoon", "evening"],
 	nsfw: "off",
 }
 

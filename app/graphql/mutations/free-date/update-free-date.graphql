@@ -24,10 +24,6 @@ mutation UpdateFreeDate($input: UpdateFreeDateInput!) {
 				id 
 				name
 			}
-			timesOfDay {
-				id
-				name
-			}
 			tastemaker {
 				...TastemakerInfo
 			}

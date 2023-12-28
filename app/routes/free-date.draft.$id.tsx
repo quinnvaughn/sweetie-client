@@ -7,11 +7,13 @@ import {
 import {
 	Outlet,
 	useActionData,
+	useFetcher,
 	useLoaderData,
 	useParams,
 } from "@remix-run/react"
 import { $params, $path } from "remix-routes"
 import { setFormDefaults, validationError } from "remix-validated-form"
+import { P, match } from "ts-pattern"
 import {
 	FreeDateForm,
 	FreeDateFormValues,
@@ -25,9 +27,8 @@ import {
 	ViewerIsLoggedInDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import { css } from "~/styled-system/css"
 import { isTypeofFieldError, mapFieldErrorToValidationError, omit } from "~/lib"
-import { P, match } from "ts-pattern"
+import { css } from "~/styled-system/css"
 
 export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
@@ -76,35 +77,31 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 		.with(P.nullish, () => json({ error: "Free date not found." }))
 		.with({ __typename: "AuthError" }, () => redirect($path("/login")))
 		.with({ __typename: "Error" }, ({ message }) => json({ error: message }))
-		.otherwise(
-			({ id, nsfw, stops, tags, timesOfDay, description, thumbnail, title }) =>
-				json({
-					error: null,
+		.otherwise(({ id, nsfw, stops, tags, description, thumbnail, title }) =>
+			json({
+				error: null,
+				id,
+				...setFormDefaults<FreeDateFormValues>("draft-free-date-form", {
 					id,
-					...setFormDefaults<FreeDateFormValues>("draft-free-date-form", {
-						id,
-						description: description ?? "",
-						thumbnail: thumbnail ?? "",
-						nsfw: nsfw ? "true" : "false",
-						stops:
-							stops.length > 0
-								? stops.map(({ title, content, location }) => ({
-										title: title ?? "",
-										content: content ?? "",
-										location: {
-											id: location?.id ?? "",
-											name: location?.name ?? "",
-										},
-								  }))
-								: [{ content: "", location: { id: "", name: "" }, title: "" }],
-						tags: tags.map(({ name }) => name),
-						tagText: "",
-						timesOfDay: timesOfDay.map(
-							({ name }) => name,
-						) as FreeDateFormValues["timesOfDay"],
-						title: title ?? "",
-					}),
+					description: description ?? "",
+					thumbnail: thumbnail ?? "",
+					nsfw: nsfw ? "true" : "false",
+					stops:
+						stops.length > 0
+							? stops.map(({ title, content, location }) => ({
+									title: title ?? "",
+									content: content ?? "",
+									location: {
+										id: location?.id ?? "",
+										name: location?.name ?? "",
+									},
+							  }))
+							: [{ content: "", location: { id: "", name: "" }, title: "" }],
+					tags: tags.map(({ name }) => name),
+					tagText: "",
+					title: title ?? "",
 				}),
+			}),
 		)
 }
 
@@ -113,6 +110,7 @@ export default function DraftRoute() {
 	const actionData = useActionData<typeof action>()
 	const params = useParams()
 	const { id } = $params("/free-date/draft/:id", params)
+	const fetcher = useFetcher<typeof action>()
 	return (
 		<PageContainer
 			tastemaker
@@ -124,6 +122,7 @@ export default function DraftRoute() {
 				<p className={css({ textStyle: "error" })}>{loaderData.error}</p>
 			) : (
 				<FreeDateForm
+					fetcher={fetcher}
 					locationPath={$path("/free-date/draft/:id/add-location", {
 						id,
 					})}

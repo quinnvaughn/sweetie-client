@@ -16,11 +16,6 @@ export const schema = z.object({
 	tagText: z.string().optional(),
 	title: z.string().optional(),
 	description: z.string().optional(),
-	timesOfDay: zfd
-		.repeatable(
-			z.array(zfd.text()).min(1, "Must select at least one time of day."),
-		)
-		.optional(),
 	tags: zfd.repeatableOfType(z.string()).optional(),
 	stops: z
 		.array(
