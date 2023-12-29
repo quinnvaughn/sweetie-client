@@ -9,7 +9,7 @@ const currentMonth = cva({
 		borderRadius: "4px",
 		flex: "0 0 14.285714285714286%",
 		cursor: "pointer",
-		padding: "8px",
+		paddingY: "4px",
 		_disabled: {
 			cursor: "not-allowed",
 			color: "gray",
