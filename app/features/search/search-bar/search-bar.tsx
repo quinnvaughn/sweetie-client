@@ -7,7 +7,7 @@ import { $path } from "remix-routes"
 import { ValidatedForm } from "remix-validated-form"
 import { z } from "zod"
 import { MultipleCityCombobox } from "~/features/city"
-import { RadioGroup } from "~/features/ui"
+import { Desktop, RadioGroup } from "~/features/ui"
 import { useInterval } from "~/hooks"
 import { css, cva } from "~/styled-system/css"
 import { HStack } from "~/styled-system/jsx"
@@ -86,7 +86,14 @@ const SearchBar = forwardRef<Ref>(function SearchBar(_p, ref) {
 				width: "100%",
 			})}
 		>
-			<div className={css({ width: "100%" })}>
+			<div
+				className={css({
+					width: "100%",
+					display: "flex",
+					flexDirection: "column",
+					alignItems: "center",
+				})}
+			>
 				<div
 					className={css({
 						display: "flex",
@@ -94,7 +101,7 @@ const SearchBar = forwardRef<Ref>(function SearchBar(_p, ref) {
 						borderColor: "gray",
 						borderRadius: "50px",
 						padding: "8px 12px",
-						width: "100%",
+						width: { base: "100%", md: "75%" },
 						shadow: "sm",
 					})}
 				>
@@ -115,13 +122,15 @@ const SearchBar = forwardRef<Ref>(function SearchBar(_p, ref) {
 							placeholder={`Search for ${suggestion} dates`}
 							name="query"
 						/>
-						<div
-							className={css({
-								width: "1px",
-								minHeight: "100%",
-								backgroundColor: "gray",
-							})}
-						/>
+						<Desktop>
+							<div
+								className={css({
+									width: "1px",
+									minHeight: "100%",
+									backgroundColor: "gray",
+								})}
+							/>
+						</Desktop>
 						<button
 							type="button"
 							className={css({
@@ -138,15 +147,16 @@ const SearchBar = forwardRef<Ref>(function SearchBar(_p, ref) {
 						>
 							<HStack gap={1} alignItems="center">
 								<FaSlidersH size={20} className={css({ color: "black" })} />
-								<p
-									className={css({
-										fontWeight: "bold",
-										textStyle: "paragraph",
-										display: { base: "none", md: "block" },
-									})}
-								>
-									Filters
-								</p>
+								<Desktop>
+									<p
+										className={css({
+											fontWeight: "bold",
+											textStyle: "paragraph",
+										})}
+									>
+										Filters
+									</p>
+								</Desktop>
 							</HStack>
 						</button>
 						<button
@@ -156,15 +166,17 @@ const SearchBar = forwardRef<Ref>(function SearchBar(_p, ref) {
 								border: 0,
 								outline: 0,
 								cursor: "pointer",
-								borderRadius: "50px",
+								borderRadius: { base: "50%", md: "9999999999px" },
 								color: "white",
-								padding: "8px 16px",
+								padding: { base: "8px", md: "8px 16px" },
 								fontWeight: "bold",
-								display: { base: "none", md: "block" },
 							})}
 						>
-							<HStack gap={1} alignItems="center">
-								<FiSearch /> <span>Search</span>
+							<HStack gap={{ base: 0, md: 1 }} alignItems="center">
+								<FiSearch />{" "}
+								<Desktop>
+									<span>Search</span>
+								</Desktop>
 							</HStack>
 						</button>
 					</HStack>

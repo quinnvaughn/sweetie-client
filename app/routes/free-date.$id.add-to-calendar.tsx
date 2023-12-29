@@ -272,7 +272,6 @@ export default function AddToCalendarPage() {
 							)}
 							<DatePicker name="date" label="Date" required />
 							<RecommendedTimePicker required label="Start time" name="time" />
-							{/* <TimePicker name="time" label="Start time" required /> */}
 							{defaultGuest !== null && defaultGuest !== undefined ? (
 								<SendToDefaultGuest
 									guest={{
