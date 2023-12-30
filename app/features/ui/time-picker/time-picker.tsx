@@ -178,6 +178,7 @@ function Select({ onChange, options, defaultValue }: SelectProps) {
 					flexDirection: "column",
 					gap: 1,
 					width: "60px",
+					position: "relative",
 				})}
 			>
 				<div
@@ -208,7 +209,7 @@ function Select({ onChange, options, defaultValue }: SelectProps) {
 					position: "absolute",
 					backgroundColor: "white",
 					boxShadow: "md",
-					maxHeight: "200px",
+					maxHeight: { base: "100px", md: "200px" },
 					overflowY: "scroll",
 					overflowX: "hidden",
 					padding: "0px",
