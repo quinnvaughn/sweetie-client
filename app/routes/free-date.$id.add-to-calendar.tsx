@@ -195,7 +195,7 @@ export default function AddToCalendarPage() {
 		track("User Opened Add to Calendar Modal", {
 			title: freeDate.title,
 			tastemaker_name: freeDate.tastemaker.user.name,
-			loggedIn: isLoggedIn(),
+			logged_in: isLoggedIn(),
 		})
 	}, [])
 
