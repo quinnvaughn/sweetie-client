@@ -1,32 +1,32 @@
 fragment GetFreeDate on FreeDate {
     id
-        title
-        description
-        thumbnail
-        retired
-        nsfw
-        createdAt
-        updatedAt
-        isUserTastemaker
-        viewerFavorited
-        viewerAuthorizedGoogleCalendar
-        recommendedTime
-        cities {
-          id 
-          nameAndState
-          name
-        }
-        tags {
-          ...Tags
-        }
-        tastemaker {
-          ...TastemakerInfo
-        }
-        stops {
-          id
-          ...DateStopItem
-        }
-        exploreMore {
-          ...FreeDateCard
-        }
+    title
+    description
+    thumbnail
+    retired
+    nsfw
+    createdAt
+    updatedAt
+    isUserTastemaker
+    viewerFavorited
+    viewerAuthorizedGoogleCalendar
+    recommendedTime
+    cities {
+      id 
+      nameAndState
+      name
+    }
+    tags {
+      ...Tags
+    }
+    tastemaker {
+      ...TastemakerInfo
+    }
+    stops {
+      id
+      ...DateStopItem
+    }
+    exploreMore {
+      ...FreeDateCard
+    }
 }

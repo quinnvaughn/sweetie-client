@@ -4,6 +4,7 @@ fragment DateStopItem on DateStop {
     order
     content
     estimatedTime
+    formattedEstimatedTime
     travel {
       distance 
       duration 
