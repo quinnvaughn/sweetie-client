@@ -8,8 +8,8 @@
 		"dev:node": "remix dev",
 		"start": "remix-serve build/index.js",
 		"typecheck": "tsc",
-		"codegen": "graphql-codegen --config codegen.ts",
-		"codegen:watch": "yarn codegen --watch"
+		"graphql": "graphql-codegen --config codegen.ts",
+		"graphql:watch": "yarn codegen --watch"
 	},
 	"dependencies": {
 		"@google-cloud/storage": "^7.6.0",
