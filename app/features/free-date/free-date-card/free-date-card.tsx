@@ -72,10 +72,11 @@ export function FreeDateCard({ date, loading = "eager" }: Props) {
 							width: "100%",
 						}}
 					/>
-					<VStack gap="2" alignItems={"flex-start"} width={"100%"}>
+					<VStack gap={1.5} alignItems={"flex-start"} width={"100%"}>
 						<p className={css({ lineHeight: 1, fontWeight: "600" })}>
 							{date.title}
 						</p>
+						<p className={css({ color: "grayText" })}>{date.estimatedTime}</p>
 						{date.nsfw && <NSFWTag />}
 						<p className={numLines({ color: "grayText", lines: 2 })}>
 							{date.description}
