@@ -23,8 +23,8 @@ export function DateStop({ stop }: Props) {
 						{stop.order}. {stop.title}
 					</h3>
 					<span className={css({ color: "grayText", fontWeight: "normal" })}>
-							{stop.formattedEstimatedTime}
-						</span>
+						{stop.formattedEstimatedTime}
+					</span>
 					{stop.location.website ? (
 						<div
 							className={css({ display: "flex", gap: 1, alignItems: "center" })}
