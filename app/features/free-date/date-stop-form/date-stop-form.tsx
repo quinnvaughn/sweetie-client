@@ -1,6 +1,9 @@
+import { useEffect, useState } from "react"
 import { FaArrowDown, FaArrowUp, FaTrash } from "react-icons/fa/index.js"
+import { useControlField, useField } from "remix-validated-form"
 import { LocationCombobox } from "~/features/location"
-import { Button, Input, Textarea } from "~/features/ui"
+import { Button, Input, Select, Textarea, TimePicker } from "~/features/ui"
+import { generateTimeIntervals } from "~/lib"
 import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
 
@@ -16,6 +19,7 @@ type Props = {
 	fields: {
 		title: string
 		content: string
+		estimatedTime: string
 		location: {
 			id: string
 			name: string
@@ -29,11 +33,14 @@ export function DateStopForm({
 	isLengthMoreThanOne,
 	isLast,
 	remove,
-	fields: { title, content, location },
+	fields: { title, content, location, estimatedTime },
 	onMoveDown,
 	onMoveUp,
 	locationPath,
 }: Props) {
+	const [value, setValue] = useControlField<string>(estimatedTime)
+	const { error } = useField(estimatedTime)
+
 	return (
 		<VStack gap={4} alignItems="flex-start" width={"100%"}>
 			<HStack
@@ -98,6 +105,18 @@ export function DateStopForm({
 					fields={location}
 					locationPath={locationPath}
 				/>
+				<VStack gap={2} width={"100%"} alignItems={"flex-start"}>
+					<HStack gap={2} alignItems={"flex-start"} width={"100%"}>
+						<TimePicker
+							label="How much time should the user spend at this stop? (hours:minutes)"
+							name={estimatedTime}
+							options={generateTimeIntervals("00:15", "10:00", 15)}
+							required
+							defaultValue={value}
+						/>
+					</HStack>
+					{error && <p className={css({ textStyle: "error" })}>{error}</p>}
+				</VStack>
 				<Textarea
 					required
 					name={content}

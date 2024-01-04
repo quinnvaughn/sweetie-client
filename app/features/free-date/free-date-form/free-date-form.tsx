@@ -55,6 +55,10 @@ const schema = z.object({
 				.string()
 				.min(5, "Title must be at least 5 characters.")
 				.max(500, "Title must be no more than 500 characters."),
+			estimatedTime: z.string({
+				invalid_type_error: "Must be a time",
+				required_error: "Estimated time is required.",
+			}),
 			content: z
 				.string()
 				.min(100, "Content must be at least 100 characters.")
@@ -72,6 +76,7 @@ export const freeDateValidator = withZod(schema)
 type Stop = {
 	title: string
 	content: string
+	estimatedTime: string
 	location: {
 		id: string
 		name: string
@@ -165,7 +170,6 @@ export function FreeDateForm({
 						both half an hour before and after the time you select.
 					</p>
 					<RecommendedTimePicker
-						// defaultValue="6:30 PM"
 						label="Recommended time"
 						name="recommendedTime"
 						required
@@ -212,6 +216,7 @@ export function FreeDateForm({
 							fields={{
 								content: `stops[${index}].content`,
 								title: `stops[${index}].title`,
+								estimatedTime: `stops[${index}].estimatedTime`,
 								location: {
 									id: `stops[${index}].location.id`,
 									name: `stops[${index}].location.name`,

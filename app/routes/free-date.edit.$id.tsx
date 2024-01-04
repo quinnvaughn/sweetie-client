@@ -21,7 +21,13 @@ import {
 	ViewerIsLoggedInDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import { isTypeofFieldError, mapFieldErrorToValidationError, omit } from "~/lib"
+import {
+	getHourAndMinutes,
+	getMinutes,
+	isTypeofFieldError,
+	mapFieldErrorToValidationError,
+	omit,
+} from "~/lib"
 import { css } from "~/styled-system/css"
 
 export async function action({ request, params }: DataFunctionArgs) {
@@ -31,6 +37,7 @@ export async function action({ request, params }: DataFunctionArgs) {
 	if (result.error) {
 		return validationError(result.error)
 	}
+
 	const { data } = await gqlFetch(request, UpdateFreeDateDocument, {
 		input: {
 			id,
@@ -39,6 +46,7 @@ export async function action({ request, params }: DataFunctionArgs) {
 			stops: result.data.stops.map<UpdateDateStopInput>((stop, i) => ({
 				...stop,
 				order: i + 1,
+				estimatedTime: getMinutes(stop.estimatedTime),
 			})),
 			tags: result.data.tags?.filter((v) => v.length > 0) ?? [],
 		},
@@ -81,9 +89,10 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 						thumbnail,
 						nsfw: nsfw ? "true" : "false",
 						recommendedTime,
-						stops: stops.map(({ title, content, location }) => ({
+						stops: stops.map(({ title, content, location, estimatedTime }) => ({
 							title,
 							content,
+							estimatedTime: getHourAndMinutes(estimatedTime),
 							location: {
 								id: location.id,
 								name: location.name,

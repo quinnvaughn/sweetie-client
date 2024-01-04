@@ -3,6 +3,7 @@ fragment DateStopItem on DateStop {
     title
     order
     content
+    estimatedTime
     travel {
       distance 
       duration 

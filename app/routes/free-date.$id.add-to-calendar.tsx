@@ -135,13 +135,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		ViewerHasDefaultGuestDocument,
 	)
 
-	console.log(
-		"date",
-		DateTime.fromFormat(`${date} ${formattedTime}`, "yyyy-MM-dd hh:mm a")
-			.setZone(timeZone, { keepLocalTime: true })
-			.toISO() as string,
-	)
-
 	const input: CreateDateItineraryInput = {
 		date: DateTime.fromFormat(`${date} ${formattedTime}`, "yyyy-MM-dd hh:mm a")
 			.setZone(timeZone, { keepLocalTime: true })
@@ -157,9 +150,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		user,
 	}
 
-	const { data } = await gqlFetch(request, CreateDateItineraryDocument, {
-		input,
-	})
+	const { data, errors } = await gqlFetch(
+		request,
+		CreateDateItineraryDocument,
+		{
+			input,
+		},
+	)
 
 	return match(data?.createDateItinerary)
 		.with({ __typename: "PlannedDate" }, () =>

@@ -20,7 +20,7 @@ export function Modal({ children }: Props) {
 	return (
 		<div
 			className={css({
-				zIndex: 999,
+				zIndex: 1000,
 				width: "100%",
 				height: "100%",
 				overflow: "auto",

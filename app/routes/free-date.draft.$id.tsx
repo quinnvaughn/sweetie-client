@@ -27,7 +27,13 @@ import {
 	ViewerIsLoggedInDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import { isTypeofFieldError, mapFieldErrorToValidationError, omit } from "~/lib"
+import {
+	getHourAndMinutes,
+	getMinutes,
+	isTypeofFieldError,
+	mapFieldErrorToValidationError,
+	omit,
+} from "~/lib"
 import { css } from "~/styled-system/css"
 
 export async function action({ request }: DataFunctionArgs) {
@@ -43,6 +49,7 @@ export async function action({ request }: DataFunctionArgs) {
 			nsfw: result.data.nsfw === "true",
 			stops: result.data.stops.map<CreateDateStopInput>((stop, i) => ({
 				...stop,
+				estimatedTime: getMinutes(stop.estimatedTime),
 				order: i + 1,
 			})),
 			tags: result.data.tags?.filter((v) => v.length > 0) ?? [],
@@ -98,15 +105,23 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 						nsfw: nsfw ? "true" : "false",
 						stops:
 							stops.length > 0
-								? stops.map(({ title, content, location }) => ({
+								? stops.map(({ title, content, location, estimatedTime }) => ({
 										title: title ?? "",
 										content: content ?? "",
+										estimatedTime: getHourAndMinutes(estimatedTime) ?? "1:00",
 										location: {
 											id: location?.id ?? "",
 											name: location?.name ?? "",
 										},
 								  }))
-								: [{ content: "", location: { id: "", name: "" }, title: "" }],
+								: [
+										{
+											content: "",
+											location: { id: "", name: "" },
+											title: "",
+											estimatedTime: "1:00",
+										},
+								  ],
 						tags: tags.map(({ name }) => name),
 						tagText: "",
 						title: title ?? "",

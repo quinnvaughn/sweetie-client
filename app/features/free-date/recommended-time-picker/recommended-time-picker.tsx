@@ -2,6 +2,7 @@ import { DateTime } from "luxon"
 import { useRef, useState } from "react"
 import { useControlField } from "remix-validated-form"
 import { TimePicker } from "~/features/ui"
+import { generateTwentyFourHours } from "~/lib"
 import { css, cva } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
@@ -36,41 +37,52 @@ type Props = {
 	name: string
 	label: string
 	required?: boolean
+	otherValue?: string
 }
 
-export function RecommendedTimePicker({ name, label, required }: Props) {
+export function RecommendedTimePicker({
+	name,
+	label,
+	required,
+	otherValue = "12:00 PM",
+}: Props) {
 	const [recommendedTime, setRecommendedTime] = useControlField<string>(name)
 	// recommendedTime is in the format of "HH:MM AM/PM"
 	// remove the AM/PM
 	const defaultValue = useRef(recommendedTime).current
 	const [time, amPM] = defaultValue.split(" ")
 	const [hour, minute] = time.split(":")
-	const formattedDate = new Date()
-	formattedDate.setHours(
-		amPM === "PM" ? Number(hour) + 12 : Number(hour),
-		Number(minute),
-	)
+	const formattedDate = DateTime.now().set({
+		hour:
+			amPM === "PM" && Number(hour) !== 12 ? Number(hour) + 12 : Number(hour),
+		minute: Number(minute),
+	})
 	const [activeTab, setActiveTab] = useState(1)
 	const displayedTimes = [
 		{
-			value: DateTime.fromJSDate(formattedDate)
+			text: formattedDate
+				.minus({ minutes: 30 })
+				.toLocaleString(DateTime.TIME_SIMPLE),
+			value: formattedDate
 				.minus({ minutes: 30 })
 				.toLocaleString(DateTime.TIME_SIMPLE),
 			tab: 0,
 		},
 		{
-			value: DateTime.fromJSDate(formattedDate).toLocaleString(
-				DateTime.TIME_SIMPLE,
-			),
+			text: formattedDate.toLocaleString(DateTime.TIME_SIMPLE),
+			value: formattedDate.toLocaleString(DateTime.TIME_SIMPLE),
 			tab: 1,
 		},
 		{
-			value: DateTime.fromJSDate(formattedDate)
+			text: formattedDate
+				.plus({ minutes: 30 })
+				.toLocaleString(DateTime.TIME_SIMPLE),
+			value: formattedDate
 				.plus({ minutes: 30 })
 				.toLocaleString(DateTime.TIME_SIMPLE),
 			tab: 2,
 		},
-		{ value: "Other", tab: 3 },
+		{ value: otherValue, tab: 3, text: "Other" },
 	]
 
 	function onClickTab(tab: number, time: string) {
@@ -95,15 +107,21 @@ export function RecommendedTimePicker({ name, label, required }: Props) {
 			>
 				{displayedTimes.map((time) => (
 					<Tab
-						key={time.value}
+						key={time.text}
 						active={activeTab === time.tab}
-						value={time.value}
+						value={time.text}
 						onSelect={() => onClickTab(time.tab, time.value)}
 					/>
 				))}
 			</div>
 			{activeTab === 3 && (
-				<TimePicker name={name} label={""} required={false} />
+				<TimePicker
+					defaultValue={otherValue}
+					name={name}
+					label={""}
+					required={false}
+					options={generateTwentyFourHours()}
+				/>
 			)}
 			{!(activeTab === 3) && (
 				<input type="hidden" name={name} value={recommendedTime} />

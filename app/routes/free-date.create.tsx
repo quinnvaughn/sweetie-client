@@ -4,7 +4,7 @@ import {
 	json,
 	redirect,
 } from "@remix-run/node"
-import { Outlet, useActionData, useFetcher } from "@remix-run/react"
+import { Outlet, useFetcher } from "@remix-run/react"
 import { $path } from "remix-routes"
 import { setFormDefaults, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
@@ -20,7 +20,12 @@ import {
 	ViewerIsLoggedInDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import { isTypeofFieldError, mapFieldErrorToValidationError, omit } from "~/lib"
+import {
+	getMinutes,
+	isTypeofFieldError,
+	mapFieldErrorToValidationError,
+	omit,
+} from "~/lib"
 
 export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
@@ -34,6 +39,7 @@ export async function action({ request }: DataFunctionArgs) {
 			nsfw: result.data.nsfw === "true",
 			stops: result.data.stops.map((stop, i) => ({
 				...stop,
+				estimatedTime: getMinutes(stop.estimatedTime),
 				order: i + 1,
 			})),
 			tags: result.data.tags?.filter((v) => v.length > 0) ?? [],
@@ -72,7 +78,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
 			description: "",
 			nsfw: "false",
 			recommendedTime: "6:30 PM",
-			stops: [{ content: "", title: "", location: { id: "", name: "" } }],
+			stops: [
+				{
+					content: "",
+					title: "",
+					location: { id: "", name: "" },
+					estimatedTime: "1:00",
+				},
+			],
 			title: "",
 			tags: [],
 			tagText: "",
