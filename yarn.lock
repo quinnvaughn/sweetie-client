@@ -2192,46 +2192,6 @@
   resolved "https://registry.yarnpkg.com/@repeaterjs/repeater/-/repeater-3.0.5.tgz#b77571685410217a548a9c753aa3cdfc215bfc78"
   integrity sha512-l3YHBLAol6d/IKnB9LhpD0cEZWAoe3eFKUyTYWmFmCO2Q/WOckxLQAUyMZWwZV2M/m3+4vgRoaolFqaII82/TA==
 
-"@sentry-internal/tracing@7.83.0":
-  version "7.83.0"
-  resolved "https://registry.yarnpkg.com/@sentry-internal/tracing/-/tracing-7.83.0.tgz#8f69d339569b020c495f8350a8ea527c369586e8"
-  integrity sha512-fY1ZyOiQaaUTuoq5rO+G4/5Ov3n8BnfNK7ck97yAGxy3w+E1CwhVZkXHEvTngNfdYV3ArxvlrtPRb9STFRqXvQ==
-  dependencies:
-    "@sentry/core" "7.83.0"
-    "@sentry/types" "7.83.0"
-    "@sentry/utils" "7.83.0"
-
-"@sentry/core@7.83.0":
-  version "7.83.0"
-  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-7.83.0.tgz#29bdd5aba40a6f25c01c68387b6a9aa13e27f20a"
-  integrity sha512-fglvpw8aWM6nWXzCjAVXIMTiTEAQ9G9b85IpDd/7L8fuwaFTPQAUSJXupF2PfbpQ3FUYbJt80dxshbERVJG8vQ==
-  dependencies:
-    "@sentry/types" "7.83.0"
-    "@sentry/utils" "7.83.0"
-
-"@sentry/node@^7.81.1":
-  version "7.83.0"
-  resolved "https://registry.yarnpkg.com/@sentry/node/-/node-7.83.0.tgz#199965f4c0cb3cd0d2ae590faa260d2505c38528"
-  integrity sha512-ibnON+5ovoGOsvcLxcWQu5XAc4rbkvDkzCP74YGnME3/NzRuo3cKam8bUL5Wlm15h68QzxskyNOLuj6BEJ6AfQ==
-  dependencies:
-    "@sentry-internal/tracing" "7.83.0"
-    "@sentry/core" "7.83.0"
-    "@sentry/types" "7.83.0"
-    "@sentry/utils" "7.83.0"
-    https-proxy-agent "^5.0.0"
-
-"@sentry/types@7.83.0":
-  version "7.83.0"
-  resolved "https://registry.yarnpkg.com/@sentry/types/-/types-7.83.0.tgz#117e45900603190c547e52bba35e1b3d539d47fb"
-  integrity sha512-Bd+zJcy8p1VgCfQqUprmUaw0QPWUV+GmCt6zJRHrHTb2pwLahXv6sHJvQ8F8Va6S7Keuy088U+kHzUFGQLMZMQ==
-
-"@sentry/utils@7.83.0":
-  version "7.83.0"
-  resolved "https://registry.yarnpkg.com/@sentry/utils/-/utils-7.83.0.tgz#ec0fc0a468ec35ab9623603f1ba218dd58233eda"
-  integrity sha512-7SrZtgAn3pHFBqSSvV/VL0CWTBQ7VenJjok4+WGWd6/FhP3fKrEEd9rjVTUb2Pzq9WLJJYzdvxAG8RlggG+H4g==
-  dependencies:
-    "@sentry/types" "7.83.0"
-
 "@swc/helpers@^0.5.0":
   version "0.5.3"
   resolved "https://registry.yarnpkg.com/@swc/helpers/-/helpers-0.5.3.tgz#98c6da1e196f5f08f977658b80d6bd941b5f294f"

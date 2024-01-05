@@ -1,31 +1,11 @@
 import { PassThrough } from "node:stream"
-
-import type {
-	AppLoadContext,
-	DataFunctionArgs,
-	EntryContext,
-} from "@remix-run/node"
+import type { AppLoadContext, EntryContext } from "@remix-run/node"
 import { createReadableStreamFromReadable } from "@remix-run/node"
 import { RemixServer } from "@remix-run/react"
-import * as Sentry from "@sentry/node"
 import isbot from "isbot"
 import { renderToPipeableStream } from "react-dom/server"
 
-Sentry.init({
-	dsn: process.env.SENTRY_DSN,
-	environment: process.env.NODE_ENV ?? "development",
-	// We recommend adjusting this value in production, or using tracesSampler
-	// for finer control
-	tracesSampleRate: 1.0,
-})
-
 const ABORT_DELAY = 5_000
-
-export function handleError(error: unknown, { request }: DataFunctionArgs) {
-	if (!request.signal.aborted) {
-		Sentry.captureException(error)
-	}
-}
 
 export default function handleRequest(
 	request: Request,
