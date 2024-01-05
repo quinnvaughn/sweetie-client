@@ -173,6 +173,11 @@ export function FreeDateForm({
 						label="Recommended time"
 						name="recommendedTime"
 						required
+						defaultDisplayedTimes={[
+							{ tab: 0, text: "6:00 PM", value: "6:00 PM" },
+							{ tab: 1, text: "6:30 PM", value: "6:30 PM" },
+							{ tab: 2, text: "7:00 PM", value: "7:00 PM" },
+						]}
 					/>
 				</VStack>
 				<VStack gap={4} alignItems="flex-start">

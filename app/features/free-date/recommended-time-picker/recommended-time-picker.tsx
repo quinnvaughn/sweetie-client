@@ -33,11 +33,18 @@ const tabStyle = cva({
 	},
 })
 
+type DisplayedTime = {
+	text: string
+	value: string
+	tab: number
+}
+
 type Props = {
 	name: string
 	label: string
 	required?: boolean
 	otherValue?: string
+	defaultDisplayedTimes?: DisplayedTime[]
 }
 
 export function RecommendedTimePicker({
@@ -45,6 +52,7 @@ export function RecommendedTimePicker({
 	label,
 	required,
 	otherValue = "12:00 PM",
+	defaultDisplayedTimes,
 }: Props) {
 	const [recommendedTime, setRecommendedTime] = useControlField<string>(name)
 	// recommendedTime is in the format of "HH:MM AM/PM"
@@ -57,33 +65,50 @@ export function RecommendedTimePicker({
 			amPM === "PM" && Number(hour) !== 12 ? Number(hour) + 12 : Number(hour),
 		minute: Number(minute),
 	})
-	const [activeTab, setActiveTab] = useState(1)
-	const displayedTimes = [
-		{
-			text: formattedDate
-				.minus({ minutes: 30 })
-				.toLocaleString(DateTime.TIME_SIMPLE),
-			value: formattedDate
-				.minus({ minutes: 30 })
-				.toLocaleString(DateTime.TIME_SIMPLE),
-			tab: 0,
-		},
-		{
-			text: formattedDate.toLocaleString(DateTime.TIME_SIMPLE),
-			value: formattedDate.toLocaleString(DateTime.TIME_SIMPLE),
-			tab: 1,
-		},
-		{
-			text: formattedDate
-				.plus({ minutes: 30 })
-				.toLocaleString(DateTime.TIME_SIMPLE),
-			value: formattedDate
-				.plus({ minutes: 30 })
-				.toLocaleString(DateTime.TIME_SIMPLE),
-			tab: 2,
-		},
-		{ value: otherValue, tab: 3, text: "Other" },
-	]
+
+	const displayedTimes = defaultDisplayedTimes
+		? [
+				...defaultDisplayedTimes,
+				{
+					value: defaultDisplayedTimes.some((dt) => dt.value === defaultValue)
+						? otherValue
+						: defaultValue,
+					tab: 3,
+					text: "Other",
+				},
+		  ]
+		: [
+				{
+					text: formattedDate
+						.minus({ minutes: 30 })
+						.toLocaleString(DateTime.TIME_SIMPLE),
+					value: formattedDate
+						.minus({ minutes: 30 })
+						.toLocaleString(DateTime.TIME_SIMPLE),
+					tab: 0,
+				},
+				{
+					text: formattedDate.toLocaleString(DateTime.TIME_SIMPLE),
+					value: formattedDate.toLocaleString(DateTime.TIME_SIMPLE),
+					tab: 1,
+				},
+				{
+					text: formattedDate
+						.plus({ minutes: 30 })
+						.toLocaleString(DateTime.TIME_SIMPLE),
+					value: formattedDate
+						.plus({ minutes: 30 })
+						.toLocaleString(DateTime.TIME_SIMPLE),
+					tab: 2,
+				},
+				{ value: otherValue, tab: 3, text: "Other" },
+		  ]
+
+	const [activeTab, setActiveTab] = useState(
+		displayedTimes.some((dt) => dt.value === defaultValue)
+			? displayedTimes.findIndex((time) => time.value === defaultValue)
+			: 3,
+	)
 
 	function onClickTab(tab: number, time: string) {
 		setActiveTab(tab)
@@ -116,7 +141,7 @@ export function RecommendedTimePicker({
 			</div>
 			{activeTab === 3 && (
 				<TimePicker
-					defaultValue={otherValue}
+					defaultValue={displayedTimes[3].value}
 					name={name}
 					label={""}
 					required={false}
