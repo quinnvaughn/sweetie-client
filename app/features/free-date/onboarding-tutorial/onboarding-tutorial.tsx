@@ -1,4 +1,5 @@
 import Joyride, { ACTIONS, EVENTS, STATUS } from "react-joyride"
+import { useTrack } from "~/hooks"
 import { freeDateStore } from "~/stores"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
@@ -19,6 +20,7 @@ function Content({ title, content }: Props) {
 
 export function OnboardingTutorial() {
 	const { showOnboardingTutorial, setShowOnboardingTutorial } = freeDateStore()
+	const track = useTrack()
 	return (
 		<Joyride
 			disableOverlayClose
@@ -27,10 +29,13 @@ export function OnboardingTutorial() {
 			showSkipButton
 			run={showOnboardingTutorial}
 			callback={(data) => {
-				const { type, action } = data
+				const { type, action, status } = data
 				if (action === ACTIONS.CLOSE || type === EVENTS.TOUR_END) {
 					setShowOnboardingTutorial(false)
 					window.scrollTo({ behavior: "smooth", top: 0, left: 0 })
+				}
+				if (status === STATUS.FINISHED) {
+					track("User Completed Onboarding Tutorial", {})
 				}
 			}}
 			styles={{
