@@ -6,6 +6,7 @@ import { flex } from "~/styled-system/patterns"
 export function EmailItineraryRightSide() {
 	return (
 		<VStack
+			id="go-on-this-date-desktop"
 			gap={6}
 			alignContent={"flex-start"}
 			justifyContent={"flex-start"}

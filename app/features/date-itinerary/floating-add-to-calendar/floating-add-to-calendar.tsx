@@ -1,9 +1,40 @@
 import { useEffect, useState } from "react"
-import { css } from "~/styled-system/css"
+import { freeDateStore } from "~/stores"
+import { css, cva } from "~/styled-system/css"
 import { flex } from "~/styled-system/patterns"
 import { GoOnThisDateButton } from "../go-on-this-date-button"
 
+const container = cva({
+	base: {
+		position: "fixed",
+		bottom: 0,
+		left: 0,
+		right: 0,
+		padding: "10px 20px",
+		background: "white",
+		borderTop: "1px solid",
+		borderTopColor: "gray",
+		display: "flex",
+		gap: 2,
+		flexDirection: "column",
+		alignItems: "center",
+		zIndex: 10,
+		transition: "all 0.2s",
+	},
+	variants: {
+		visible: {
+			true: {
+				opacity: 1,
+			},
+			false: {
+				opacity: 0,
+			},
+		},
+	},
+})
+
 export function FloatingAddToCalendar() {
+	const { showOnboardingTutorial } = freeDateStore()
 	const [scrollY, setScrollY] = useState(0)
 	const [showFloatingButton, setShowFloatingButton] = useState(true)
 	// check if user is scrolling down or up
@@ -28,25 +59,11 @@ export function FloatingAddToCalendar() {
 		return () => window.removeEventListener("scroll", () => {})
 	}, [scrollY])
 
-	if (!showFloatingButton) return null
-
 	return (
 		<div
-			id="floating-add-to-calendar"
-			className={css({
-				position: "fixed",
-				bottom: 0,
-				left: 0,
-				right: 0,
-				padding: "10px 20px",
-				background: "white",
-				borderTop: "1px solid",
-				borderTopColor: "gray",
-				display: "flex",
-				gap: 2,
-				flexDirection: "column",
-				alignItems: "center",
-				zIndex: 10,
+			id="go-on-this-date-mobile"
+			className={container({
+				visible: showOnboardingTutorial || showFloatingButton,
 			})}
 		>
 			<div className={flex({ justifyContent: "center", width: "100%" })}>

@@ -11,7 +11,7 @@ type Props = {
 
 export function TastemakerInfo({ tastemaker }: Props) {
 	return (
-		<VStack gap={2} alignItems="flex-start">
+		<VStack id="tastemaker-info" gap={2} alignItems="flex-start">
 			<HStack gap={1} alignItems="center">
 				<p className={css({ textStyle: "paragraph" })}>Tastemaker:</p>
 				<HStack

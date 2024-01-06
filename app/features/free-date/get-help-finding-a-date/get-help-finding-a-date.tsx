@@ -26,7 +26,7 @@ export function GetHelpFindingADate() {
 
 	return (
 		<>
-			<div>
+			<div id="help-finding-date">
 				Not finding what you're looking for?{" "}
 				<button
 					type="button"

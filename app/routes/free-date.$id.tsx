@@ -22,6 +22,7 @@ import {
 	FreeDateList,
 	GetHelpFindingADate,
 	NSFWTag,
+	OnboardingTutorial,
 } from "~/features/free-date"
 import { ShareDateScreen } from "~/features/free-date/share-date-screen/share-date-screen"
 import { TastemakerInfo } from "~/features/tastemaker"
@@ -217,6 +218,7 @@ export default function FreeDateIdeaRoute() {
 			}}
 		>
 			<Outlet />
+			<OnboardingTutorial />
 			{!isBot && showSignupModal && <SignupModal />}
 			{match(freeDate)
 				.with({ __typename: "Error" }, () => (
@@ -259,7 +261,7 @@ export default function FreeDateIdeaRoute() {
 									alignItems="flex-start"
 									width={"100%"}
 								>
-									<div className={flex({ gap: 2 })}>
+									<div className={flex({ gap: 2 })} id="share-and-save">
 										<OpenShareModalLink
 											to={$path("/free-date/:id/share", { id: freeDate.id })}
 										/>
@@ -291,7 +293,10 @@ export default function FreeDateIdeaRoute() {
 									/>
 								</VStack>
 								<VStack gap={4} width={"100%"} alignItems={"flex-start"}>
-									<div className={css({ display: "flex", gap: 1 })}>
+									<div
+										className={css({ display: "flex", gap: 1 })}
+										id="location-cities"
+									>
 										<span className={css({ textStyle: "paragraph" })}>
 											{singularOrPlural(
 												freeDate.cities.length,
@@ -360,8 +365,12 @@ export default function FreeDateIdeaRoute() {
 									<ClientOnly>
 										{() => <DateLocationsMap stops={freeDate.stops} />}
 									</ClientOnly>
-									{freeDate.stops.map((stop) => (
-										<DateStop stop={stop} key={stop.id} />
+									{freeDate.stops.map((stop, i) => (
+										<DateStop
+											stop={stop}
+											key={stop.id}
+											id={i === 0 ? "first-stop" : ""}
+										/>
 									))}
 								</VStack>
 							</VStack>

@@ -6,11 +6,12 @@ import { TravelTime } from ".."
 
 type Props = {
 	stop: DateStopItemFragment
+	id?: string
 }
 
-export function DateStop({ stop }: Props) {
+export function DateStop({ stop, id }: Props) {
 	return (
-		<VStack gap={stop.travel ? 4 : 0} alignItems={"flex-start"}>
+		<VStack id={id} gap={stop.travel ? 4 : 0} alignItems={"flex-start"}>
 			{stop.travel && <TravelTime travel={stop.travel} />}
 			<VStack gap={2} alignItems={"flex-start"}>
 				<VStack gap={1} alignItems={"flex-start"}>
