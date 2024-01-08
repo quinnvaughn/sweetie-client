@@ -37,6 +37,13 @@ export function OnboardingTutorial() {
 				if (status === STATUS.FINISHED) {
 					track("User Completed Onboarding Tutorial", {})
 				}
+				if (
+					status === STATUS.SKIPPED ||
+					action === ACTIONS.SKIP ||
+					action === ACTIONS.CLOSE
+				) {
+					track("User Skipped Onboarding Tutorial", {})
+				}
 			}}
 			styles={{
 				options: {
