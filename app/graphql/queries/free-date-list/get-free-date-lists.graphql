@@ -1,0 +1,5 @@
+query FreeDateLists {
+  freeDateLists {
+    ...FreeDateList
+  }
+}

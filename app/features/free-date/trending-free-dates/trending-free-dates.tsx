@@ -1,4 +1,3 @@
-import { MutableRefObject, forwardRef } from "react"
 import { P, match } from "ts-pattern"
 import { ListHeading } from "~/features/ui"
 import { FreeDateCardFragment } from "~/graphql/generated"
@@ -10,14 +9,7 @@ type Props = {
 	freeDates: FreeDateCardFragment[]
 }
 
-type Ref = HTMLInputElement
-
-const TrendingFreeDates = forwardRef<Ref, Props>(function TrendingFreeDates(
-	{ freeDates },
-	ref,
-) {
-	const myRef = ref as MutableRefObject<HTMLInputElement>
-
+export function TrendingFreeDates({ freeDates }: Props) {
 	return (
 		<VStack gap={4} alignItems={"flex-start"} width={"100%"}>
 			<ListHeading title="Trending Dates" />
@@ -37,34 +29,9 @@ const TrendingFreeDates = forwardRef<Ref, Props>(function TrendingFreeDates(
 				)
 				.when(
 					(dates) => dates.length > 0,
-					(dates) => (
-						<VStack gap={6}>
-							<FreeDateList freeDates={dates} />
-							<p>
-								Want to find more dates? Trying{" "}
-								<button
-									className={css({
-										textStyle: "paragraph",
-										color: "primary",
-										backgroundColor: "transparent",
-										border: "none",
-										cursor: "pointer",
-										"&:hover": {
-											textDecoration: "underline",
-										},
-									})}
-									type="button"
-									onClick={() => myRef?.current?.focus()}
-								>
-									searching
-								</button>
-							</p>
-						</VStack>
-					),
+					(dates) => <FreeDateList freeDates={dates} />,
 				)
 				.otherwise(() => null)}
 		</VStack>
 	)
-})
-
-export { TrendingFreeDates }
+}

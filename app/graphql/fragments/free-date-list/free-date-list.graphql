@@ -1,0 +1,7 @@
+fragment FreeDateList on FreeDateList {
+    title
+    id
+    dates {
+      ...FreeDateCard
+    }
+}

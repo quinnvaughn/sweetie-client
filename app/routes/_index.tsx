@@ -1,19 +1,29 @@
 import { DataFunctionArgs, json } from "@remix-run/node"
 import { useLoaderData } from "@remix-run/react"
 import { useRef } from "react"
-import { TrendingFreeDates } from "~/features/free-date"
+import { FreeDateLists, TrendingFreeDates } from "~/features/free-date"
 import { SearchBar } from "~/features/search"
 import { PageContainer } from "~/features/ui/page-container"
-import { GetFeaturedDatesDocument } from "~/graphql/generated"
+import {
+	FreeDateListsDocument,
+	GetFeaturedDatesDocument,
+} from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
 export async function loader({ request }: DataFunctionArgs) {
 	const { data, response } = await gqlFetch(request, GetFeaturedDatesDocument)
-	return json(data, {
-		headers: { "Set-Cookie": response?.headers.get("Set-Cookie") ?? "" },
-	})
+	const { data: freeDateListData } = await gqlFetch(
+		request,
+		FreeDateListsDocument,
+	)
+	return json(
+		{ ...data, ...freeDateListData },
+		{
+			headers: { "Set-Cookie": response?.headers.get("Set-Cookie") ?? "" },
+		},
+	)
 }
 
 export default function HomeRoute() {
@@ -32,7 +42,29 @@ export default function HomeRoute() {
 					</span>
 				</p>
 				<SearchBar ref={ref} />
-				<TrendingFreeDates freeDates={data.featuredFreeDates} ref={ref} />
+				<TrendingFreeDates freeDates={data.featuredFreeDates ?? []} />
+				<VStack gap={6}>
+					<FreeDateLists freeDateLists={data.freeDateLists ?? []} />
+					<p>
+						Want to find more dates? Trying{" "}
+						<button
+							className={css({
+								textStyle: "paragraph",
+								color: "primary",
+								backgroundColor: "transparent",
+								border: "none",
+								cursor: "pointer",
+								"&:hover": {
+									textDecoration: "underline",
+								},
+							})}
+							type="button"
+							onClick={() => ref?.current?.focus()}
+						>
+							searching
+						</button>
+					</p>
+				</VStack>
 			</VStack>
 		</PageContainer>
 	)
