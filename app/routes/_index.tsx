@@ -25,22 +25,12 @@ export default function HomeRoute() {
 			padding={{ base: "40px 20px", lg: "40px 0" }}
 		>
 			<VStack gap={8}>
-				<VStack gap={4} alignItems="center">
-					<h1
-						className={css({
-							textStyle: "h1",
-							color: "primary",
-						})}
-					>
-						Sweetie
-					</h1>
-					<p className={css({ textStyle: "paragraph", fontSize: "20px" })}>
-						Your personal date concierge in{" "}
-						<span className={css({ fontWeight: "bold", color: "secondary" })}>
-							Los Angeles
-						</span>
-					</p>
-				</VStack>
+				<p className={css({ textStyle: "paragraph", fontSize: "20px" })}>
+					Your personal date concierge in{" "}
+					<span className={css({ fontWeight: "bold", color: "secondary" })}>
+						Los Angeles
+					</span>
+				</p>
 				<SearchBar ref={ref} />
 				<TrendingFreeDates freeDates={data.featuredFreeDates} ref={ref} />
 			</VStack>
