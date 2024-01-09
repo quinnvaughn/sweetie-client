@@ -46,8 +46,8 @@ export default function ShareFreeDateRoute() {
 	return (
 		<ShareModal
 			to={$path("/free-date/:id", { id })}
-			title="Share"
-			aboveText="Share this free date with your friends or followers!"
+			title="Share this date"
+			aboveText="Share with your date or your friends!"
 			campaign="free date share modal"
 		/>
 	)

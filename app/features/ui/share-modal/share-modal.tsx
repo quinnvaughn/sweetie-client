@@ -29,7 +29,9 @@ export function ShareModal({
 			<Modal.Body>
 				<VStack gap={4} width={"100%"} alignItems="center">
 					{aboveText && (
-						<p className={css({ textStyle: "paragraph" })}>{aboveText}</p>
+						<p className={css({ textStyle: "paragraph", textAlign: "center" })}>
+							{aboveText}
+						</p>
 					)}
 					<div
 						className={css({
