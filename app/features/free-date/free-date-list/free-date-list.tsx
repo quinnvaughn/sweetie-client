@@ -56,7 +56,8 @@ export function FreeDateList({
 					className={css({
 						base: base ?? {
 							display: "grid",
-							gap: 2,
+							columnGap: 4,
+							rowGap: 6,
 							gridTemplateColumns: "1fr",
 						},
 						md: md ?? {
