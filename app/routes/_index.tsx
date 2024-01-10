@@ -1,25 +1,22 @@
 import { DataFunctionArgs, json } from "@remix-run/node"
 import { useLoaderData } from "@remix-run/react"
 import { useRef } from "react"
-import { CategorizedDateLists, TrendingFreeDates } from "~/features/free-date"
+import { CategorizedDateLists } from "~/features/free-date"
 import { SearchBar } from "~/features/search"
 import { PageContainer } from "~/features/ui/page-container"
 import {
 	CategorizedDateListsDocument,
-	GetFeaturedDatesDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
 export async function loader({ request }: DataFunctionArgs) {
-	const { data, response } = await gqlFetch(request, GetFeaturedDatesDocument)
-	const { data: categorizedDateListsData } = await gqlFetch(
+	const { data, response} = await gqlFetch(
 		request,
 		CategorizedDateListsDocument,
 	)
-	return json(
-		{ ...data, ...categorizedDateListsData },
+	return json(data,
 		{
 			headers: { "Set-Cookie": response?.headers.get("Set-Cookie") ?? "" },
 		},
@@ -42,10 +39,9 @@ export default function HomeRoute() {
 					</span>
 				</p>
 				<SearchBar ref={ref} />
-				<TrendingFreeDates freeDates={data.featuredFreeDates ?? []} />
 				<VStack gap={6} width={"100%"}>
 					<CategorizedDateLists
-						categorizedDateLists={data.categorizedDateLists ?? []}
+						categorizedDateLists={data.categorizedDateLists}
 					/>
 					<p>
 						Want to find more dates? Trying{" "}

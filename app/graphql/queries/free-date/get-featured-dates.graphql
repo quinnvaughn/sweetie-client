@@ -1,6 +1,0 @@
-query GetFeaturedDates {
-    featuredFreeDates {
-        id 
-        ...FreeDateCard
-    }
-}

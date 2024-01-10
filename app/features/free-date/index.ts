@@ -1,6 +1,5 @@
 export * from "./free-date-card"
 export * from "./nsfw-tag"
-export * from "./trending-free-dates"
 export * from "./free-date-list"
 export * from "./time-of-the-day"
 export * from "./email-itinerary-right-side"
