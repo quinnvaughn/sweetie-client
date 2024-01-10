@@ -4,23 +4,19 @@ import { useRef } from "react"
 import { CategorizedDateLists } from "~/features/free-date"
 import { SearchBar } from "~/features/search"
 import { PageContainer } from "~/features/ui/page-container"
-import {
-	CategorizedDateListsDocument,
-} from "~/graphql/generated"
+import { CategorizedDateListsDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
 export async function loader({ request }: DataFunctionArgs) {
-	const { data, response} = await gqlFetch(
+	const { data, response } = await gqlFetch(
 		request,
 		CategorizedDateListsDocument,
 	)
-	return json(data,
-		{
-			headers: { "Set-Cookie": response?.headers.get("Set-Cookie") ?? "" },
-		},
-	)
+	return json(data, {
+		headers: { "Set-Cookie": response?.headers.get("Set-Cookie") ?? "" },
+	})
 }
 
 export default function HomeRoute() {
