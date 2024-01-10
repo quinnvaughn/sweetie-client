@@ -1,4 +1,4 @@
-fragment FreeDateList on FreeDateList {
+fragment CategorizedDateList on CategorizedDateList {
     title
     id
     dates {

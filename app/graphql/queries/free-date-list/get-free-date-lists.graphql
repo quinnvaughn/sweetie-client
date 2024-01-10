@@ -1,5 +1,0 @@
-query FreeDateLists {
-  freeDateLists {
-    ...FreeDateList
-  }
-}
