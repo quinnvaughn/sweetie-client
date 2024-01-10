@@ -8,7 +8,7 @@ export function LoggedInActions() {
 		<>
 			<Navbar.Link
 				to={$path("/tastemaker/free-dates/created")}
-				text="Create dates"
+				text="Tastemaker Dashboard"
 			/>
 			{isLoggedIn("admin") && (
 				<Navbar.Link to={"/admin/dashboard/free-dates"} text="Admin" />
