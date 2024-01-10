@@ -43,7 +43,7 @@ export default function HomeRoute() {
 				</p>
 				<SearchBar ref={ref} />
 				<TrendingFreeDates freeDates={data.featuredFreeDates ?? []} />
-				<VStack gap={6}>
+				<VStack gap={6} width={"100%"}>
 					<CategorizedDateLists
 						categorizedDateLists={data.categorizedDateLists ?? []}
 					/>
