@@ -1,7 +1,8 @@
 query ViewerIsLoggedIn {
   viewer {
     id
-    username 
+    username
+    hasCreatedADate
     role {
       id 
       name
