@@ -176,6 +176,20 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 						property: "twitter:site",
 						content: "@sweetie_dates",
 					},
+					{
+						property: "twitter:title",
+						content: `${title.trim()} by ${
+							tastemaker.user.name
+						} - Sweetie date idea`,
+					},
+					{
+						property: "twitter:description",
+						content: description,
+					},
+					{
+						property: "twitter:image",
+						content: thumbnail,
+					},
 					// TODO: twitter:creator
 					// we don't currently know the twitter handle of the tastemaker
 				],

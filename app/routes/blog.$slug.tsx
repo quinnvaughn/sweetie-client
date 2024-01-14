@@ -41,6 +41,11 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 		{ property: "twitter:card", content: "summary" },
 		{ property: "og:type", content: "article" },
 		{ property: "twitter:site", content: "@sweetie_dates" },
+		{ property: "og:author", content: "Sweetie" },
+		{ property: "twitter:creator", content: "@sweetie_dates" },
+		{ property: "twitter:title", content: data.blogPost.title },
+		{ property: "twitter:description", content: data.blogPost.description },
+		{ property: "twitter:image", content: data.blogPost.thumbnail.url },
 	]
 }
 
