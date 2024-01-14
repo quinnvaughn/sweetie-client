@@ -95,7 +95,7 @@ export async function blogFetch<TData = any, TVariables = Record<string, any>>(
 
 	try {
 		const response = await fetch(
-			`${env.BLOG_URL}?operation=${props.name?.value}}`,
+			`${process.env.BLOG_URL}?operation=${props.name?.value}}`,
 			{
 				credentials: "include",
 				body: JSON.stringify(requestBody),

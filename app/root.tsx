@@ -59,7 +59,6 @@ export async function loader({ request }: DataFunctionArgs) {
 			FRONTEND_URL: env.FRONTEND_URL,
 			NODE_ENV: env.NODE_ENV,
 			GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
-			BLOG_URL: env.BLOG_URL,
 		},
 	})
 }
@@ -105,7 +104,7 @@ export const meta: MetaFunction = () => {
 			content:
 				"dating, los angeles, dates, fun, love, romance, couples, single",
 		},
-		{ name: "author", content: "Sweetie" },
+		{ name: "author", property: "og:author", content: "Sweetie" },
 		{
 			name: "og:description",
 			content:

@@ -45,8 +45,11 @@ export default function BlogsRoute() {
 					})}
 				>
 					{blogPosts.map((post) => (
-						<Link to={$path("/blog/:slug", { slug: post.slug })}>
-							<VStack key={post.title} gap={2} alignItems={"flex-start"}>
+						<Link
+							key={post.title}
+							to={$path("/blog/:slug", { slug: post.slug })}
+						>
+							<VStack gap={2} alignItems={"flex-start"}>
 								<Image
 									src={post.thumbnail.url}
 									alt={post.title}

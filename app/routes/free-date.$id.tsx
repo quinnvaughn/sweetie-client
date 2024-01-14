@@ -175,7 +175,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 					},
 					{
 						name: "publish_date",
-						property: "og:published_date",
+						property: "og:publish_date",
 						content: DateTime.fromISO(createdAt).toFormat(
 							"yyyy-MM-ddTHH:mm:ssZ",
 						),
@@ -207,7 +207,11 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 						property: "twitter:image",
 						content: thumbnail,
 					},
-					{ name: "author", content: tastemaker.user.name },
+					{
+						name: "author",
+						property: "og:author",
+						content: tastemaker.user.name,
+					},
 					// TODO: twitter:creator
 					// we don't currently know the twitter handle of the tastemaker
 				],

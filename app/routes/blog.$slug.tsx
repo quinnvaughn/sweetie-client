@@ -41,7 +41,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 		{ property: "twitter:card", content: "summary" },
 		{ property: "og:type", content: "article" },
 		{ property: "twitter:site", content: "@sweetie_dates" },
-		{ name: "author", content: "Sweetie" },
+		{ name: "author", property: "og:author", content: "Sweetie" },
 		{ property: "article:author", content: "Sweetie" },
 		{ property: "og:site_name", content: "Sweetie" },
 		{ property: "og:locale", content: "en_US" },
@@ -53,7 +53,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 		},
 		{
 			name: "publish_date",
-			property: "og:published_date",
+			property: "og:publish_date",
 			content: DateTime.fromISO(data.blogPost.publishedAt as string).toFormat(
 				"yyyy-MM-ddTHH:mm:ssZ",
 			),
