@@ -8,5 +8,6 @@ interface Window {
 		FRONTEND_URL: string
 		NODE_ENV: "development" | "production" | "test"
 		GOOGLE_CLIENT_ID: string
+		BLOG_URL: string
 	}
 }

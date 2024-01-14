@@ -6,6 +6,7 @@ declare global {
 			GRAPHQL_ENDPOINT: string
 			FRONTEND_URL: string
 			GOOGLE_CLIENT_ID: string
+			BLOG_URL: string
 		}
 	}
 }

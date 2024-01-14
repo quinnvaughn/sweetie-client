@@ -7,6 +7,15 @@ import { Desktop, Mobile } from ".."
 import { SocialLinks } from "../social-links"
 import { MobileFooter } from "./mobile-footer"
 
+const link = css({
+	color: "black",
+	textDecoration: "none",
+	fontWeight: "bold",
+	_hover: {
+		textDecoration: "underline",
+	},
+})
+
 export function Footer() {
 	return (
 		<>
@@ -29,30 +38,13 @@ export function Footer() {
 						© {DateTime.now().year} trysweetie.com
 					</p>
 					<HStack gap={2}>
-						<Link
-							className={css({
-								color: "black",
-								textDecoration: "none",
-								fontWeight: "bold",
-								_hover: {
-									textDecoration: "underline",
-								},
-							})}
-							to={$path("/privacy-policy")}
-						>
+						<Link className={link} to={$path("/blog")}>
+							Blog
+						</Link>
+						<Link className={link} to={$path("/privacy-policy")}>
 							Privacy Policy
 						</Link>
-						<a
-							className={css({
-								color: "black",
-								textDecoration: "none",
-								fontWeight: "bold",
-								_hover: {
-									textDecoration: "underline",
-								},
-							})}
-							href={"https://discord.gg/2qyk3vcQXa"}
-						>
+						<a className={link} href={"https://discord.gg/2qyk3vcQXa"}>
 							Support
 						</a>
 					</HStack>

@@ -1,0 +1,10 @@
+query AllBlogPosts{
+  blogPosts (where:{documentInStages_some:{stage:PUBLISHED}}) {
+    title
+    slug
+    thumbnail {
+     	url
+    }
+    publishedAt
+  }
+}

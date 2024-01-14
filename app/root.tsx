@@ -59,6 +59,7 @@ export async function loader({ request }: DataFunctionArgs) {
 			FRONTEND_URL: env.FRONTEND_URL,
 			NODE_ENV: env.NODE_ENV,
 			GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
+			BLOG_URL: env.BLOG_URL,
 		},
 	})
 }

@@ -1,0 +1,16 @@
+query GetBlogPost ($slug:String!){
+  blogPost(where:{
+    slug: $slug
+  }) {
+    publishedAt
+    title
+    description
+    slug
+    thumbnail {
+      url
+    }
+    content {
+      markdown
+    }
+  }
+}

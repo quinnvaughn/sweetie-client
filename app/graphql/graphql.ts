@@ -80,3 +80,49 @@ export async function gqlFetch<TData = any, TVariables = Record<string, any>>(
 		}
 	}
 }
+
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+export async function blogFetch<TData = any, TVariables = Record<string, any>>(
+	operation: TypedDocumentNode<TData, TVariables>,
+	variables?: TVariables,
+): Promise<GqlFetchResult<TData>> {
+	const props = operation.definitions[0] as ExecutableDefinitionNode
+
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	const requestBody: any = { query: print(operation) }
+
+	if (variables) requestBody.variables = variables
+
+	try {
+		const response = await fetch(
+			`${env.BLOG_URL}?operation=${props.name?.value}}`,
+			{
+				credentials: "include",
+				body: JSON.stringify(requestBody),
+				method: "POST",
+			},
+		)
+
+		if (response.ok) {
+			const value = await response.json()
+
+			return { ...value, response }
+		}
+		return {
+			errors: [
+				{
+					message: await response.text(),
+				} as GraphQLError,
+			],
+		}
+	} catch (error) {
+		const message = error instanceof Error ? error.message : "Unhandled error"
+		return {
+			errors: [
+				{
+					message: message,
+				} as GraphQLError,
+			],
+		}
+	}
+}
