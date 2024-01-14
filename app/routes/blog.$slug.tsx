@@ -31,16 +31,16 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	return [
 		{ title: data.blogPost.title },
 		{ name: "description", content: data.blogPost.description },
-		{ name: "og:image", content: data.blogPost.thumbnail.url },
-		{ name: "og:title", content: data.blogPost.title },
+		{ property: "og:image", content: data.blogPost.thumbnail.url },
+		{ property: "og:title", content: data.blogPost.title },
 		{
-			name: "og:url",
+			property: "og:url",
 			content: `${env.FRONTEND_URL}/blog/${data.blogPost.slug}`,
 		},
-		{ name: "og:description", content: data.blogPost.description },
-		{ name: "twitter:card", content: "summary" },
-		{ name: "og:type", content: "article" },
-		{ name: "twitter:site", content: "@sweetie_dates" },
+		{ property: "og:description", content: data.blogPost.description },
+		{ property: "twitter:card", content: "summary" },
+		{ property: "og:type", content: "article" },
+		{ property: "twitter:site", content: "@sweetie_dates" },
 	]
 }
 

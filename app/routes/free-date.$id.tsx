@@ -124,39 +124,39 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 					{ name: "description", content: description },
 					{ name: "robots", content: "index, follow" },
 					{
-						name: "og:title",
+						property: "og:title",
 						content: `${title.trim()} by ${
 							tastemaker.user.name
 						} - Sweetie date idea`,
 					},
-					{ name: "og:description", content: description },
-					{ name: "og:image", content: thumbnail },
+					{ property: "og:description", content: description },
+					{ property: "og:image", content: thumbnail },
 					{
-						name: "og:url",
+						property: "og:url",
 						content: `https://trysweetie.com/free-date/${id}`,
 					},
 					{
-						name: "og:site_name",
+						property: "og:site_name",
 						content: "Sweetie",
 					},
 					{
-						name: "og:type",
+						property: "og:type",
 						content: "article",
 					},
 					{
-						name: "article:published_time",
+						property: "article:published_time",
 						content: createdAt,
 					},
 					{
-						name: "article:modified_time",
+						property: "article:modified_time",
 						content: updatedAt,
 					},
 					{
-						name: "article:author",
+						property: "article:author",
 						content: `https://trysweetie.com/user/${tastemaker.user.id}`,
 					},
 					{
-						name: "article:tag",
+						property: "article:tag",
 						content: [
 							...tags.map((t) => `${t.name} date idea`),
 							"dating",
@@ -165,15 +165,15 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 						],
 					},
 					{
-						name: "article:section",
+						property: "article:section",
 						content: "Dating",
 					},
 					{
-						name: "twitter:card",
+						property: "twitter:card",
 						content: "summary_large_image",
 					},
 					{
-						name: "twitter:site",
+						property: "twitter:site",
 						content: "@sweetie_dates",
 					},
 					// TODO: twitter:creator
