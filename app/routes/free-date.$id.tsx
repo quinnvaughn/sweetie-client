@@ -180,6 +180,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 							"yyyy-MM-ddTHH:mm:ssZ",
 						),
 					},
+					{ property: "article:author", content: tastemaker.user.name },
 					{
 						property: "twitter:card",
 						content: "summary_large_image",

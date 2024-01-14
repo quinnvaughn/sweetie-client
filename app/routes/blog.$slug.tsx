@@ -42,6 +42,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 		{ property: "og:type", content: "article" },
 		{ property: "twitter:site", content: "@sweetie_dates" },
 		{ name: "author", content: "Sweetie" },
+		{ property: "article:author", content: "Sweetie" },
 		{ property: "og:site_name", content: "Sweetie" },
 		{ property: "og:locale", content: "en_US" },
 		{
