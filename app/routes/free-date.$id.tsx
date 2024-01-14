@@ -153,10 +153,6 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 						content: updatedAt,
 					},
 					{
-						property: "article:author",
-						content: `https://trysweetie.com/user/${tastemaker.user.id}`,
-					},
-					{
 						property: "article:tag",
 						content: [
 							...tags.map((t) => `${t.name} date idea`),
