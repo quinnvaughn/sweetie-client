@@ -50,6 +50,13 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 				"yyyy-MM-dd",
 			),
 		},
+		{
+			name: "publish_date",
+			property: "og:published_date",
+			content: DateTime.fromISO(data.blogPost.publishedAt as string).toFormat(
+				"yyyy-MM-ddTHH:mm:ssZ",
+			),
+		},
 		{ property: "twitter:creator", content: "@sweetie_dates" },
 		{ property: "twitter:title", content: data.blogPost.title },
 		{ property: "twitter:description", content: data.blogPost.description },

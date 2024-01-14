@@ -174,6 +174,13 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 						content: DateTime.fromISO(createdAt).toFormat("yyyy-MM-dd"),
 					},
 					{
+						name: "publish_date",
+						property: "og:published_date",
+						content: DateTime.fromISO(createdAt).toFormat(
+							"yyyy-MM-ddTHH:mm:ssZ",
+						),
+					},
+					{
 						property: "twitter:card",
 						content: "summary_large_image",
 					},
