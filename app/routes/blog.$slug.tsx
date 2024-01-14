@@ -3,10 +3,12 @@ import { Link, useLoaderData } from "@remix-run/react"
 import { LoaderFunctionArgs, json } from "@remix-run/server-runtime"
 import { DateTime } from "luxon"
 import Markdown from "markdown-to-jsx"
+import { useEffect } from "react"
 import { $params, $path } from "remix-routes"
 import { Image, PageContainer } from "~/features/ui"
 import { GetBlogPostDocument } from "~/graphql/blog-generated"
 import { blogFetch } from "~/graphql/graphql"
+import { useTrack } from "~/hooks"
 import { getEnv } from "~/lib"
 import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
@@ -71,6 +73,13 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 export default function SpecificBlogPostRoute() {
 	const { blogPost } = useLoaderData<typeof loader>()
+	const track = useTrack()
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		track("Blog Post Viewed", {
+			title: blogPost.title,
+		})
+	}, [])
 	return (
 		<PageContainer
 			width={{ base: "100%", lg: 700 }}

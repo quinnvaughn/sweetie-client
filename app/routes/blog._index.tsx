@@ -2,10 +2,12 @@ import { MetaFunction } from "@remix-run/node"
 import { Link, useLoaderData } from "@remix-run/react"
 import { LoaderFunctionArgs, json } from "@remix-run/server-runtime"
 import { DateTime } from "luxon"
+import { useEffect } from "react"
 import { $path } from "remix-routes"
 import { Image, PageContainer } from "~/features/ui"
 import { AllBlogPostsDocument } from "~/graphql/blog-generated"
 import { blogFetch } from "~/graphql/graphql"
+import { useTrack } from "~/hooks"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
@@ -27,6 +29,11 @@ export const meta: MetaFunction = () => {
 
 export default function BlogsRoute() {
 	const { blogPosts } = useLoaderData<typeof loader>()
+	const track = useTrack()
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		track("Blog Home Page Viewed", {})
+	}, [])
 	return (
 		<PageContainer
 			width={{ base: "100%", lg: 1024 }}
