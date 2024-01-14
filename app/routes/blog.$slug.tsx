@@ -41,10 +41,15 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 		{ property: "twitter:card", content: "summary" },
 		{ property: "og:type", content: "article" },
 		{ property: "twitter:site", content: "@sweetie_dates" },
-		{ property: "og:author", content: "Sweetie" },
+		{ name: "author", content: "Sweetie" },
 		{ property: "og:site_name", content: "Sweetie" },
 		{ property: "og:locale", content: "en_US" },
-		{ property: "article:published_time", content: data.blogPost.publishedAt },
+		{
+			property: "article:published_time",
+			content: DateTime.fromISO(data.blogPost.publishedAt as string).toFormat(
+				"yyyy-MM-dd",
+			),
+		},
 		{ property: "twitter:creator", content: "@sweetie_dates" },
 		{ property: "twitter:title", content: data.blogPost.title },
 		{ property: "twitter:description", content: data.blogPost.description },

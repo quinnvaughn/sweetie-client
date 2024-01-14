@@ -7,6 +7,7 @@ import {
 	useLocation,
 } from "@remix-run/react"
 import isbot from "isbot"
+import { DateTime } from "luxon"
 import { useContext, useEffect } from "react"
 import { $params, $path } from "remix-routes"
 import { ClientOnly } from "remix-utils/client-only"
@@ -168,7 +169,10 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 						property: "article:section",
 						content: "Dating",
 					},
-					{ property: "article:published_time", content: createdAt },
+					{
+						property: "article:published_time",
+						content: DateTime.fromISO(createdAt).toFormat("yyyy-MM-dd"),
+					},
 					{
 						property: "twitter:card",
 						content: "summary_large_image",
@@ -195,6 +199,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 						property: "twitter:image",
 						content: thumbnail,
 					},
+					{ name: "author", content: tastemaker.user.name },
 					// TODO: twitter:creator
 					// we don't currently know the twitter handle of the tastemaker
 				],
