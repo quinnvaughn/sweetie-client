@@ -42,10 +42,17 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 		{ property: "og:type", content: "article" },
 		{ property: "twitter:site", content: "@sweetie_dates" },
 		{ property: "og:author", content: "Sweetie" },
+		{ property: "og:site_name", content: "Sweetie" },
+		{ property: "og:locale", content: "en_US" },
+		{ property: "article:published_time", content: data.blogPost.publishedAt },
 		{ property: "twitter:creator", content: "@sweetie_dates" },
 		{ property: "twitter:title", content: data.blogPost.title },
 		{ property: "twitter:description", content: data.blogPost.description },
 		{ property: "twitter:image", content: data.blogPost.thumbnail.url },
+		{
+			property: "twitter:url",
+			content: `https://trysweetie.com/blog/${data.blogPost.slug}`,
+		},
 	]
 }
 

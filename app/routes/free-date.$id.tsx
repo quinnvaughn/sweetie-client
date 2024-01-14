@@ -168,6 +168,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 						property: "article:section",
 						content: "Dating",
 					},
+					{ property: "article:published_time", content: createdAt },
 					{
 						property: "twitter:card",
 						content: "summary_large_image",
@@ -181,6 +182,10 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 						content: `${title.trim()} by ${
 							tastemaker.user.name
 						} - Sweetie date idea`,
+					},
+					{
+						property: "twitter:url",
+						content: `https://trysweetie.com/free-date/${id}`,
 					},
 					{
 						property: "twitter:description",
