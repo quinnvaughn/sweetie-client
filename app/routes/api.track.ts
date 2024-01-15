@@ -7,6 +7,7 @@ import { gqlFetch } from "~/graphql/graphql"
 const schema = z.object({
 	event: z.string(),
 	properties: z.string(),
+	url: z.string().url(),
 })
 
 const validator = withZod(schema)
@@ -16,8 +17,9 @@ export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
 	const result = await validator.validate(formData)
 	if (result.error) return null
-	const { event, properties } = result.data
-	await gqlFetch(request, TrackDocument, {
+	const { event, properties, url } = result.data
+	const newRequest = new Request(new URL(url), request)
+	await gqlFetch(newRequest, TrackDocument, {
 		input: {
 			event,
 			properties: JSON.parse(properties),

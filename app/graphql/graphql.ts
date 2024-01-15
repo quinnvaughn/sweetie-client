@@ -35,7 +35,6 @@ export async function gqlFetch<TData = any, TVariables = Record<string, any>>(
 	const requestBody: any = { query: print(operation) }
 
 	if (variables) requestBody.variables = variables
-
 	try {
 		const response = await fetch(
 			`${env.GRAPHQL_ENDPOINT}?operation=${props.name?.value}}`,
@@ -70,6 +69,7 @@ export async function gqlFetch<TData = any, TVariables = Record<string, any>>(
 			],
 		}
 	} catch (error) {
+		console.error(error)
 		const message = error instanceof Error ? error.message : "Unhandled error"
 		return {
 			errors: [

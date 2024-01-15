@@ -10,6 +10,7 @@ export function useTrack() {
 		const formData = new FormData()
 		formData.append("event", event)
 		formData.append("properties", JSON.stringify(properties))
+		formData.append("url", window.location.href)
 		fetcher.submit(formData, { method: "post", action: $path("/api/track") })
 	}
 }
