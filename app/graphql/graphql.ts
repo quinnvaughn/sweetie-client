@@ -69,7 +69,6 @@ export async function gqlFetch<TData = any, TVariables = Record<string, any>>(
 			],
 		}
 	} catch (error) {
-		console.error(error)
 		const message = error instanceof Error ? error.message : "Unhandled error"
 		return {
 			errors: [
