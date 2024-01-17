@@ -8,7 +8,7 @@ import { button } from "~/styled-system/recipes"
 export function GetUserToLoginSection() {
 	return (
 		<>
-			<Desktop>
+			<Desktop css={{ width: "100%" }}>
 				<HStack
 					padding={"24px"}
 					borderRadius={"8px"}
