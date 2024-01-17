@@ -26,7 +26,10 @@ export function OnboardingTutorial() {
 			disableOverlayClose
 			continuous
 			disableOverlay
-			showSkipButton
+			hideCloseButton
+			disableCloseOnEsc
+			hideBackButton
+			showSkipButton={false}
 			run={showOnboardingTutorial}
 			callback={(data) => {
 				const { type, action, status } = data
@@ -36,13 +39,6 @@ export function OnboardingTutorial() {
 				}
 				if (status === STATUS.FINISHED) {
 					track("User Completed Onboarding Tutorial", {})
-				}
-				if (
-					status === STATUS.SKIPPED ||
-					action === ACTIONS.SKIP ||
-					action === ACTIONS.CLOSE
-				) {
-					track("User Skipped Onboarding Tutorial", {})
 				}
 			}}
 			styles={{
@@ -61,6 +57,7 @@ export function OnboardingTutorial() {
 					disableBeacon: true,
 					target: "body",
 					placement: "center",
+					locale: { next: "Close" },
 				},
 				{
 					content: (
@@ -71,6 +68,7 @@ export function OnboardingTutorial() {
 					),
 					disableBeacon: true,
 					target: "#first-stop",
+					locale: { next: "Close" },
 				},
 				{
 					content: (
@@ -82,16 +80,7 @@ export function OnboardingTutorial() {
 					disableBeacon: true,
 					target: "#date-locations-map",
 					placement: "bottom",
-				},
-				{
-					content: (
-						<Content
-							content="Ever wondered who's behind the genius date night ideas? Get to know our tastemaker and the stories that inspired your date night. Swipe right to check out more of their gems!"
-							title="Meet Your Tastemaker"
-						/>
-					),
-					disableBeacon: true,
-					target: "#tastemaker-info",
+					locale: { next: "Close" },
 				},
 				{
 					content: (
@@ -102,6 +91,7 @@ export function OnboardingTutorial() {
 					),
 					disableBeacon: true,
 					target: "#share-and-save",
+					locale: { next: "Close" },
 				},
 				{
 					content: (
@@ -112,6 +102,7 @@ export function OnboardingTutorial() {
 					),
 					disableBeacon: true,
 					target: "#go-on-this-date-desktop",
+					locale: { next: "Close" },
 				},
 				{
 					content: (
@@ -122,39 +113,7 @@ export function OnboardingTutorial() {
 					),
 					disableBeacon: true,
 					target: "#go-on-this-date-mobile",
-				},
-				{
-					content: (
-						<Content
-							content="Curious about what else we have got in these cities? Click on a city, and start exploring different dates to spice up your romantic repertoire!"
-							title="Explore More Dates"
-						/>
-					),
-					disableBeacon: true,
-					target: "#location-cities",
-				},
-				{
-					content: (
-						<Content
-							content="Unable to find the perfect date night? Click here and let our experts whip up a personalized date night just for you. Because everyone deserves a unique and magical experience!"
-							title="Seeking Something Special? Tell Us!"
-						/>
-					),
-					disableBeacon: true,
-					target: "#help-finding-date",
-				},
-				{
-					content: (
-						<p className={css({ textStyle: "paragraph" })}>
-							Ready for a night to remember? Dive into your curated date night
-							now and let the magic unfold!
-						</p>
-					),
-					locale: { last: "Let's go!" },
-					hideBackButton: true,
-					disableBeacon: true,
-					target: "body",
-					placement: "center",
+					locale: { next: "Close" },
 				},
 			]}
 		/>
