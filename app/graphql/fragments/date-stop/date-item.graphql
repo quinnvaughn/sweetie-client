@@ -17,6 +17,10 @@ fragment DateStopItem on DateStop {
       address {
         id
         formattedAddress
+        city {
+          id
+          name
+        }
         coordinates {
           lat
           lng

@@ -4,7 +4,7 @@ require("dotenv").config()
 const config: CodegenConfig = {
 	overwrite: true,
 	schema: process.env.BLOG_URL,
-	documents: "app/graphql/**/blog/*.graphql",
+	documents: "app/blog/**/*.graphql",
 	config: {
 		scalars: {
 			DateTime: "string",
