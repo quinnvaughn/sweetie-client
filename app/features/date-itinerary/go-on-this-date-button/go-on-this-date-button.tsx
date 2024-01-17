@@ -16,6 +16,9 @@ export function GoOnThisDateButton() {
 				color: "white",
 				fontWeight: "bold",
 				borderRadius: "8px",
+				_hover: {
+					filter: "brightness(110%)",
+				},
 			})}
 		>
 			Go on this date

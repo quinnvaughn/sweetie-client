@@ -56,8 +56,9 @@ export function SignupModal() {
 				<ModalBody>
 					<VStack gap={2} alignItems={"center"}>
 						<p className={css({ textAlign: "center" })}>
-							Hey there! Looks like you're enjoying Sweetie. Create an account
-							to save your dates and get access to more features.
+							Looks like you're enjoying Sweetie. Embark on a personalized
+							dating adventure – register now for exclusive perks and a touch of
+							magic!
 						</p>
 						<LoginWithGoogleButton
 							redirectTo={pathname}

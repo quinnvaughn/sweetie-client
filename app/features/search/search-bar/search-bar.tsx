@@ -182,8 +182,11 @@ const SearchBar = forwardRef<Ref>(function SearchBar(_p, ref) {
 					</HStack>
 				</div>
 				<HStack
-					gap={{ base: 4, lg: 8 }}
-					paddingBlock={6}
+					gap={{
+						base: isVisible === "yes" ? 4 : 0,
+						lg: isVisible === "yes" ? 8 : 0,
+					}}
+					paddingBlock={isVisible === "yes" ? 6 : 0}
 					flexWrap={"wrap"}
 					alignItems={"flex-start"}
 					className={visible({ visible: isVisible })}

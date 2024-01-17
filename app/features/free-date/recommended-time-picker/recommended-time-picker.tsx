@@ -116,7 +116,7 @@ export function RecommendedTimePicker({
 	}
 
 	return (
-		<VStack alignItems={"flex-start"} width={"100%"}>
+		<VStack gap={1} alignItems={"flex-start"} width={"100%"}>
 			<label htmlFor={name}>
 				{label}{" "}
 				{required && <span className={css({ textStyle: "error" })}>*</span>}

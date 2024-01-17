@@ -252,7 +252,7 @@ export default function AddToCalendarPage() {
 							userEmail={fetcher.data?.formData?.user?.email}
 						/>
 					) : (
-						<VStack gap={3} justifyContent="center">
+						<VStack gap={1} justifyContent="center">
 							<p
 								className={css({ textStyle: "paragraph", textAlign: "center" })}
 							>
@@ -263,8 +263,8 @@ export default function AddToCalendarPage() {
 							{!authorizedCalendar && <AddGoogleCalendar />}
 							{!isLoggedIn() && (
 								<>
-									<Input name="user.name" label="Your name" required />
-									<Input name="user.email" label="Your email" required />
+									<Input name="user.name" label="Name" required />
+									<Input name="user.email" label="Email" required />
 								</>
 							)}
 							<DatePicker name="date" label="Date" required />

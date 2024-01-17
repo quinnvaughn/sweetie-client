@@ -1,8 +1,6 @@
-import { useGoogleLogin } from "@react-oauth/google"
 import { DataFunctionArgs, redirect } from "@remix-run/node"
 import { Link, useFetcher } from "@remix-run/react"
 import { withZod } from "@remix-validated-form/with-zod"
-import { FcGoogle } from "react-icons/fc/index.js"
 import { $path } from "remix-routes"
 import { ValidatedForm, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
@@ -13,7 +11,6 @@ import { LoginDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
-import { action as googleAction } from "./api.login-with-google"
 
 const validator = withZod(
 	z.object({
@@ -64,22 +61,14 @@ export default function LoginRoute() {
 		<ValidatedForm fetcher={fetcher} validator={validator} method="post">
 			<VStack gap="4" alignItems={"center"}>
 				<h1 className={css({ textStyle: "h1" })}>Login</h1>
+				<p className={css({ textStyle: "paragraph", textAlign: "center" })}>
+					Unlock a world of possibilities – sign in for an elevated experience.
+					Your journey just got more exciting!
+				</p>
 				<LoginWithGoogleButton />
 				<p className={css({ textStyle: "paragraph" })}>or</p>
-				<Input
-					type="email"
-					label="Email"
-					required
-					name="email"
-					placeholder="Please enter your email"
-				/>
-				<Input
-					label="Password"
-					required
-					name="password"
-					placeholder="Please enter your password"
-					type={"password"}
-				/>
+				<Input type="email" label="Email" required name="email" />
+				<Input label="Password" required name="password" type={"password"} />
 				<Button
 					type="submit"
 					size={"xl"}

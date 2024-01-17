@@ -14,6 +14,7 @@ import { ClientOnly } from "remix-utils/client-only"
 import { match } from "ts-pattern"
 import { RouterContext } from "~/context"
 import { showShareScreen } from "~/cookies.server"
+import { GetUserToLoginSection } from "~/features/auth"
 import { FloatingAddToCalendar } from "~/features/date-itinerary"
 import { DateStop } from "~/features/date-stop"
 import {
@@ -41,7 +42,7 @@ import {
 	ViewerIsLoggedInDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import { useScrolledToBottom, useTrack } from "~/hooks"
+import { useScrolledToBottom, useTrack, useViewer } from "~/hooks"
 import { singularOrPlural } from "~/lib"
 import { signupStore } from "~/stores"
 import { css } from "~/styled-system/css"

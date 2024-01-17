@@ -8,7 +8,7 @@ type State = {
 
 export const freeDateStore = create(
 	persist<State>(
-		(set, get) => ({
+		(set) => ({
 			showOnboardingTutorial: true,
 			setShowOnboardingTutorial: (show) =>
 				set({ showOnboardingTutorial: show }),

@@ -1,11 +1,11 @@
-import Calendar from "./calendar"
-import { useOutsideClick } from "~/hooks"
-import { getNumberSuffix } from "~/lib"
 import { DateTime } from "luxon"
 import { useState } from "react"
 import { FaCalendarDay } from "react-icons/fa/index.js"
+import { useOutsideClick } from "~/hooks"
+import { getNumberSuffix } from "~/lib"
 import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
+import Calendar from "./calendar"
 
 const invisibleButton = css({
 	backgroundColor: "transparent",
@@ -45,7 +45,7 @@ export default function DateTimePicker({
 
 	return (
 		<VStack
-			gap={2}
+			gap={1}
 			alignItems="flex-start"
 			justifyContent="flex-start"
 			width="100%"

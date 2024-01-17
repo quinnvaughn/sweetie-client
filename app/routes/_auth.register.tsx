@@ -6,7 +6,7 @@ import { ValidatedForm, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
 import { LoginWithGoogleButton } from "~/features/auth"
-import { Button, Input, SubmitButton } from "~/features/ui"
+import { Button, Input } from "~/features/ui"
 import { RegisterDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { css } from "~/styled-system/css"
@@ -67,28 +67,15 @@ export default function RegisterRoute() {
 		>
 			<VStack gap="4" alignItems={"center"}>
 				<h1 className={css({ textStyle: "h1" })}>Register</h1>
+				<p className={css({ textStyle: "paragraph", textAlign: "center" })}>
+					Embark on a personalized dating adventure – register now for exclusive
+					perks and a touch of magic!
+				</p>
 				<LoginWithGoogleButton type="register" />
 				<p className={css({ textStyle: "paragraph" })}>or</p>
-				<Input
-					type="email"
-					label="Email"
-					required
-					name="email"
-					placeholder="Please enter your email"
-				/>
-				<Input
-					label="Password"
-					required
-					name="password"
-					placeholder="Please enter your password"
-					type={"password"}
-				/>
-				<Input
-					label="Full name"
-					required
-					name="name"
-					placeholder="Please enter your full name"
-				/>
+				<Input type="email" label="Email" required name="email" />
+				<Input label="Password" required name="password" type={"password"} />
+				<Input label="Full name" required name="name" />
 				<Button
 					type="submit"
 					size={"xl"}

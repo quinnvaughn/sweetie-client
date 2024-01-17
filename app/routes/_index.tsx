@@ -1,11 +1,13 @@
 import { DataFunctionArgs, json } from "@remix-run/node"
 import { useLoaderData } from "@remix-run/react"
 import { useRef } from "react"
+import { GetUserToLoginSection } from "~/features/auth"
 import { CategorizedDateLists } from "~/features/free-date"
 import { SearchBar } from "~/features/search"
 import { PageContainer } from "~/features/ui/page-container"
 import { CategorizedDateListsDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
+import { useViewer } from "~/hooks"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
@@ -22,6 +24,7 @@ export async function loader({ request }: DataFunctionArgs) {
 export default function HomeRoute() {
 	const data = useLoaderData<typeof loader>()
 	const ref = useRef<HTMLInputElement>(null)
+	const { isLoggedIn } = useViewer()
 	return (
 		<PageContainer
 			width={{ base: "100%", lg: 1024 }}
@@ -35,12 +38,13 @@ export default function HomeRoute() {
 					</span>
 				</p>
 				<SearchBar ref={ref} />
+				{!isLoggedIn() && <GetUserToLoginSection />}
 				<VStack gap={6} width={"100%"}>
 					<CategorizedDateLists
 						categorizedDateLists={data.categorizedDateLists}
 					/>
 					<p>
-						Want to find more dates? Trying{" "}
+						Want to find more dates? Try{" "}
 						<button
 							className={css({
 								textStyle: "paragraph",

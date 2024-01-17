@@ -14,6 +14,9 @@ export const buttonRecipe = defineRecipe({
 			opacity: 0.5,
 			cursor: "not-allowed",
 		},
+		_hover: {
+			filter: "brightness(110%)",
+		},
 	},
 	variants: {
 		visual: {
