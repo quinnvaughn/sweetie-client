@@ -138,6 +138,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 							stops.map(
 								(s) => `${s.location.name} in ${s.location.address.city.name}`,
 							),
+							stops.map(
+								(s) => `${s.location.name} ${s.location.address.city.name}`,
+							),
 						],
 					},
 					{ name: "description", content: description },
