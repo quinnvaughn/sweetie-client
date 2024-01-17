@@ -19,6 +19,7 @@ import {
 import { createPortal } from "react-dom"
 import { ClientOnly } from "remix-utils/client-only"
 import { RouterProvider } from "./context"
+import { showSigninModal } from "./cookies.server"
 import { PageContainer, ToastContainer } from "./features/ui"
 import { ViewerIsLoggedInDocument } from "./graphql/generated"
 import { gqlFetch } from "./graphql/graphql"
@@ -50,17 +51,24 @@ export const links: LinksFunction = () => [
 
 export async function loader({ request }: DataFunctionArgs) {
 	const { data } = await gqlFetch(request, ViewerIsLoggedInDocument)
+	const cookieHeader = request.headers.get("Cookie")
+	const cookie = (await showSigninModal.parse(cookieHeader)) || {}
 	const env = process.env
-	return json({
-		data,
-		ENV: {
-			GOOGLE_MAPS_API_KEY: env.GOOGLE_MAPS_API_KEY,
-			GRAPHQL_ENDPOINT: env.GRAPHQL_ENDPOINT,
-			FRONTEND_URL: env.FRONTEND_URL,
-			NODE_ENV: env.NODE_ENV,
-			GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
+	cookie.showSigninModal = (cookie.showSigninModal as boolean) ?? true
+	return json(
+		{
+			data,
+			showSigninModal: cookie?.showSigninModal,
+			ENV: {
+				GOOGLE_MAPS_API_KEY: env.GOOGLE_MAPS_API_KEY,
+				GRAPHQL_ENDPOINT: env.GRAPHQL_ENDPOINT,
+				FRONTEND_URL: env.FRONTEND_URL,
+				NODE_ENV: env.NODE_ENV,
+				GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
+			},
 		},
-	})
+		{ headers: { "Set-Cookie": await showSigninModal.serialize(cookie) } },
+	)
 }
 
 export function ErrorBoundary() {

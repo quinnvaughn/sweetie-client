@@ -1,22 +1,33 @@
-import { useLocation } from "@remix-run/react"
-import { useEffect, useState } from "react"
+import { useFetcher, useLocation, useRouteLoaderData } from "@remix-run/react"
+import { useState } from "react"
 import { $path } from "remix-routes"
 import { SignInPopupModal } from "~/features/auth"
 import { useOutsideClick } from "~/hooks"
-import { loginStore } from "~/stores"
+import { loader } from "~/root"
+import { action } from "~/routes/api.hide-sign-in-modal"
 import { css } from "~/styled-system/css"
 import { Desktop } from "../.."
 
 export function NotLoggedInActions() {
 	const { pathname } = useLocation()
-	const { setShowLoginPopup, showLoginPopup } = loginStore()
-	const [showLogin, setShowLogin] = useState(showLoginPopup ?? false)
-	const ref = useOutsideClick<HTMLDivElement>(() => {
-		if (showLoginPopup) {
-			setShowLoginPopup(false)
+	const result = useRouteLoaderData<typeof loader>("root")
+	const [showLogin, setShowLogin] = useState(result?.showSigninModal ?? false)
+	const fetcher = useFetcher<typeof action>()
+
+	function toggleShowLogin(value: boolean) {
+		if (result?.showSigninModal) {
+			fetcher.submit(
+				{},
+				{
+					method: "post",
+					action: $path("/api/hide-sign-in-modal"),
+				},
+			)
 		}
-		setShowLogin(false)
-	})
+		setShowLogin(value)
+	}
+
+	const ref = useOutsideClick<HTMLDivElement>(() => toggleShowLogin(false))
 
 	return (
 		<>
@@ -24,11 +35,7 @@ export function NotLoggedInActions() {
 				<div className={css({ position: "relative" })} ref={ref}>
 					<button
 						type="submit"
-						onClick={(e) => {
-							setShowLogin(!showLogin)
-							e.preventDefault()
-							e.stopPropagation()
-						}}
+						onClick={() => toggleShowLogin(!showLogin)}
 						className={css({
 							backgroundColor: "transparent",
 							border: "none",
