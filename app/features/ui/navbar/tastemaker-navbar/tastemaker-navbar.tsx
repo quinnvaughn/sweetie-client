@@ -56,8 +56,8 @@ export function TastemakerNavbar() {
 											text: "Drafts",
 										},
 										{
-											to: $path("/tastemaker/free-dates/retired"),
-											text: "Retired",
+											to: $path("/tastemaker/free-dates/archived"),
+											text: "Archived",
 										},
 										{
 											to: $path("/tastemaker/free-dates/analytics"),
@@ -126,8 +126,8 @@ export function TastemakerNavbar() {
 									text: "Drafts",
 								},
 								{
-									to: $path("/tastemaker/free-dates/retired"),
-									text: "Retired",
+									to: $path("/tastemaker/free-dates/archived"),
+									text: "Archived",
 								},
 								{
 									to: $path("/tastemaker/free-dates/analytics"),

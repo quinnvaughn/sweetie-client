@@ -1,7 +1,7 @@
 fragment FreeDateCard on FreeDate {
     id
     title
-	retired
+	archived
     thumbnail
 	updatedAt
 	nsfw

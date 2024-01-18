@@ -5,11 +5,11 @@ import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
 
 type Props = {
-	retired: boolean
+	archived: boolean
 	dates: FreeDateCardFragment[]
 }
 
-export function FreeDatesInformation({ retired, dates }: Props) {
+export function FreeDatesInformation({ archived, dates }: Props) {
 	return (
 		<VStack
 			gap={4}
@@ -23,7 +23,7 @@ export function FreeDatesInformation({ retired, dates }: Props) {
 					fontSize: { base: "24px", md: "32px" },
 				})}
 			>
-				{retired ? "Retired" : "Created"} Dates
+				{archived ? "Archived" : "Created"} Dates
 			</h1>
 			<HStack
 				gap={4}
@@ -32,9 +32,9 @@ export function FreeDatesInformation({ retired, dates }: Props) {
 				alignItems="flex-start"
 				width={"100%"}
 			>
-				{match([dates, retired])
+				{match([dates, archived])
 					.when(
-						([dates, retired]) => dates?.length === 0 && !retired,
+						([dates, archived]) => dates?.length === 0 && !archived,
 						() => (
 							<p className={css({ textStyle: "paragraph" })}>
 								Press &quot;Create a new date&quot; to get started making a new
@@ -43,10 +43,10 @@ export function FreeDatesInformation({ retired, dates }: Props) {
 						),
 					)
 					.when(
-						([dates, retired]) => dates?.length === 0 && retired,
+						([dates, archived]) => dates?.length === 0 && archived,
 						() => (
 							<p className={css({ textStyle: "paragraph" })}>
-								No retired dates.
+								No archived dates.
 							</p>
 						),
 					)

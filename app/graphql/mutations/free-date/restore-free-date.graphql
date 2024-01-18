@@ -1,5 +1,5 @@
-mutation UnretireFreeDate($input: UnretireFreeDateInput!) {
-  unretireFreeDate(input: $input) {
+mutation RestoreFreeDate($input: RestoreFreeDateInput!) {
+  restoreFreeDate(input: $input) {
     __typename
     ... on FreeDate {
 		id

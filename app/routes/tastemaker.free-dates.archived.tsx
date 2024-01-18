@@ -9,7 +9,7 @@ import { VStack } from "~/styled-system/jsx"
 
 export async function loader({ request }: DataFunctionArgs) {
 	const { data } = await gqlFetch(request, GetViewerFreeDatesDocument, {
-		retired: true,
+		archived: true,
 	})
 
 	if (!data?.viewer) {
@@ -31,7 +31,7 @@ export default function FreeDatesRetiredRoute() {
 		>
 			<VStack alignItems="flex-start" width={"100%"}>
 				<FreeDatesInformation
-					retired={true}
+					archived={true}
 					dates={data.viewer.tastemaker?.freeDates ?? []}
 				/>
 			</VStack>

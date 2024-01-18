@@ -92,6 +92,7 @@ const SearchBar = forwardRef<Ref>(function SearchBar(_p, ref) {
 					display: "flex",
 					flexDirection: "column",
 					alignItems: "center",
+					gap: 4,
 				})}
 			>
 				<div

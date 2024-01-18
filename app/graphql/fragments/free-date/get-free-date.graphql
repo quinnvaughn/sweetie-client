@@ -3,7 +3,7 @@ fragment GetFreeDate on FreeDate {
     title
     description
     thumbnail
-    retired
+    archived
     nsfw
     createdAt
     updatedAt

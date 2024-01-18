@@ -11,7 +11,7 @@ import { button } from "~/styled-system/recipes"
 
 export async function loader({ request }: DataFunctionArgs) {
 	const { data } = await gqlFetch(request, GetViewerFreeDatesDocument, {
-		retired: false,
+		archived: false,
 	})
 
 	if (!data?.viewer) {
@@ -59,7 +59,7 @@ export default function FreeDatesRoute() {
 					</VStack>
 				)}
 				<FreeDatesInformation
-					retired={false}
+					archived={false}
 					dates={data.viewer.tastemaker?.freeDates ?? []}
 				/>
 			</VStack>

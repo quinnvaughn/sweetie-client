@@ -18,7 +18,7 @@ mutation UpdateFreeDate($input: UpdateFreeDateInput!) {
 			title
 			description
 			thumbnail
-			retired
+			archived
 			nsfw
 			tags {
 				id 

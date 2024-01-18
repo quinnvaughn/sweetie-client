@@ -1,5 +1,5 @@
-mutation RetireFreeDate($input: RetireFreeDateInput!) {
-  retireFreeDate(input: $input) {
+mutation ArchiveFreeDate($input: ArchiveFreeDateInput!) {
+  archiveFreeDate(input: $input) {
     __typename
     ... on AuthError {
       message

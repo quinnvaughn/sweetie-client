@@ -1,9 +1,9 @@
-query GetViewerFreeDates($retired: Boolean!) {
+query GetViewerFreeDates($archived: Boolean!) {
     viewer {
 	  id
     tastemaker {
         id
-        freeDates (retired: $retired) {
+        freeDates (archived: $archived) {
           id
           ...FreeDateCard
         }

@@ -1,13 +1,13 @@
 import { Link, useFetcher, useLocation } from "@remix-run/react"
+import { useEffect } from "react"
 import { $path } from "remix-routes"
 import { FreeDateCardFragment } from "~/graphql/generated"
+import { useToast } from "~/hooks"
+import { action } from "~/routes/api.archive-date"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
-import { FreeDateCard } from ".."
 import { flex } from "~/styled-system/patterns"
-import { action } from "~/routes/api.retire-date"
-import { useEffect } from "react"
-import { useToast } from "~/hooks"
+import { FreeDateCard } from ".."
 
 type Props = {
 	date: FreeDateCardFragment
@@ -18,7 +18,7 @@ export function EditFreeDate({ date }: Props) {
 
 	const { pathname } = useLocation()
 
-	const isRetiredPage = pathname.includes("retired")
+	const isArchivedPage = pathname.includes("archived")
 	const { success, error } = useToast()
 
 	const data = fetcher.data
@@ -29,17 +29,17 @@ export function EditFreeDate({ date }: Props) {
 			error(data.error)
 		} else if (data?.data) {
 			success(
-				`We successfully ${isRetiredPage ? "unretired" : "retired"} "${
+				`We successfully ${isArchivedPage ? "restored" : "archived"} "${
 					date.title
 				}"`,
 			)
 		}
-	}, [data, isRetiredPage, date])
+	}, [data, isArchivedPage, date])
 
 	function retireDate() {
 		fetcher.submit(
-			{ id: date.id, type: isRetiredPage ? "unretire" : "retire" },
-			{ method: "POST", action: $path("/api/retire-date") },
+			{ id: date.id, type: isArchivedPage ? "restore" : "archive" },
+			{ method: "POST", action: $path("/api/archive-date") },
 		)
 	}
 
@@ -67,7 +67,7 @@ export function EditFreeDate({ date }: Props) {
 					type="button"
 					onClick={retireDate}
 				>
-					{isRetiredPage ? "Unretire" : "Retire"}
+					{isArchivedPage ? "Restore" : "Archive"}
 				</button>
 			</div>
 			<FreeDateCard date={date} />
