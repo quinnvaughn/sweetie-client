@@ -45,7 +45,11 @@ export function SignupModal() {
 			validator={authState === "login" ? loginValidator : registerValidator}
 			method="post"
 			fetcher={fetcher}
-			action={authState === "login" ? $path("/login") : $path("/register")}
+			action={
+				authState === "login"
+					? $path("/login", [["utm_source", "signup-modal"]])
+					: $path("/register", [["utm_source", "signup-modal"]])
+			}
 		>
 			<Modal>
 				<Modal.Header

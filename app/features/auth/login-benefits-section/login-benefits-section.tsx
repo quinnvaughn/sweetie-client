@@ -5,7 +5,7 @@ import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
 import { button } from "~/styled-system/recipes"
 
-export function GetUserToLoginSection() {
+export function LoginBenefitsSection() {
 	return (
 		<>
 			<Desktop css={{ width: "100%" }}>
@@ -30,7 +30,7 @@ export function GetUserToLoginSection() {
 						dating history.
 					</p>
 					<Link
-						to={$path("/login")}
+						to={$path("/login", [["utm_source", "login-benefits-section"]])}
 						className={button({ variant: "secondary", size: "md" })}
 					>
 						Sign in
@@ -59,7 +59,7 @@ export function GetUserToLoginSection() {
 						dating history.
 					</p>
 					<Link
-						to={$path("/login")}
+						to={$path("/login", [["utm_source", "login-benefits-section"]])}
 						className={button({ variant: "secondary", size: "md" })}
 					>
 						Sign in

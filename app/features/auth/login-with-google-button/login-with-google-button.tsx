@@ -23,7 +23,12 @@ export function LoginWithGoogleButton({
 		onSuccess: (tokenResponse) => {
 			fetcher.submit(
 				{ code: tokenResponse.code, redirectTo, noRedirect },
-				{ method: "post", action: $path("/api/login-with-google") },
+				{
+					method: "post",
+					action: $path("/api/login-with-google", [
+						["utm_source", "sign-up-modal"],
+					]),
+				},
 			)
 		},
 		flow: "auth-code",

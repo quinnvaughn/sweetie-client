@@ -45,7 +45,7 @@ export function SignInPopupModal() {
 					journey. Sign in for an enhanced experience!
 				</p>
 				<Link
-					to={$path("/login")}
+					to={$path("/login", [["utm_source", "sign-in-popup"]])}
 					className={css({
 						backgroundColor: "secondary",
 						color: "white",
@@ -63,7 +63,7 @@ export function SignInPopupModal() {
 					Sign in
 				</Link>
 				<Link
-					to={$path("/register")}
+					to={$path("/register", [["utm_source", "sign-in-popup"]])}
 					className={css({
 						backgroundColor: "transparent",
 						color: "secondary",

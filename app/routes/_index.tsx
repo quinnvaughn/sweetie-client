@@ -1,7 +1,7 @@
 import { DataFunctionArgs, json } from "@remix-run/node"
 import { useLoaderData } from "@remix-run/react"
 import { useRef } from "react"
-import { GetUserToLoginSection } from "~/features/auth"
+import { LoginBenefitsSection } from "~/features/auth"
 import { CategorizedDateLists } from "~/features/free-date"
 import { SearchBar } from "~/features/search"
 import { PageContainer } from "~/features/ui/page-container"
@@ -38,7 +38,7 @@ export default function HomeRoute() {
 					</span>
 				</p>
 				<SearchBar ref={ref} />
-				{!isLoggedIn() && <GetUserToLoginSection />}
+				{!isLoggedIn() && <LoginBenefitsSection />}
 				<VStack gap={6} width={"100%"}>
 					<CategorizedDateLists
 						categorizedDateLists={data.categorizedDateLists}

@@ -49,7 +49,11 @@ export function AuthModal({
 			fetcher={fetcher}
 			validator={authState === "login" ? loginValidator : registerValidator}
 			method="post"
-			action={authState === "login" ? $path("/login") : $path("/register")}
+			action={
+				authState === "login"
+					? $path("/login", [["utm_source", "auth-modal"]])
+					: $path("/register", [["utm_source", "auth-modal"]])
+			}
 		>
 			<Modal>
 				<Modal.Header
