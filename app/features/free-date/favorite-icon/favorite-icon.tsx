@@ -1,4 +1,4 @@
-import { IoIosHeartEmpty, IoMdHeart } from "react-icons/io/index.js"
+import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io/index.js"
 import { css } from "~/styled-system/css"
 
 type Props = {
@@ -15,7 +15,9 @@ export function FavoriteIcon({ onClick, favorited }: Props) {
 				top: "12px",
 				right: "12px",
 				cursor: "pointer",
-				backgroundColor: "transparent",
+				backgroundColor: "white",
+				padding: "4px",
+				borderRadius: "50%",
 			})}
 			onClick={(e) => {
 				e.preventDefault()
@@ -24,9 +26,13 @@ export function FavoriteIcon({ onClick, favorited }: Props) {
 			}}
 		>
 			{favorited ? (
-				<IoMdHeart size={30} className={css({ color: "secondary" })} />
+				<IoIosHeart size={24} className={css({ color: "secondary" })} />
 			) : (
-				<IoIosHeartEmpty size={30} color="white" />
+				<IoIosHeartEmpty
+					size={24}
+					strokeWidth={"2px"}
+					className={css({ color: "secondary" })}
+				/>
 			)}
 		</button>
 	)
