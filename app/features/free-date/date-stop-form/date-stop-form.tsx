@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react"
 import { FaArrowDown, FaArrowUp, FaTrash } from "react-icons/fa/index.js"
 import { useControlField, useField } from "remix-validated-form"
 import { LocationCombobox } from "~/features/location"
-import { Button, Input, Select, Textarea, TimePicker } from "~/features/ui"
+import { Button, Input, Textarea, TimePicker } from "~/features/ui"
 import { generateTimeIntervals } from "~/lib"
 import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
@@ -38,7 +37,7 @@ export function DateStopForm({
 	onMoveUp,
 	locationPath,
 }: Props) {
-	const [value, setValue] = useControlField<string>(estimatedTime)
+	const [value] = useControlField<string>(estimatedTime)
 	const { error } = useField(estimatedTime)
 
 	return (

@@ -174,9 +174,9 @@ export function FreeDateForm({
 						name="recommendedTime"
 						required
 						defaultDisplayedTimes={[
-							{ tab: 0, text: "6:00 PM", value: "6:00 PM" },
-							{ tab: 1, text: "6:30 PM", value: "6:30 PM" },
-							{ tab: 2, text: "7:00 PM", value: "7:00 PM" },
+							{ tab: 0, text: "5:30 PM", value: "5:30 PM" },
+							{ tab: 1, text: "6:00 PM", value: "6:00 PM" },
+							{ tab: 2, text: "6:30 PM", value: "6:30 PM" },
 						]}
 					/>
 				</VStack>
@@ -234,7 +234,12 @@ export function FreeDateForm({
 						size="md"
 						icon={<FiPlus className={css({ color: "white" })} />}
 						onClick={() =>
-							push({ title: "", content: "", location: { id: "", name: "" } })
+							push({
+								title: "",
+								content: "",
+								location: { id: "", name: "" },
+								estimatedTime: "1:00",
+							})
 						}
 					>
 						Add another stop

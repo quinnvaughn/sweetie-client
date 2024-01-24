@@ -101,7 +101,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 						id,
 						description: description ?? "",
 						thumbnail: thumbnail ?? "",
-						recommendedTime: recommendedTime ?? "6:30 PM",
+						recommendedTime: recommendedTime ?? "6:00 PM",
 						nsfw: nsfw ? "true" : "false",
 						stops:
 							stops.length > 0
