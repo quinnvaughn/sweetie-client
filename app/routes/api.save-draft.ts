@@ -48,7 +48,15 @@ export async function action({ request }: DataFunctionArgs) {
 
 	const { data } = await gqlFetch(request, SaveFreeDateDraftDocument, {
 		input: {
-			...omit(result.data, "nsfw", "stops", "tagText", "prepText", 'tags', 'prep'),
+			...omit(
+				result.data,
+				"nsfw",
+				"stops",
+				"tagText",
+				"prepText",
+				"tags",
+				"prep",
+			),
 			nsfw: result.data.nsfw === "true",
 			prep: result.data.prep?.filter((v) => v.length > 0) ?? [],
 			tags: result.data.tags?.filter((v) => v.length > 0) ?? [],
