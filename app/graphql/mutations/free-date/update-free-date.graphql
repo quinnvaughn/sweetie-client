@@ -20,6 +20,7 @@ mutation UpdateFreeDate($input: UpdateFreeDateInput!) {
 			thumbnail
 			archived
 			nsfw
+			prep
 			tags {
 				id 
 				name

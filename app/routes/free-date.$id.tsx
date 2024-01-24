@@ -41,7 +41,7 @@ import {
 	ViewerIsLoggedInDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import { useScrolledToBottom, useTrack, useViewer } from "~/hooks"
+import { useScrolledToBottom, useTrack } from "~/hooks"
 import { singularOrPlural } from "~/lib"
 import { signupStore } from "~/stores"
 import { css } from "~/styled-system/css"
@@ -413,6 +413,24 @@ export default function FreeDateIdeaRoute() {
 								>
 									{freeDate.description}
 								</em>
+								<div
+									className={divider({
+										color: "gray",
+										thickness: "1px",
+										orientation: "horizontal",
+										width: "100%",
+									})}
+								/>
+								{freeDate.prep.length > 0 && (
+									<VStack gap={4} width={"100%"} alignItems={"flex-start"}>
+										<h3 className={css({ textStyle: "h3" })}>Before you go</h3>
+										<ul className={css({ listStyle: "inside" })}>
+											{freeDate.prep.map((p) => (
+												<li>{p}</li>
+											))}
+										</ul>
+									</VStack>
+								)}
 								<VStack gap={4} alignItems={"flex-start"}>
 									<ClientOnly>
 										{() => <DateLocationsMap stops={freeDate.stops} />}
@@ -424,6 +442,7 @@ export default function FreeDateIdeaRoute() {
 											id={i === 0 ? "first-stop" : ""}
 										/>
 									))}
+									Vhp
 								</VStack>
 							</VStack>
 							<div

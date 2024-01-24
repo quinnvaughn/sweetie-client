@@ -13,6 +13,8 @@ export const schema = z.object({
 	id: z.string().optional(),
 	thumbnail: z.string().optional(),
 	nsfw: z.union([z.literal("true"), z.literal("false")]).optional(),
+	prepText: z.string().optional(),
+	prep: zfd.repeatableOfType(z.string()).optional(),
 	tagText: z.string().optional(),
 	title: z.string().optional(),
 	description: z.string().optional(),
@@ -46,8 +48,10 @@ export async function action({ request }: DataFunctionArgs) {
 
 	const { data } = await gqlFetch(request, SaveFreeDateDraftDocument, {
 		input: {
-			...omit(result.data, "nsfw", "stops", "tagText"),
+			...omit(result.data, "nsfw", "stops", "tagText", "prepText", 'tags', 'prep'),
 			nsfw: result.data.nsfw === "true",
+			prep: result.data.prep?.filter((v) => v.length > 0) ?? [],
+			tags: result.data.tags?.filter((v) => v.length > 0) ?? [],
 			stops:
 				result.data.stops?.map((stop, i) => ({
 					...omit(stop, "location"),

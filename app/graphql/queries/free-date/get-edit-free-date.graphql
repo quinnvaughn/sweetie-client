@@ -7,6 +7,7 @@ query GetEditFreeDate($id: String!) {
         description
         thumbnail
         nsfw
+        prep
         tags {
           ...Tags
         }

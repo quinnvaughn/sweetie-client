@@ -41,13 +41,23 @@ export async function action({ request, params }: DataFunctionArgs) {
 	const { data } = await gqlFetch(request, UpdateFreeDateDocument, {
 		input: {
 			id,
-			...omit(result.data, "tagText", "tags", "stops", "nsfw", "id"),
+			...omit(
+				result.data,
+				"tagText",
+				"tags",
+				"stops",
+				"nsfw",
+				"id",
+				"prep",
+				"prepText",
+			),
 			nsfw: result.data.nsfw === "true",
 			stops: result.data.stops.map<UpdateDateStopInput>((stop, i) => ({
 				...stop,
 				order: i + 1,
 				estimatedTime: getMinutes(stop.estimatedTime),
 			})),
+			prep: result.data.prep?.filter((v) => v.length > 0) ?? [],
 			tags: result.data.tags?.filter((v) => v.length > 0) ?? [],
 		},
 	})
@@ -81,8 +91,16 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 		.with({ __typename: "Error" }, ({ message }) => json({ error: message }))
 		.with(
 			{ __typename: "FreeDate" },
-			({ description, nsfw, stops, tags, thumbnail, title, recommendedTime }) =>
-				json({
+			({
+				description,
+				nsfw,
+				stops,
+				tags,
+				thumbnail,
+				title,
+				recommendedTime,
+				prep,
+			}) => json({
 					error: null,
 					...setFormDefaults<FreeDateFormValues>("edit-free-date-form", {
 						description,
@@ -98,6 +116,8 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 								name: location.name,
 							},
 						})),
+						prep,
+						prepText: "",
 						tags: tags.map(({ name }) => name),
 						tagText: "",
 						title,

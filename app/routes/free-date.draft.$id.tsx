@@ -45,13 +45,23 @@ export async function action({ request }: DataFunctionArgs) {
 
 	const { data } = await gqlFetch(request, CreateFreeDateDocument, {
 		input: {
-			...omit(result.data, "tagText", "tags", "stops", "nsfw", "id"),
+			...omit(
+				result.data,
+				"tagText",
+				"tags",
+				"stops",
+				"nsfw",
+				"id",
+				"prepText",
+				"prep",
+			),
 			nsfw: result.data.nsfw === "true",
 			stops: result.data.stops.map<CreateDateStopInput>((stop, i) => ({
 				...stop,
 				estimatedTime: getMinutes(stop.estimatedTime),
 				order: i + 1,
 			})),
+			prep: result.data.prep?.filter((v) => v.length > 0) ?? [],
 			tags: result.data.tags?.filter((v) => v.length > 0) ?? [],
 		},
 	})
@@ -94,6 +104,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 				thumbnail,
 				title,
 				recommendedTime,
+				prep,
 			}) => json({
 					error: null,
 					id,
@@ -123,6 +134,8 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 										},
 								  ],
 						tags: tags.map(({ name }) => name),
+						prep: prep,
+						prepText: "",
 						tagText: "",
 						title: title ?? "",
 					}),

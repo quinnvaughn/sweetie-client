@@ -9,6 +9,7 @@ import {
 import { z } from "zod"
 import { SaveDraftButton } from "~/features/drafts"
 import {
+	BulletPointsInput,
 	Button,
 	ImageUpload,
 	Input,
@@ -31,6 +32,15 @@ const schema = z.object({
 	nsfw: z.union([z.literal("true"), z.literal("false")], {
 		required_error: "NSFW is required.",
 	}),
+	prepText: z.string().optional(),
+	prep: z
+		.array(z.string())
+		.or(z.string())
+		.optional()
+		.transform((data) => {
+			if (typeof data === "string") return [data]
+			return data
+		}),
 	tagText: z.string().optional(),
 	title: z
 		.string()
@@ -199,6 +209,17 @@ export function FreeDateForm({
 							},
 						]}
 						name="nsfw"
+					/>
+				</VStack>
+				<VStack gap={4} alignItems="flex-start" width={"100%"}>
+					<p className={css({ textStyle: "paragraph", fontWeight: "bold" })}>
+						Any preparation steps recommended for this date? If so, please list
+						them here.
+					</p>
+					<BulletPointsInput
+						label="Preparation step"
+						prepName="prep"
+						textName="prepText"
 					/>
 				</VStack>
 				<VStack gap={4} paddingBottom={"40px"} alignItems="flex-start">

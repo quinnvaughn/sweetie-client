@@ -13,6 +13,7 @@ query GetFreeDateDraft($id: String!) {
                 thumbnail
                 description
 				nsfw
+                prep
 				tags {
 					...Tags
 				}
