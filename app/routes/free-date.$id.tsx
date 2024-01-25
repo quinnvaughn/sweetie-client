@@ -442,7 +442,6 @@ export default function FreeDateIdeaRoute() {
 											id={i === 0 ? "first-stop" : ""}
 										/>
 									))}
-									Vhp
 								</VStack>
 							</VStack>
 							<div
