@@ -1,4 +1,9 @@
-import { LoaderFunctionArgs, json } from "@remix-run/node"
+import {
+	LoaderFunctionArgs,
+	MetaArgs,
+	MetaFunction,
+	json,
+} from "@remix-run/node"
 import { useLoaderData } from "@remix-run/react"
 import { $params } from "remix-routes"
 import { P, match } from "ts-pattern"
@@ -21,6 +26,17 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 		.otherwise(() => {
 			throw new Response("Not Found", { status: 404 })
 		})
+}
+
+export const meta: MetaFunction<typeof loader> = ({
+	data,
+}: MetaArgs<typeof loader>) => {
+	if (!data?.user) return [{ title: "Not Found", status: 404 }]
+	const { user } = data
+	return [
+		{ title: `${user.name} (@${user.username}) - Sweetie` },
+		{ name: "description", content: `${user.name} profile` },
+	]
 }
 
 export default function UserProfileRoute() {
