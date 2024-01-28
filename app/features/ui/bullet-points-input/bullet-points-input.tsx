@@ -74,6 +74,7 @@ export function BulletPointsInput({ prepName, textName, label }: Props) {
 						})}
 						onClick={() => {
 							const lowercaseText = text.toLowerCase()
+							if (text.length === 0) return
 							if (prep.includes(lowercaseText)) return
 							setPrep([...prep, text])
 							setText("")

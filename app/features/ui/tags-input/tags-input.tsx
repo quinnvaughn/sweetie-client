@@ -73,6 +73,7 @@ export function TagsInput({ tagsName, textName, label }: Props) {
 						})}
 						onClick={() => {
 							const lowercaseText = text.toLowerCase()
+							if (text.length === 0) return
 							if (tags.includes(lowercaseText)) return
 							setTags([...tags, lowercaseText])
 							setText("")
