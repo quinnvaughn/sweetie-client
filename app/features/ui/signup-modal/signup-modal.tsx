@@ -7,7 +7,6 @@ import { z } from "zod"
 import { LoginWithGoogleButton } from "~/features/auth"
 import { Input, Modal } from "~/features/ui"
 import { ModalBody } from "~/features/ui/modal/body"
-import { signupStore } from "~/stores"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
@@ -34,10 +33,13 @@ const registerValidator = withZod(
 	}),
 )
 
-export function SignupModal() {
+type Props = {
+	onClose: () => void
+}
+
+export function SignupModal({ onClose }: Props) {
 	const [authState, setAuthState] = useState<AuthState>("register")
 	const { pathname } = useLocation()
-	const { clearSignupModal } = signupStore()
 	const fetcher = useFetcher()
 
 	return (
@@ -55,7 +57,7 @@ export function SignupModal() {
 				<Modal.Header
 					type="button"
 					title={authState === "login" ? "Login" : "Create an account"}
-					onClick={() => clearSignupModal()}
+					onClick={onClose}
 				/>
 				<ModalBody>
 					<VStack gap={2} alignItems={"center"}>

@@ -4,16 +4,13 @@ import {
 	Outlet,
 	ShouldRevalidateFunction,
 	useLoaderData,
-	useLocation,
 } from "@remix-run/react"
-import isbot from "isbot"
 import { DateTime } from "luxon"
-import { useContext, useEffect } from "react"
 import { $params, $path } from "remix-routes"
 import { ClientOnly } from "remix-utils/client-only"
 import { match } from "ts-pattern"
-import { RouterContext } from "~/context"
 import { showShareScreen } from "~/cookies.server"
+import { LoginBenefitsSection } from "~/features/auth"
 import { FloatingAddToCalendar } from "~/features/date-itinerary"
 import { DateStop } from "~/features/date-stop"
 import {
@@ -33,17 +30,12 @@ import {
 	Mobile,
 	OpenShareModalLink,
 	PageContainer,
-	SignupModal,
 	Tags,
 } from "~/features/ui"
-import {
-	GetFreeDateDocument,
-	ViewerIsLoggedInDocument,
-} from "~/graphql/generated"
+import { GetFreeDateDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import { useScrolledToBottom, useTrack } from "~/hooks"
+import { useScrolledToBottom, useTrack, useViewer } from "~/hooks"
 import { singularOrPlural } from "~/lib"
-import { signupStore } from "~/stores"
 import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
 import { divider, flex } from "~/styled-system/patterns"
@@ -74,7 +66,6 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const { id } = $params("/free-date/:id", params)
 	const { data } = await gqlFetch(request, GetFreeDateDocument, { id })
-	const { data: userData } = await gqlFetch(request, ViewerIsLoggedInDocument)
 
 	if (!data?.freeDate) {
 		throw new Response("Not Found", { status: 404 })
@@ -85,8 +76,6 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 	return json({
 		freeDate: data.freeDate,
 		showShareScreen: cookie ? (cookie.showShareScreen as boolean) : false,
-		viewer: userData?.viewer,
-		isBot: isbot(request.headers.get("user-agent")),
 	})
 }
 
@@ -237,12 +226,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 }
 
 export default function FreeDateIdeaRoute() {
-	const { freeDate, showShareScreen, viewer, isBot } =
-		useLoaderData<typeof loader>()
+	const { freeDate, showShareScreen } = useLoaderData<typeof loader>()
 	const track = useTrack()
-	const { pathname } = useLocation()
-	const { incrementTimesViewedDates, showSignupModal } = signupStore()
-	const { from } = useContext(RouterContext)
+	const { isLoggedIn } = useViewer()
 	useScrolledToBottom(() => {
 		if (freeDate.__typename === "FreeDate" && !freeDate.isUserTastemaker) {
 			track("User Scrolled To Bottom", {
@@ -252,11 +238,6 @@ export default function FreeDateIdeaRoute() {
 			})
 		}
 	})
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		!isBot && incrementTimesViewedDates(!!viewer, pathname, from)
-	}, [viewer, pathname, from, isBot])
 
 	return showShareScreen && freeDate.__typename === "FreeDate" ? (
 		<ShareDateScreen freeDate={freeDate} />
@@ -271,7 +252,6 @@ export default function FreeDateIdeaRoute() {
 		>
 			<Outlet />
 			<OnboardingTutorial />
-			{!isBot && showSignupModal && <SignupModal />}
 			{match(freeDate)
 				.with({ __typename: "Error" }, () => (
 					<p className={css({ textStyle: "paragraph" })}>Not Found</p>
@@ -413,20 +393,20 @@ export default function FreeDateIdeaRoute() {
 								>
 									{freeDate.description}
 								</em>
-								<div
-									className={divider({
-										color: "gray",
-										thickness: "1px",
-										orientation: "horizontal",
-										width: "100%",
-									})}
-								/>
 								{freeDate.prep.length > 0 && (
 									<VStack gap={4} width={"100%"} alignItems={"flex-start"}>
+										<div
+											className={divider({
+												color: "gray",
+												thickness: "1px",
+												orientation: "horizontal",
+												width: "100%",
+											})}
+										/>
 										<h3 className={css({ textStyle: "h3" })}>Before you go</h3>
 										<ul className={css({ listStyle: "inside" })}>
-											{freeDate.prep.map((p) => (
-												<li>{p}</li>
+											{freeDate.prep.map((p, i) => (
+												<li key={`${p}${i}`}>{p}</li>
 											))}
 										</ul>
 									</VStack>
@@ -435,6 +415,9 @@ export default function FreeDateIdeaRoute() {
 									<ClientOnly>
 										{() => <DateLocationsMap stops={freeDate.stops} />}
 									</ClientOnly>
+									{!isLoggedIn() && (
+										<LoginBenefitsSection buttonSize={{ desktop: "sm" }} />
+									)}
 									{freeDate.stops.map((stop, i) => (
 										<DateStop
 											stop={stop}

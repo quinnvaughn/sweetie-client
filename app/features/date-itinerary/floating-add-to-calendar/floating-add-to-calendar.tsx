@@ -37,6 +37,22 @@ export function FloatingAddToCalendar() {
 	const { showOnboardingTutorial } = freeDateStore()
 	const [scrollY, setScrollY] = useState(0)
 	const [showFloatingButton, setShowFloatingButton] = useState(true)
+	// if the user stops scrolling for a while, show the floating button
+	const [scrollTimeout, setScrollTimeout] = useState<NodeJS.Timeout | null>(
+		null,
+	)
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		if (scrollTimeout) {
+			clearTimeout(scrollTimeout)
+		}
+		setScrollTimeout(
+			setTimeout(() => {
+				setShowFloatingButton(true)
+			}, 4000),
+		)
+	}, [scrollY])
 	// check if user is scrolling down or up
 	// if down, hide the floating button
 	// if up, show the floating button
@@ -67,7 +83,7 @@ export function FloatingAddToCalendar() {
 			})}
 		>
 			<div className={flex({ justifyContent: "center", width: "100%" })}>
-				<p className={css({ textStyle: "paragraph" })}>
+				<p className={css({ textStyle: "paragraph", textAlign: "center" })}>
 					Add to your calendar for{" "}
 					<span
 						className={css({
@@ -76,8 +92,9 @@ export function FloatingAddToCalendar() {
 							color: "secondary",
 						})}
 					>
-						free
+						free{" "}
 					</span>
+					and save yourself time.
 				</p>
 			</div>
 			<GoOnThisDateButton />

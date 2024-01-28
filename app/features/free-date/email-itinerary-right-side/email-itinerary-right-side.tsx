@@ -19,20 +19,23 @@ export function EmailItineraryRightSide() {
 			})}
 		>
 			<GoOnThisDateButton />
-			<div className={flex({ justifyContent: "center", width: "100%" })}>
-				<p className={css({ textStyle: "paragraph" })}>
-					Add to your calendar for{" "}
-					<span
-						className={css({
-							fontWeight: "bold",
-							textStyle: "paragraph",
-							color: "secondary",
-						})}
-					>
-						free
-					</span>
-				</p>
-			</div>
+			<VStack gap={2} alignContent={"flex-start"} justifyContent={"flex-start"}>
+				<div className={flex({ justifyContent: "center", width: "100%" })}>
+					<p className={css({ textStyle: "paragraph", textAlign: "center" })}>
+						Add to your calendar for{" "}
+						<span
+							className={css({
+								fontWeight: "bold",
+								textStyle: "paragraph",
+								color: "secondary",
+							})}
+						>
+							free{" "}
+						</span>
+						and save yourself time.
+					</p>
+				</div>
+			</VStack>
 		</VStack>
 	)
 }
