@@ -214,7 +214,9 @@ export function FreeDateForm({
 				<VStack gap={4} alignItems="flex-start" width={"100%"}>
 					<p className={css({ textStyle: "paragraph", fontWeight: "bold" })}>
 						Any preparation steps recommended for this date? If so, please list
-						them here.
+						them here. These could be things like making a reservation,
+						reserving an Uber, buying tickets or flowers, or bringing a picnic
+						blanket.
 					</p>
 					<BulletPointsInput
 						label="Preparation step"
