@@ -19,12 +19,10 @@ export function LoginBenefitsSection({ buttonSize }: Props) {
 				<HStack
 					padding={"24px"}
 					borderRadius={"8px"}
-					borderColor={"gray"}
-					border={"1px solid"}
 					width={"100%"}
 					boxShadow={"sm"}
 					justifyContent={"space-between"}
-					backgroundColor={"#191e3b"}
+					backgroundColor={"#210124"}
 				>
 					<p
 						className={css({
