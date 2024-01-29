@@ -83,7 +83,7 @@ export default function LinksRoute() {
 					</a>
 					<a
 						className={customLinkStyles}
-						href={"https://twitter.com/sweetie_dates"}
+						href={"https://tiktok.com/@sweetie_date_night"}
 					>
 						<FaTiktok size={20} className={css({ color: "black" })} />
 					</a>
