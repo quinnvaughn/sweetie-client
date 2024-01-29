@@ -21,7 +21,7 @@ export function PayForMyDate() {
 					fontWeight: "500",
 				})}
 			>
-				Interested in getting paid to go on dates?
+				Want money off your next date?
 			</p>
 			<Link
 				to={$path("/contest/pay-for-my-date")}
