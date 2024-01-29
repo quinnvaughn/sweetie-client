@@ -1,6 +1,17 @@
+import { MetaFunction } from "@remix-run/node"
 import { PageContainer } from "~/features/ui"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
+
+export const meta: MetaFunction = () => {
+	return [
+		{ title: "Sweetie Date Night Contest: Pay For My Date!" },
+		{
+			name: "description",
+			content: "Contest Alert! Win $50 towards your next Sweetie date night!",
+		},
+	]
+}
 
 export default function PayForMyDateRoute() {
 	return (
