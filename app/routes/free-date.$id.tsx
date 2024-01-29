@@ -21,6 +21,7 @@ import {
 	GetHelpFindingADate,
 	NSFWTag,
 	OnboardingTutorial,
+	PayForMyDate,
 } from "~/features/free-date"
 import { ShareDateScreen } from "~/features/free-date/share-date-screen/share-date-screen"
 import { TastemakerInfo } from "~/features/tastemaker"
@@ -281,7 +282,11 @@ export default function FreeDateIdeaRoute() {
 								alignItems="flex-start"
 								width={{ base: "100%", md: "66%" }}
 							>
-								<VStack gap={freeDate.nsfw ? 1 : 0}>
+								<VStack
+									gap={freeDate.nsfw ? 1 : 0}
+									width={"100%"}
+									alignItems={"flex-start"}
+								>
 									<h1 className={css({ textStyle: "h1", fontSize: 32 })}>
 										{freeDate.title}
 									</h1>
@@ -303,6 +308,7 @@ export default function FreeDateIdeaRoute() {
 											title={freeDate.title}
 										/>
 									</div>
+									<PayForMyDate />
 									{freeDate.tags.length > 0 && <Tags tags={freeDate.tags} />}
 									<div
 										className={divider({
@@ -425,6 +431,7 @@ export default function FreeDateIdeaRoute() {
 											id={i === 0 ? "first-stop" : ""}
 										/>
 									))}
+									P
 								</VStack>
 							</VStack>
 							<div
