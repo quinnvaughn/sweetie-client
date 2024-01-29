@@ -33,14 +33,18 @@ export function Footer() {
 						backgroundColor: "#F7F7F7",
 					})}
 				>
-					<SocialLinks />
-					<p className={css({ textStyle: "paragraph" })}>
-						© {DateTime.now().year} trysweetie.com
-					</p>
-					<HStack gap={2}>
+					<HStack gap={3}>
+						<Link className={link} to={$path("/links")}>
+							Social Links
+						</Link>
 						<Link className={link} to={$path("/blog")}>
 							Blog
 						</Link>
+					</HStack>
+					<p className={css({ textStyle: "paragraph" })}>
+						© {DateTime.now().year} trysweetie.com
+					</p>
+					<HStack gap={3}>
 						<Link className={link} to={$path("/privacy-policy")}>
 							Privacy Policy
 						</Link>
