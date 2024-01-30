@@ -23,6 +23,31 @@ export const meta: MetaFunction = () => {
 			content:
 				"https://www.moneymagpie.com/wp-content/uploads/2023/03/MoneyMagpie_Couple-Cash-Savings-Happy-Celebrate-Win-e1514892677221.jpg",
 		},
+		{
+			name: "twitter:card",
+			content: "summary_large_image",
+		},
+		{
+			name: "twitter:site",
+			content: "@sweetie_dates",
+		},
+		{
+			name: "twitter:creator",
+			content: "@sweetie_dates",
+		},
+		{
+			name: "twitter:title",
+			content: "Sweetie Date Night Contest: Pay For My Date!",
+		},
+		{
+			name: "twitter:description",
+			content: "Contest Alert! Win $50 towards your next Sweetie date night!",
+		},
+		{
+			name: "twitter:image",
+			content:
+				"https://www.moneymagpie.com/wp-content/uploads/2023/03/MoneyMagpie_Couple-Cash-Savings-Happy-Celebrate-Win-e1514892677221.jpg",
+		},
 	]
 }
 
