@@ -3,12 +3,27 @@ import { PageContainer } from "~/features/ui"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
-export const meta: MetaFunction = () => {
+export const meta: MetaFunction = ({ matches }) => {
+	const parentMeta = matches.flatMap((match) => match.meta ?? [])
 	return [
+		...parentMeta,
 		{ title: "Sweetie Date Night Contest: Pay For My Date!" },
 		{
 			name: "description",
 			content: "Contest Alert! Win $50 towards your next Sweetie date night!",
+		},
+		{
+			name: "og:title",
+			content: "Sweetie Date Night Contest: Pay For My Date!",
+		},
+		{
+			name: "og:author",
+			content: "Sweetie",
+		},
+		{
+			name: "og:image",
+			content:
+				"https://www.moneymagpie.com/wp-content/uploads/2023/03/MoneyMagpie_Couple-Cash-Savings-Happy-Celebrate-Win-e1514892677221.jpg",
 		},
 	]
 }
