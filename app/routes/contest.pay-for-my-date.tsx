@@ -3,10 +3,8 @@ import { PageContainer } from "~/features/ui"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
-export const meta: MetaFunction = ({ matches }) => {
-	const parentMeta = matches.flatMap((match) => match.meta ?? [])
+export const meta: MetaFunction = () => {
 	return [
-		...parentMeta,
 		{ title: "Sweetie Date Night Contest: Pay For My Date!" },
 		{
 			name: "description",
