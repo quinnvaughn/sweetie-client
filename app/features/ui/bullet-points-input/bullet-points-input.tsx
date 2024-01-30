@@ -1,7 +1,9 @@
+import { FaArrowDown, FaArrowUp } from "react-icons/fa/index.js"
 import { FiPlus, FiX } from "react-icons/fi/index.js"
 import { useControlField, useField } from "remix-validated-form"
 import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
+import { Button } from ".."
 
 type Props = {
 	textName: string
@@ -96,8 +98,49 @@ export function BulletPointsInput({ prepName, textName, label }: Props) {
 				) : null}
 			</VStack>
 			<ul className={css({ listStyle: "inside" })}>
-				{prep.map((p) => (
-					<li key={p}>{p}</li>
+				{prep.map((p, i) => (
+					<HStack gap={2} alignItems={"center"} width={"100%"}>
+						<li key={p}>{p}</li>
+						{i !== 0 && prep.length > 1 && (
+							<button
+								className={css({ cursor: "pointer", height: "100%" })}
+								type="button"
+								onClick={() => {
+									const newPrep = [...prep]
+									const temp = newPrep[i - 1]
+									newPrep[i - 1] = newPrep[i]
+									newPrep[i] = temp
+									setPrep(newPrep)
+								}}
+							>
+								<FaArrowUp className={css({ color: "black" })} />
+							</button>
+						)}
+						{i !== prep.length - 1 && (
+							<button
+								type="button"
+								className={css({ cursor: "pointer", height: "100%" })}
+								onClick={() => {
+									const newPrep = [...prep]
+									const temp = newPrep[i + 1]
+									newPrep[i + 1] = newPrep[i]
+									newPrep[i] = temp
+									setPrep(newPrep)
+								}}
+							>
+								<FaArrowDown className={css({ color: "black" })} />
+							</button>
+						)}
+						<button
+							className={css({ cursor: "pointer", height: "100%" })}
+							type="button"
+							onClick={() => {
+								setPrep(prep.filter((x) => x !== p))
+							}}
+						>
+							<FiX size={20} />
+						</button>
+					</HStack>
 				))}
 			</ul>
 		</VStack>
