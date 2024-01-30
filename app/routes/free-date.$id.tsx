@@ -431,7 +431,6 @@ export default function FreeDateIdeaRoute() {
 											id={i === 0 ? "first-stop" : ""}
 										/>
 									))}
-									P
 								</VStack>
 							</VStack>
 							<div
