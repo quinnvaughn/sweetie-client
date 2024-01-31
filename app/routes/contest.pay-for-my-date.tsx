@@ -1,5 +1,7 @@
 import { MetaFunction } from "@remix-run/node"
+import { useEffect } from "react"
 import { PageContainer } from "~/features/ui"
+import { useTrack } from "~/hooks"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
@@ -52,6 +54,12 @@ export const meta: MetaFunction = () => {
 }
 
 export default function PayForMyDateRoute() {
+	const track = useTrack()
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		track('User viewed "Pay For My Date" contest page', {})
+	}, [])
 	return (
 		<PageContainer
 			width={{ base: "100%", md: 780, lg: 1024 }}
