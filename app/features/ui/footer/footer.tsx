@@ -4,7 +4,6 @@ import { $path } from "remix-routes"
 import { css } from "~/styled-system/css"
 import { HStack } from "~/styled-system/jsx"
 import { Desktop, Mobile } from ".."
-import { SocialLinks } from "../social-links"
 import { MobileFooter } from "./mobile-footer"
 
 const link = css({

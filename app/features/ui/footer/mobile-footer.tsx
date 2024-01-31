@@ -3,7 +3,6 @@ import { DateTime } from "luxon"
 import { $path } from "remix-routes"
 import { css } from "~/styled-system/css"
 import { HStack } from "~/styled-system/jsx"
-import { SocialLinks } from "../social-links"
 
 const link = css({
 	color: "black",
