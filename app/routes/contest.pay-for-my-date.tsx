@@ -92,8 +92,8 @@ export default function PayForMyDateRoute() {
 							width: "auto",
 							borderRadius: "4px",
 						})}
-						alt="austin powers yeah baby yeah gif"
-						src="https://media1.tenor.com/m/XRbkPJly5NUAAAAC/yeah-baby-yeah.gif"
+						alt="what are the rules gif"
+						src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMm45dWZoMmxkc2hpMnNlcnN6b21rajRuOXQxdDUxeDdwNmpkcXJicCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/4KFjJmTGav0QoE5WDk/giphy.gif"
 					/>
 				</div>
 				<h2 className={css({ textStyle: "h2" })}>Here's how to participate:</h2>{" "}
