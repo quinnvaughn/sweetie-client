@@ -1,7 +1,7 @@
 import { Link, useFetcher } from "@remix-run/react"
 import { useEffect, useState } from "react"
 import { $path } from "remix-routes"
-import { GetUserToSignUpModal, Image, SignupModal } from "~/features/ui"
+import { GetUserToSignUpModal, Image } from "~/features/ui"
 import { UserAvatar } from "~/features/user"
 import { FreeDateCardFragment } from "~/graphql/generated"
 import { useToast } from "~/hooks"

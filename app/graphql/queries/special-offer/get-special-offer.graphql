@@ -1,0 +1,5 @@
+query GetSpecialOffer {
+  getSpecialOffer {
+    ...SpecialOffer
+  }
+}

@@ -4,8 +4,12 @@ import { useRef } from "react"
 import { LoginBenefitsSection } from "~/features/auth"
 import { CategorizedDateLists } from "~/features/free-date"
 import { SearchBar } from "~/features/search"
+import { SpecialOffer } from "~/features/special-offer"
 import { PageContainer } from "~/features/ui/page-container"
-import { CategorizedDateListsDocument } from "~/graphql/generated"
+import {
+	CategorizedDateListsDocument,
+	GetSpecialOfferDocument,
+} from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { useViewer } from "~/hooks"
 import { css } from "~/styled-system/css"
@@ -16,7 +20,15 @@ export async function loader({ request }: DataFunctionArgs) {
 		request,
 		CategorizedDateListsDocument,
 	)
-	return json(data, {
+	const { data: specialOfferData } = await gqlFetch(
+		request,
+		GetSpecialOfferDocument,
+	)
+	const newData = {
+		...data,
+		specialOffer: specialOfferData,
+	}
+	return json(newData, {
 		headers: { "Set-Cookie": response?.headers.get("Set-Cookie") ?? "" },
 	})
 }
@@ -38,10 +50,13 @@ export default function HomeRoute() {
 					</span>
 				</p>
 				<SearchBar ref={ref} />
+				{data.specialOffer?.getSpecialOffer && (
+					<SpecialOffer specialOffer={data.specialOffer.getSpecialOffer} />
+				)}
 				{!isLoggedIn() && <LoginBenefitsSection />}
 				<VStack gap={6} width={"100%"}>
 					<CategorizedDateLists
-						categorizedDateLists={data.categorizedDateLists}
+						categorizedDateLists={data.categorizedDateLists ?? []}
 					/>
 					<p>
 						Want to find more dates? Try{" "}

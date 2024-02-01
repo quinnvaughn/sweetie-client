@@ -1,0 +1,7 @@
+fragment SpecialOffer on SpecialOffer {
+    id 
+    title 
+    description 
+    icon 
+    color
+}

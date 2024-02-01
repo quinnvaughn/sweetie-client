@@ -35,7 +35,7 @@ import {
 } from "~/features/ui"
 import { GetFreeDateDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import { useScrolledToBottom, useTrack, useViewer } from "~/hooks"
+import { useViewer } from "~/hooks"
 import { singularOrPlural } from "~/lib"
 import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
@@ -228,17 +228,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 export default function FreeDateIdeaRoute() {
 	const { freeDate, showShareScreen } = useLoaderData<typeof loader>()
-	const track = useTrack()
 	const { isLoggedIn } = useViewer()
-	useScrolledToBottom(() => {
-		if (freeDate.__typename === "FreeDate" && !freeDate.isUserTastemaker) {
-			track("User Scrolled To Bottom", {
-				of: "Free Date Page",
-				title: freeDate.title,
-				tastemaker_name: freeDate.tastemaker.user.name,
-			})
-		}
-	})
 
 	return showShareScreen && freeDate.__typename === "FreeDate" ? (
 		<ShareDateScreen freeDate={freeDate} />
