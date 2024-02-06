@@ -18,21 +18,6 @@ export type Scalars = {
   JSON: { input: any; output: any; }
 };
 
-export type AcceptCustomDateSuggestionInput = {
-  customDateId: Scalars['String']['input'];
-  guest?: InputMaybe<GuestInput>;
-  timeZone: Scalars['String']['input'];
-};
-
-export type AcceptCustomDateSuggestionPayload = AuthError | CustomDateSuggestion | Error;
-
-/** When a custom date is accepted */
-export type AcceptedCustomDateEvent = IBaseCustomDateEvent & {
-  __typename: 'AcceptedCustomDateEvent';
-  date: CustomDate;
-  eventType: CustomDateType;
-};
-
 export type Address = {
   __typename: 'Address';
   city: City;
@@ -66,15 +51,6 @@ export type AuthError = BaseError & {
   message: Scalars['String']['output'];
 };
 
-export type Badge = {
-  __typename: 'Badge';
-  color: Scalars['String']['output'];
-  description: Scalars['String']['output'];
-  icon: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  title: Scalars['String']['output'];
-};
-
 export type BaseError = {
   message: Scalars['String']['output'];
 };
@@ -82,6 +58,7 @@ export type BaseError = {
 export type CategorizedDateList = {
   __typename: 'CategorizedDateList';
   dates: Array<FreeDate>;
+  description?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   order: Scalars['Int']['output'];
   title: Scalars['String']['output'];
@@ -123,6 +100,7 @@ export type Country = {
 
 export type CreateCategorizedDateListInput = {
   dateIds: Array<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
   order: Scalars['Int']['input'];
   title: Scalars['String']['input'];
 };
@@ -183,8 +161,6 @@ export type CreateRoleInput = {
 
 export type CreateRolePayload = AuthError | Error | Role;
 
-export type CreateSetupIntentPayload = AuthError | Error | SetupIntent;
-
 export type CreateTastemakerProfileInput = {
   doesNotDo?: InputMaybe<TastemakerPreferenceInput>;
   maxNumStops?: InputMaybe<Scalars['Int']['input']>;
@@ -194,151 +170,6 @@ export type CreateTastemakerProfileInput = {
 };
 
 export type CreateTastemakerProfilePayload = AuthError | Error | FieldErrors | Tastemaker;
-
-export type CreditCard = {
-  __typename: 'CreditCard';
-  brand: Scalars['String']['output'];
-  expirationDate: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  isDefault: Scalars['Boolean']['output'];
-  lastFourDigits: Scalars['String']['output'];
-};
-
-export type CreditCardInput = {
-  cardId: Scalars['String']['input'];
-};
-
-export type CustomDate = {
-  __typename: 'CustomDate';
-  beginsAt: Scalars['DateTime']['output'];
-  canBeAccepted: Scalars['Boolean']['output'];
-  changesCanBeRequested: Scalars['Boolean']['output'];
-  cities: Array<City>;
-  cost: Scalars['Int']['output'];
-  createdAt: Scalars['DateTime']['output'];
-  formattedCost: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  isUserRequestor: Scalars['Boolean']['output'];
-  isUserTastemaker: Scalars['Boolean']['output'];
-  lastMessageSentAt: Scalars['DateTime']['output'];
-  messagePreview: Scalars['String']['output'];
-  messages: Array<CustomDateMessage>;
-  mostRecentSuggestion?: Maybe<CustomDateSuggestion>;
-  notes?: Maybe<Scalars['String']['output']>;
-  numStops: Scalars['Int']['output'];
-  payout: Scalars['String']['output'];
-  priceRangeMax?: Maybe<Scalars['Int']['output']>;
-  priceRangeMin?: Maybe<Scalars['Int']['output']>;
-  refundCanBeRequested: Scalars['Boolean']['output'];
-  requestor: User;
-  respondedAt?: Maybe<Scalars['DateTime']['output']>;
-  status: CustomDateStatus;
-  suggestionCanBeRevised: Scalars['Boolean']['output'];
-  suggestions: Array<CustomDateSuggestion>;
-  tags: Array<Tag>;
-  tastemaker: Tastemaker;
-  title: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type CustomDateMessage = {
-  __typename: 'CustomDateMessage';
-  createdAt: Scalars['DateTime']['output'];
-  customDate: CustomDate;
-  id: Scalars['ID']['output'];
-  sender: User;
-  text: Scalars['String']['output'];
-};
-
-export enum CustomDateMessageType {
-  NewMessage = 'NewMessage'
-}
-
-export type CustomDateRefund = {
-  __typename: 'CustomDateRefund';
-  date: CustomDate;
-  id: Scalars['ID']['output'];
-  reason: Scalars['String']['output'];
-  status: CustomDateRefundStatus;
-};
-
-export type CustomDateRefundStatus = {
-  __typename: 'CustomDateRefundStatus';
-  id: Scalars['ID']['output'];
-  name: Scalars['String']['output'];
-  refunds: Array<CustomDateRefund>;
-};
-
-export type CustomDateStatus = {
-  __typename: 'CustomDateStatus';
-  createdAt: Scalars['DateTime']['output'];
-  customDates: Array<CustomDate>;
-  id: Scalars['ID']['output'];
-  name: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type CustomDateSuggestion = {
-  __typename: 'CustomDateSuggestion';
-  createdAt: Scalars['DateTime']['output'];
-  date: CustomDate;
-  id: Scalars['ID']['output'];
-  status: CustomDateSuggestionStatus;
-  stops: Array<CustomDateSuggestionStop>;
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type CustomDateSuggestionStatus = {
-  __typename: 'CustomDateSuggestionStatus';
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['ID']['output'];
-  name: Scalars['String']['output'];
-  suggestions: Array<CustomDateSuggestion>;
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type CustomDateSuggestionStop = {
-  __typename: 'CustomDateSuggestionStop';
-  change?: Maybe<CustomDateSuggestionStopRequestedChange>;
-  content: Scalars['String']['output'];
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['ID']['output'];
-  location: Location;
-  order: Scalars['Int']['output'];
-  suggestion: CustomDateSuggestion;
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type CustomDateSuggestionStopInput = {
-  content: Scalars['String']['input'];
-  locationId: Scalars['String']['input'];
-  order: Scalars['Int']['input'];
-};
-
-export type CustomDateSuggestionStopRequestedChange = {
-  __typename: 'CustomDateSuggestionStopRequestedChange';
-  comment?: Maybe<Scalars['String']['output']>;
-  id: Scalars['ID']['output'];
-  stop: CustomDateSuggestionStop;
-};
-
-export type CustomDateSuggestionStopRequestedChangeInput = {
-  changeRequested: Scalars['Boolean']['input'];
-  comment?: InputMaybe<Scalars['String']['input']>;
-  stopId: Scalars['String']['input'];
-};
-
-export enum CustomDateSuggestionType {
-  NewSuggestion = 'NewSuggestion',
-  RefundRequested = 'RefundRequested'
-}
-
-export enum CustomDateType {
-  Accepted = 'Accepted',
-  Declined = 'Declined',
-  Expired = 'Expired',
-  New = 'New'
-}
 
 export type DateCreator = {
   __typename: 'DateCreator';
@@ -393,13 +224,6 @@ export type DateSuggestion = {
   text: Scalars['String']['output'];
 };
 
-/** When a custom date is accepted */
-export type DeclinedCustomDateEvent = IBaseCustomDateEvent & {
-  __typename: 'DeclinedCustomDateEvent';
-  date: CustomDate;
-  eventType: CustomDateType;
-};
-
 export type DefaultGuest = {
   __typename: 'DefaultGuest';
   email: Scalars['String']['output'];
@@ -427,13 +251,6 @@ export type DeleteImageResult = {
 export type Error = BaseError & {
   __typename: 'Error';
   message: Scalars['String']['output'];
-};
-
-/** When a custom date expires or is declined */
-export type ExpiredCustomDateEvent = IBaseCustomDateEvent & {
-  __typename: 'ExpiredCustomDateEvent';
-  date: CustomDate;
-  eventType: CustomDateType;
 };
 
 export type Favorite = {
@@ -547,23 +364,7 @@ export type GeneratePresignedUrlResult = {
   data: Scalars['String']['output'];
 };
 
-export type GetAcceptedCustomDatesPayload = AuthError | Error | GetAcceptedCustomDatesResult;
-
-export type GetAcceptedCustomDatesResult = {
-  __typename: 'GetAcceptedCustomDatesResult';
-  data: Array<CustomDate>;
-};
-
-export type GetCustomDatePayload = AuthError | CustomDate | Error;
-
 export type GetEditFreeDatePayload = AuthError | Error | FreeDate;
-
-export type GetPendingCustomDatesPayload = AuthError | Error | GetPendingCustomDatesResult;
-
-export type GetPendingCustomDatesResult = {
-  __typename: 'GetPendingCustomDatesResult';
-  data: Array<CustomDate>;
-};
 
 export type GetTastemakerProfilePayload = AuthError | Error | Tastemaker;
 
@@ -590,19 +391,6 @@ export type HelpFindingADatePayload = Error | FieldErrors | HelpFindingADateResu
 export type HelpFindingADateResult = {
   __typename: 'HelpFindingADateResult';
   data: Scalars['Boolean']['output'];
-};
-
-export type IBaseCustomDateEvent = {
-  date: CustomDate;
-  eventType: CustomDateType;
-};
-
-export type IBaseCustomDateMessageEvent = {
-  eventType: CustomDateMessageType;
-};
-
-export type IBaseCustomDateSuggestionEvent = {
-  eventType: CustomDateSuggestionType;
 };
 
 export type Location = {
@@ -646,30 +434,14 @@ export type LogoutResult = {
   data: Scalars['Boolean']['output'];
 };
 
-export type MakeChangeOnStopInput = {
-  content: Scalars['String']['input'];
-  locationId: Scalars['String']['input'];
-  order: Scalars['Int']['input'];
-  stopId: Scalars['String']['input'];
-};
-
-export type MakeChangesOnSuggestionInput = {
-  customDateId: Scalars['String']['input'];
-  stops: Array<MakeChangeOnStopInput>;
-};
-
-export type MakeChangesOnSuggestionPayload = AuthError | CustomDateSuggestion | Error | FieldErrors;
-
 export type Mutation = {
   __typename: 'Mutation';
-  acceptCustomDateSuggestion: AcceptCustomDateSuggestionPayload;
   archiveFreeDate: ArchiveFreeDatePayload;
   createCategorizedDateList: CreateCategorizedDateListPayload;
   createDateItinerary: CreateDateItineraryPayload;
   createFreeDate: CreateFreeDatePayload;
   createLocation: CreateLocationPayload;
   createRole: CreateRolePayload;
-  createSetupIntent: CreateSetupIntentPayload;
   createTastemakerProfile: CreateTastemakerProfilePayload;
   deleteFreeDateDraft: DeleteFreeDateDraftPayload;
   deleteImage: DeleteImagePayload;
@@ -678,34 +450,19 @@ export type Mutation = {
   login: LoginPayload;
   loginWithGoogle: LoginWithGooglePayload;
   logout: LogoutPayload;
-  makeChangesOnSuggestion: MakeChangesOnSuggestionPayload;
   register: RegisterPayload;
-  removeCreditCard: RemoveCreditCardPayload;
   removeDefaultGuest: RemoveDefaultGuestPayload;
-  requestChangesOnCustomDateSuggestion: RequestChangesOnCustomDateSuggestionPayload;
-  requestCustomDate: RequestCustomDatePayload;
   requestPasswordReset: RequestPasswordResetPayload;
-  requestRefundOnCustomDate: RequestRefundOnCustomDatePayload;
   resetPassword: ResetPasswordPayload;
-  respondToCustomDate: RespondToCustomDatePayload;
-  respondToRequestedRefund: RespondToRequestedRefundPayload;
   restoreFreeDate: RestoreFreeDatePayload;
   saveFreeDateDraft: SaveFreeDateDraftPayload;
-  sendCustomDateMessage: SendCustomDateMessagePayload;
-  setDefaultCreditCard: SetDefaultCreditCardPayload;
   setDefaultGuest: SetDefaultGuestPayload;
-  suggestCustomDate: SuggestCustomDatePayload;
   suggestDate: SuggestDatePayload;
   toggleFavorite: ToggleFavoritePayload;
   track: Scalars['Boolean']['output'];
   updateFreeDate: UpdateFreeDatePayload;
   updatePassword: UpdatePasswordPayload;
   updateUserProfile: UpdateUserProfilePayload;
-};
-
-
-export type MutationAcceptCustomDateSuggestionArgs = {
-  input: AcceptCustomDateSuggestionInput;
 };
 
 
@@ -774,28 +531,8 @@ export type MutationLoginWithGoogleArgs = {
 };
 
 
-export type MutationMakeChangesOnSuggestionArgs = {
-  input: MakeChangesOnSuggestionInput;
-};
-
-
 export type MutationRegisterArgs = {
   input: RegisterInput;
-};
-
-
-export type MutationRemoveCreditCardArgs = {
-  input: CreditCardInput;
-};
-
-
-export type MutationRequestChangesOnCustomDateSuggestionArgs = {
-  input: RequestChangesOnCustomDateSuggestionInput;
-};
-
-
-export type MutationRequestCustomDateArgs = {
-  input: RequestCustomDateInput;
 };
 
 
@@ -804,23 +541,8 @@ export type MutationRequestPasswordResetArgs = {
 };
 
 
-export type MutationRequestRefundOnCustomDateArgs = {
-  input: RequestRefundOnCustomDateInput;
-};
-
-
 export type MutationResetPasswordArgs = {
   input: ResetPasswordInput;
-};
-
-
-export type MutationRespondToCustomDateArgs = {
-  input: RespondToCustomDateInput;
-};
-
-
-export type MutationRespondToRequestedRefundArgs = {
-  input: RespondToRequestedRefundInput;
 };
 
 
@@ -834,23 +556,8 @@ export type MutationSaveFreeDateDraftArgs = {
 };
 
 
-export type MutationSendCustomDateMessageArgs = {
-  input: SendCustomDateMessageInput;
-};
-
-
-export type MutationSetDefaultCreditCardArgs = {
-  input: CreditCardInput;
-};
-
-
 export type MutationSetDefaultGuestArgs = {
   input: SetDefaultGuestInput;
-};
-
-
-export type MutationSuggestCustomDateArgs = {
-  input: SuggestCustomDateInput;
 };
 
 
@@ -881,27 +588,6 @@ export type MutationUpdatePasswordArgs = {
 
 export type MutationUpdateUserProfileArgs = {
   input: UpdateUserProfileInput;
-};
-
-/** When a new custom date is created */
-export type NewCustomDateEvent = IBaseCustomDateEvent & {
-  __typename: 'NewCustomDateEvent';
-  date: CustomDate;
-  eventType: CustomDateType;
-};
-
-/** When a new custom date message is created */
-export type NewCustomDateMessageEvent = IBaseCustomDateMessageEvent & {
-  __typename: 'NewCustomDateMessageEvent';
-  eventType: CustomDateMessageType;
-  message: CustomDateMessage;
-};
-
-/** When a new custom date suggestion is created or updated */
-export type NewCustomDateSuggestionEvent = IBaseCustomDateSuggestionEvent & {
-  __typename: 'NewCustomDateSuggestionEvent';
-  eventType: CustomDateSuggestionType;
-  suggestion: CustomDateSuggestion;
 };
 
 export type PageInfo = {
@@ -940,11 +626,8 @@ export type Query = {
   freeDateDrafts: FreeDateDraftsPayload;
   freeDates: FreeDateConnection;
   freeDatesByCity: Array<FreeDatesByCity>;
-  getAcceptedCustomDates: GetAcceptedCustomDatesPayload;
-  getCustomDate: GetCustomDatePayload;
   getEditFreeDate: GetEditFreeDatePayload;
   getGoogleLocations: Array<GoogleLocation>;
-  getPendingCustomDates: GetPendingCustomDatesPayload;
   getSpecialOffer?: Maybe<SpecialOffer>;
   getTastemakerProfile: GetTastemakerProfilePayload;
   locations: LocationConnection;
@@ -981,16 +664,6 @@ export type QueryFreeDatesArgs = {
 };
 
 
-export type QueryGetAcceptedCustomDatesArgs = {
-  requestor: Scalars['Boolean']['input'];
-};
-
-
-export type QueryGetCustomDateArgs = {
-  id: Scalars['String']['input'];
-};
-
-
 export type QueryGetEditFreeDateArgs = {
   id: Scalars['String']['input'];
 };
@@ -998,11 +671,6 @@ export type QueryGetEditFreeDateArgs = {
 
 export type QueryGetGoogleLocationsArgs = {
   text: Scalars['String']['input'];
-};
-
-
-export type QueryGetPendingCustomDatesArgs = {
-  requestor: Scalars['Boolean']['input'];
 };
 
 
@@ -1035,29 +703,7 @@ export type RegisterInput = {
 
 export type RegisterPayload = AlreadyLoggedInError | Error | FieldErrors | User;
 
-export type RemoveCreditCardPayload = AuthError | CreditCard | Error;
-
 export type RemoveDefaultGuestPayload = AuthError | DefaultGuest | Error;
-
-export type RequestChangesOnCustomDateSuggestionInput = {
-  stops: Array<CustomDateSuggestionStopRequestedChangeInput>;
-  suggestionId: Scalars['String']['input'];
-};
-
-export type RequestChangesOnCustomDateSuggestionPayload = AuthError | CustomDateSuggestion | Error | FieldErrors;
-
-export type RequestCustomDateInput = {
-  beginsAt: Scalars['DateTime']['input'];
-  cities?: InputMaybe<Array<Scalars['String']['input']>>;
-  notes?: InputMaybe<Scalars['String']['input']>;
-  numStops: Scalars['Int']['input'];
-  priceRangeMax?: InputMaybe<Scalars['Int']['input']>;
-  priceRangeMin?: InputMaybe<Scalars['Int']['input']>;
-  tags?: InputMaybe<Array<Scalars['String']['input']>>;
-  tastemakerUsername: Scalars['String']['input'];
-};
-
-export type RequestCustomDatePayload = AuthError | CustomDate | Error | FieldErrors;
 
 export type RequestPasswordResetInput = {
   email: Scalars['String']['input'];
@@ -1070,41 +716,12 @@ export type RequestPasswordResetResponse = {
   email: Scalars['String']['output'];
 };
 
-/** When a new custom date suggestion is created or updated */
-export type RequestRefundEvent = IBaseCustomDateSuggestionEvent & {
-  __typename: 'RequestRefundEvent';
-  eventType: CustomDateSuggestionType;
-  suggestion: CustomDateSuggestion;
-};
-
-export type RequestRefundOnCustomDateInput = {
-  customDateId: Scalars['String']['input'];
-  reason: Scalars['String']['input'];
-};
-
-export type RequestRefundOnCustomDatePayload = AuthError | CustomDateRefund | Error;
-
 export type ResetPasswordInput = {
   password: Scalars['String']['input'];
   token: Scalars['String']['input'];
 };
 
 export type ResetPasswordPayload = Error | User;
-
-export type RespondToCustomDateInput = {
-  customDateId: Scalars['String']['input'];
-  response: Scalars['String']['input'];
-};
-
-export type RespondToCustomDatePayload = AuthError | CustomDate | Error;
-
-export type RespondToRequestedRefundInput = {
-  accepted: Scalars['Boolean']['input'];
-  reason: Scalars['String']['input'];
-  refundId: Scalars['String']['input'];
-};
-
-export type RespondToRequestedRefundPayload = AuthError | CustomDateRefund | Error;
 
 export type RestoreFreeDateInput = {
   id: Scalars['String']['input'];
@@ -1145,26 +762,12 @@ export type SaveLocationDraftInput = {
   name?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type SendCustomDateMessageInput = {
-  customDateId: Scalars['String']['input'];
-  text: Scalars['String']['input'];
-};
-
-export type SendCustomDateMessagePayload = AuthError | CustomDateMessage | Error | FieldErrors;
-
-export type SetDefaultCreditCardPayload = AuthError | CreditCard | Error;
-
 export type SetDefaultGuestInput = {
   email: Scalars['String']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SetDefaultGuestPayload = AuthError | DefaultGuest | Error | FieldErrors;
-
-export type SetupIntent = {
-  __typename: 'SetupIntent';
-  clientSecret?: Maybe<Scalars['String']['output']>;
-};
 
 export type SpecialOffer = {
   __typename: 'SpecialOffer';
@@ -1181,23 +784,6 @@ export type State = {
   initials: Scalars['String']['output'];
   name: Scalars['String']['output'];
 };
-
-export type Subscription = {
-  __typename: 'Subscription';
-  /** Events related to a custom date */
-  customDate: IBaseCustomDateEvent;
-  /** Events related to a custom date message */
-  customDateMessage: IBaseCustomDateMessageEvent;
-  /** Events related to a custom date suggestion */
-  customDateSuggestion: IBaseCustomDateSuggestionEvent;
-};
-
-export type SuggestCustomDateInput = {
-  customDateId: Scalars['String']['input'];
-  stops: Array<CustomDateSuggestionStopInput>;
-};
-
-export type SuggestCustomDatePayload = AuthError | CustomDateSuggestion | Error;
 
 export type SuggestDateInput = {
   cities?: InputMaybe<Array<Scalars['String']['input']>>;
@@ -1216,7 +802,6 @@ export type Tag = {
 
 export type Tastemaker = {
   __typename: 'Tastemaker';
-  customDates: Array<CustomDate>;
   doesNotDo?: Maybe<TastemakerPreference>;
   formattedPrice: Scalars['String']['output'];
   freeDates: Array<FreeDate>;
@@ -1358,7 +943,7 @@ export type UserProfile = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type CategorizedDateListFragment = { __typename: 'CategorizedDateList', title: string, id: string, dates: Array<{ __typename: 'FreeDate', id: string, title: string, archived: boolean, thumbnail: string, updatedAt: string, nsfw: boolean, description: string, viewerFavorited: boolean, estimatedTime: string, tastemaker: { __typename: 'Tastemaker', id: string, user: { __typename: 'User', id: string, name: string, profile?: { __typename: 'UserProfile', id: string, avatar?: string | null } | null } }, cities: Array<{ __typename: 'City', id: string, nameAndState: string }> }> };
+export type CategorizedDateListFragment = { __typename: 'CategorizedDateList', title: string, description?: string | null, id: string, dates: Array<{ __typename: 'FreeDate', id: string, title: string, archived: boolean, thumbnail: string, updatedAt: string, nsfw: boolean, description: string, viewerFavorited: boolean, estimatedTime: string, tastemaker: { __typename: 'Tastemaker', id: string, user: { __typename: 'User', id: string, name: string, profile?: { __typename: 'UserProfile', id: string, avatar?: string | null } | null } }, cities: Array<{ __typename: 'City', id: string, nameAndState: string }> }> };
 
 export type DateStopItemFragment = { __typename: 'DateStop', id: string, title: string, order: number, content: string, estimatedTime: number, formattedEstimatedTime: string, travel?: { __typename: 'Travel', distance: number, duration: number, mode: TravelMode } | null, location: { __typename: 'Location', id: string, name: string, website?: string | null, address: { __typename: 'Address', id: string, formattedAddress: string, city: { __typename: 'City', id: string, name: string }, coordinates: { __typename: 'Coordinates', lat: number, lng: number } } } };
 
@@ -1553,7 +1138,7 @@ export type ViewerIsLoggedInQuery = { __typename: 'Query', viewer?: { __typename
 export type CategorizedDateListsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CategorizedDateListsQuery = { __typename: 'Query', categorizedDateLists: Array<{ __typename: 'CategorizedDateList', title: string, id: string, dates: Array<{ __typename: 'FreeDate', id: string, title: string, archived: boolean, thumbnail: string, updatedAt: string, nsfw: boolean, description: string, viewerFavorited: boolean, estimatedTime: string, tastemaker: { __typename: 'Tastemaker', id: string, user: { __typename: 'User', id: string, name: string, profile?: { __typename: 'UserProfile', id: string, avatar?: string | null } | null } }, cities: Array<{ __typename: 'City', id: string, nameAndState: string }> }> }> };
+export type CategorizedDateListsQuery = { __typename: 'Query', categorizedDateLists: Array<{ __typename: 'CategorizedDateList', title: string, description?: string | null, id: string, dates: Array<{ __typename: 'FreeDate', id: string, title: string, archived: boolean, thumbnail: string, updatedAt: string, nsfw: boolean, description: string, viewerFavorited: boolean, estimatedTime: string, tastemaker: { __typename: 'Tastemaker', id: string, user: { __typename: 'User', id: string, name: string, profile?: { __typename: 'UserProfile', id: string, avatar?: string | null } | null } }, cities: Array<{ __typename: 'City', id: string, nameAndState: string }> }> }> };
 
 export type GetCitiesQueryVariables = Exact<{
   text: Scalars['String']['input'];
@@ -1663,13 +1248,8 @@ export type ViewerHasDefaultGuestQueryVariables = Exact<{ [key: string]: never; 
 
 export type ViewerHasDefaultGuestQuery = { __typename: 'Query', viewer?: { __typename: 'User', defaultGuest?: { __typename: 'DefaultGuest', name?: string | null, email: string } | null } | null };
 
-export type CustomDateSubscriptionVariables = Exact<{ [key: string]: never; }>;
-
-
-export type CustomDateSubscription = { __typename: 'Subscription', customDate: { __typename: 'AcceptedCustomDateEvent', eventType: CustomDateType, date: { __typename: 'CustomDate', id: string } } | { __typename: 'DeclinedCustomDateEvent', eventType: CustomDateType, date: { __typename: 'CustomDate', id: string } } | { __typename: 'ExpiredCustomDateEvent', eventType: CustomDateType, date: { __typename: 'CustomDate', id: string } } | { __typename: 'NewCustomDateEvent', eventType: CustomDateType, date: { __typename: 'CustomDate', id: string } } };
-
 export const FreeDateCardFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"FreeDateCard"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"FreeDate"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"archived"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"nsfw"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"viewerFavorited"}},{"kind":"Field","name":{"kind":"Name","value":"estimatedTime"}},{"kind":"Field","name":{"kind":"Name","value":"tastemaker"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"cities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"nameAndState"}}]}}]}}]} as unknown as DocumentNode<FreeDateCardFragment, unknown>;
-export const CategorizedDateListFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"CategorizedDateList"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CategorizedDateList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"dates"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"FreeDateCard"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"FreeDateCard"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"FreeDate"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"archived"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"nsfw"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"viewerFavorited"}},{"kind":"Field","name":{"kind":"Name","value":"estimatedTime"}},{"kind":"Field","name":{"kind":"Name","value":"tastemaker"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"cities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"nameAndState"}}]}}]}}]} as unknown as DocumentNode<CategorizedDateListFragment, unknown>;
+export const CategorizedDateListFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"CategorizedDateList"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CategorizedDateList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"dates"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"FreeDateCard"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"FreeDateCard"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"FreeDate"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"archived"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"nsfw"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"viewerFavorited"}},{"kind":"Field","name":{"kind":"Name","value":"estimatedTime"}},{"kind":"Field","name":{"kind":"Name","value":"tastemaker"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"cities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"nameAndState"}}]}}]}}]} as unknown as DocumentNode<CategorizedDateListFragment, unknown>;
 export const TagsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Tags"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Tag"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]} as unknown as DocumentNode<TagsFragment, unknown>;
 export const TastemakerInfoFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TastemakerInfo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Tastemaker"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isSetup"}},{"kind":"Field","name":{"kind":"Name","value":"formattedPrice"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]}}]}}]} as unknown as DocumentNode<TastemakerInfoFragment, unknown>;
 export const DateStopItemFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DateStopItem"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DateStop"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"estimatedTime"}},{"kind":"Field","name":{"kind":"Name","value":"formattedEstimatedTime"}},{"kind":"Field","name":{"kind":"Name","value":"travel"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"distance"}},{"kind":"Field","name":{"kind":"Name","value":"duration"}},{"kind":"Field","name":{"kind":"Name","value":"mode"}}]}},{"kind":"Field","name":{"kind":"Name","value":"location"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"website"}},{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"formattedAddress"}},{"kind":"Field","name":{"kind":"Name","value":"city"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"coordinates"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lat"}},{"kind":"Field","name":{"kind":"Name","value":"lng"}}]}}]}}]}}]}}]} as unknown as DocumentNode<DateStopItemFragment, unknown>;
@@ -1707,7 +1287,7 @@ export const SetDefaultGuestDocument = {"kind":"Document","definitions":[{"kind"
 export const UpdatePasswordDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdatePassword"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdatePasswordInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updatePassword"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Error"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AuthError"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"FieldErrors"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"field"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<UpdatePasswordMutation, UpdatePasswordMutationVariables>;
 export const UpdateUserProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateUserProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateUserProfileInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateUserProfile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"bio"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}},{"kind":"Field","name":{"kind":"Name","value":"link"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AuthError"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Error"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"FieldErrors"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"field"}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>;
 export const ViewerIsLoggedInDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ViewerIsLoggedIn"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"viewer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"hasCreatedADate"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<ViewerIsLoggedInQuery, ViewerIsLoggedInQueryVariables>;
-export const CategorizedDateListsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CategorizedDateLists"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"categorizedDateLists"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"CategorizedDateList"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"FreeDateCard"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"FreeDate"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"archived"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"nsfw"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"viewerFavorited"}},{"kind":"Field","name":{"kind":"Name","value":"estimatedTime"}},{"kind":"Field","name":{"kind":"Name","value":"tastemaker"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"cities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"nameAndState"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"CategorizedDateList"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CategorizedDateList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"dates"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"FreeDateCard"}}]}}]}}]} as unknown as DocumentNode<CategorizedDateListsQuery, CategorizedDateListsQueryVariables>;
+export const CategorizedDateListsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CategorizedDateLists"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"categorizedDateLists"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"CategorizedDateList"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"FreeDateCard"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"FreeDate"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"archived"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"nsfw"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"viewerFavorited"}},{"kind":"Field","name":{"kind":"Name","value":"estimatedTime"}},{"kind":"Field","name":{"kind":"Name","value":"tastemaker"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"cities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"nameAndState"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"CategorizedDateList"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CategorizedDateList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"dates"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"FreeDateCard"}}]}}]}}]} as unknown as DocumentNode<CategorizedDateListsQuery, CategorizedDateListsQueryVariables>;
 export const GetCitiesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCities"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"text"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"selected"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cities"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"text"},"value":{"kind":"Variable","name":{"kind":"Name","value":"text"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"selected"},"value":{"kind":"Variable","name":{"kind":"Name","value":"selected"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nameAndState"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<GetCitiesQuery, GetCitiesQueryVariables>;
 export const GetFreeDateDraftDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetFreeDateDraft"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"freeDateDraft"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AuthError"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Error"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"FreeDateDraft"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"nsfw"}},{"kind":"Field","name":{"kind":"Name","value":"prep"}},{"kind":"Field","name":{"kind":"Name","value":"tags"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"Tags"}}]}},{"kind":"Field","name":{"kind":"Name","value":"recommendedTime"}},{"kind":"Field","name":{"kind":"Name","value":"stops"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"estimatedTime"}},{"kind":"Field","name":{"kind":"Name","value":"location"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"content"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Tags"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Tag"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]} as unknown as DocumentNode<GetFreeDateDraftQuery, GetFreeDateDraftQueryVariables>;
 export const GetViewerFavoritesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetViewerFavorites"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"viewer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"favoritedDates"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"FreeDateCard"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"FreeDateCard"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"FreeDate"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"archived"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"nsfw"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"viewerFavorited"}},{"kind":"Field","name":{"kind":"Name","value":"estimatedTime"}},{"kind":"Field","name":{"kind":"Name","value":"tastemaker"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"cities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"nameAndState"}}]}}]}}]} as unknown as DocumentNode<GetViewerFavoritesQuery, GetViewerFavoritesQueryVariables>;
@@ -1725,4 +1305,3 @@ export const GetViewerFreeDatesDocument = {"kind":"Document","definitions":[{"ki
 export const GetProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"username"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"username"},"value":{"kind":"Variable","name":{"kind":"Name","value":"username"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserProfile"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Error"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserProfileHeading"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isUsersProfile"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}},{"kind":"Field","name":{"kind":"Name","value":"link"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserBio"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"bio"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserProfileLeftSide"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserProfileHeading"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserBio"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"FreeDateCard"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"FreeDate"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"archived"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"nsfw"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"viewerFavorited"}},{"kind":"Field","name":{"kind":"Name","value":"estimatedTime"}},{"kind":"Field","name":{"kind":"Name","value":"tastemaker"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"cities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"nameAndState"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserProfile"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserProfileLeftSide"}},{"kind":"Field","name":{"kind":"Name","value":"tastemaker"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"freeDates"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"FreeDateCard"}}]}}]}}]}}]} as unknown as DocumentNode<GetProfileQuery, GetProfileQueryVariables>;
 export const GetViewerInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetViewerInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"viewer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"bio"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}},{"kind":"Field","name":{"kind":"Name","value":"link"}}]}}]}}]}}]} as unknown as DocumentNode<GetViewerInfoQuery, GetViewerInfoQueryVariables>;
 export const ViewerHasDefaultGuestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ViewerHasDefaultGuest"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"viewer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"defaultGuest"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]}}]} as unknown as DocumentNode<ViewerHasDefaultGuestQuery, ViewerHasDefaultGuestQueryVariables>;
-export const CustomDateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"CustomDate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"customDate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"eventType"}},{"kind":"Field","name":{"kind":"Name","value":"date"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<CustomDateSubscription, CustomDateSubscriptionVariables>;

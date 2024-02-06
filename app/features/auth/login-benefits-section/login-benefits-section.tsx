@@ -45,7 +45,7 @@ export function LoginBenefitsSection({ buttonSize }: Props) {
 					</Link>
 				</HStack>
 			</Desktop>
-			<Mobile>
+			<Mobile css={{ width: "100%" }}>
 				<VStack
 					padding={"24px"}
 					borderRadius={"8px"}
@@ -54,7 +54,7 @@ export function LoginBenefitsSection({ buttonSize }: Props) {
 					width={"100%"}
 					boxShadow={"sm"}
 					justifyContent={"space-between"}
-					backgroundColor={"#191e3b"}
+					backgroundColor={"#210124"}
 				>
 					<p
 						className={css({

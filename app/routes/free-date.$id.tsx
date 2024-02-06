@@ -277,7 +277,13 @@ export default function FreeDateIdeaRoute() {
 									width={"100%"}
 									alignItems={"flex-start"}
 								>
-									<h1 className={css({ textStyle: "h1", fontSize: 32 })}>
+									<h1
+										className={css({
+											textStyle: "h1",
+											fontSize: { base: "32px", md: "40px" },
+											fontWeight: "800",
+										})}
+									>
 										{freeDate.title}
 									</h1>
 									{freeDate.nsfw && <NSFWTag size="lg" />}

@@ -1,8 +1,0 @@
-subscription CustomDate {
-  customDate {
-    eventType
-    date {
-      id
-    }
-  }
-}

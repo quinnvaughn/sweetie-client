@@ -15,7 +15,10 @@ export function CategorizedDateLists({ categorizedDateLists }: Props) {
 			width={"100%"}
 			key={categorizedList.id}
 		>
-			<ListHeading title={categorizedList.title} />
+			<ListHeading
+				title={categorizedList.title}
+				description={categorizedList.description}
+			/>
 			<FreeDateList freeDates={categorizedList.dates} />
 		</VStack>
 	))

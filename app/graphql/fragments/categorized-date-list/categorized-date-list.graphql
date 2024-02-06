@@ -1,5 +1,6 @@
 fragment CategorizedDateList on CategorizedDateList {
     title
+    description
     id
     dates {
       ...FreeDateCard
