@@ -6,6 +6,8 @@ import {
 	useLoaderData,
 } from "@remix-run/react"
 import { DateTime } from "luxon"
+import { useEffect, useState } from "react"
+import * as R from "remeda"
 import { $params, $path } from "remix-routes"
 import { ClientOnly } from "remix-utils/client-only"
 import { match } from "ts-pattern"
@@ -33,7 +35,7 @@ import {
 	PageContainer,
 	Tags,
 } from "~/features/ui"
-import { GetFreeDateDocument } from "~/graphql/generated"
+import { DateStopItemFragment, GetFreeDateDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { useViewer } from "~/hooks"
 import { singularOrPlural } from "~/lib"
@@ -67,7 +69,6 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const { id } = $params("/free-date/:id", params)
 	const { data } = await gqlFetch(request, GetFreeDateDocument, { id })
-
 	if (!data?.freeDate) {
 		throw new Response("Not Found", { status: 404 })
 	}
@@ -226,9 +227,68 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	}
 }
 
+type StopWithOptions = {
+	stop: DateStopItemFragment
+	optionOrder: number
+	numOptions: number
+}
+
+function getStop(
+	stops: DateStopItemFragment[],
+	order: number,
+	optionOrder: number,
+): DateStopItemFragment | undefined {
+	return stops.filter(
+		(s) => s.order === order && s.optionOrder === optionOrder,
+	)[0]
+}
+
 export default function FreeDateIdeaRoute() {
 	const { freeDate, showShareScreen } = useLoaderData<typeof loader>()
 	const { isLoggedIn } = useViewer()
+	const [selectedStops, setSelectedStops] = useState<Map<number, boolean>>(() => {
+		const map = new Map()
+		if (freeDate.__typename === "FreeDate") {
+			// get number of groups of stops
+			const numGroups = R.groupBy(freeDate.stops, (s) => s.order)
+			for (let i = 0; i < Object.keys(numGroups).length; i++) {
+				// check if the stop is optional. If it is, set to false. If it's not, set to true
+				map.set(i + 1, true)
+			}
+		}
+		return map
+	})
+	const [shownDateStops, setShownDateStops] = useState<DateStopItemFragment[]>(
+		[],
+	)
+	const [stopsWithOptions, setStopsWithOptions] = useState<
+		Map<number, StopWithOptions>
+	>(() => {
+		const map = new Map()
+		if (freeDate.__typename === "FreeDate") {
+			// get number of groups of stops
+			const numGroups = R.groupBy(freeDate.stops, (s) => s.order)
+			for (let i = 0; i < Object.keys(numGroups).length; i++) {
+				// stop order, option order
+				map.set(i + 1, {
+					stop: freeDate.stops.filter(
+						(s) => s.order === i + 1 && s.optionOrder === 1,
+					)[0],
+					optionOrder: 1,
+					numOptions: freeDate.stops.filter((s) => s.order === i + 1).length,
+				})
+			}
+		}
+		return map
+	})
+
+	useEffect(() => {
+		if (freeDate.__typename === "FreeDate") {
+			setShownDateStops(
+				Array.from(stopsWithOptions).map(([_, { stop }]) => stop),
+			)
+		}
+	}, [stopsWithOptions, freeDate])
 
 	return showShareScreen && freeDate.__typename === "FreeDate" ? (
 		<ShareDateScreen freeDate={freeDate} />
@@ -415,18 +475,74 @@ export default function FreeDateIdeaRoute() {
 								)}
 								<VStack gap={4} alignItems={"flex-start"}>
 									<ClientOnly>
-										{() => <DateLocationsMap stops={freeDate.stops} />}
+										{() => <DateLocationsMap stops={shownDateStops} />}
 									</ClientOnly>
 									{!isLoggedIn() && (
 										<LoginBenefitsSection buttonSize={{ desktop: "sm" }} />
 									)}
-									{freeDate.stops.map((stop, i) => (
-										<DateStop
-											stop={stop}
-											key={stop.id}
-											id={i === 0 ? "first-stop" : ""}
-										/>
-									))}
+									{Array.from(stopsWithOptions).map(
+										([key, { stop, optionOrder, numOptions }]) => {
+											const nextStop = stopsWithOptions.get(key + 1)?.stop
+											return (
+												<DateStop
+													key={stop.id}
+													stop={stop}
+													travel={
+														nextStop
+															? stop.travel?.filter(
+																	(t) =>
+																		t.destinationId === nextStop.location.id,
+															  )[0] ?? undefined
+															: undefined
+													}
+													hasNext={optionOrder < numOptions}
+													hasPrevious={optionOrder > 1}
+													optionNumber={optionOrder}
+													showOptions={numOptions > 1}
+													nextStop={() => {
+														// go to the next option
+														setStopsWithOptions((prev) => {
+															const newMap = new Map(prev)
+															const nextStop = getStop(
+																freeDate.stops,
+																key,
+																optionOrder + 1,
+															)
+															if (!nextStop) {
+																return prev
+															}
+															newMap.set(key, {
+																stop: nextStop,
+																optionOrder: optionOrder + 1,
+																numOptions,
+															})
+															return newMap
+														})
+													}}
+													previousStop={() => {
+														// go to the previous option
+														setStopsWithOptions((prev) => {
+															const newMap = new Map(prev)
+															const previousStop = getStop(
+																freeDate.stops,
+																key,
+																optionOrder - 1,
+															)
+															if (!previousStop) {
+																return prev
+															}
+															newMap.set(key, {
+																stop: previousStop,
+																optionOrder: optionOrder - 1,
+																numOptions,
+															})
+															return newMap
+														})
+													}}
+												/>
+											)
+										},
+									)}
 								</VStack>
 							</VStack>
 							<div

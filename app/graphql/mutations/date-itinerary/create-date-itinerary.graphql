@@ -15,22 +15,24 @@ mutation CreateDateItinerary($input: CreateDateItineraryInput!) {
     }
     ... on PlannedDate {
       plannedTime 
-      freeDate {
-        title
-        tastemaker {
-          user {
-            id 
-            name 
-            username
+      variation {
+        freeDate {
+          title
+          tastemaker {
+            user {
+              id 
+              name 
+              username
+            }
           }
-        }
-        stops {
-          location {
+          stops {
+            location {
+              name
+            }
+          }
+          cities {
             name
           }
-        }
-        cities {
-          name
         }
       }
     }

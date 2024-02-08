@@ -36,6 +36,7 @@
 		"react-dom": "^18.2.0",
 		"react-icons": "^4.11.0",
 		"react-joyride": "^2.7.2",
+		"remeda": "^1.40.1",
 		"remix-params-helper": "^0.4.10",
 		"remix-routes": "^1.5.0",
 		"remix-utils": "^7.1.0",

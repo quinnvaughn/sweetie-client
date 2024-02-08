@@ -11,7 +11,9 @@ type Props = {
 export function PlannedDateCard({ plannedDate }: Props) {
 	return (
 		<VStack gap={2} alignItems={"flex-start"}>
-			<FreeDateCard date={plannedDate.freeDate} />
+			{plannedDate.variation?.freeDate && (
+				<FreeDateCard date={plannedDate.variation.freeDate} />
+			)}
 			<p>
 				<strong>Date</strong>:{" "}
 				{DateTime.fromJSDate(new Date(plannedDate.plannedTime)).toFormat(

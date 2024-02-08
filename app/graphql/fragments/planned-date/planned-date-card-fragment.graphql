@@ -1,6 +1,8 @@
 fragment PlannedDateCard on PlannedDate {
-  freeDate {
-    ...FreeDateCard
+  variation {
+    freeDate {
+      ...FreeDateCard
+    }
   }
   id
   plannedTime

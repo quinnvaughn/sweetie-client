@@ -2,13 +2,12 @@ fragment DateStopItem on DateStop {
     id
     title
     order
+    optionOrder
     content
     estimatedTime
     formattedEstimatedTime
     travel {
-      distance 
-      duration 
-      mode
+      ...TravelItem
     }
     location {
       id
@@ -27,4 +26,11 @@ fragment DateStopItem on DateStop {
         }
       }
     }
+  }
+
+fragment TravelItem on Travel {
+    distance
+    duration
+    mode
+    destinationId
   }
