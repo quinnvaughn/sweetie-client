@@ -45,8 +45,12 @@ export function DateStop({
 }: Props) {
 	return (
 		<VStack id={id} gap={stop.travel ? 4 : 0} alignItems={"flex-start"}>
-			<VStack gap={{base: 4, md: 3}} alignItems={"flex-start"}>
-				<VStack gap={{base: 4, md: 3}} alignItems={"flex-start"} width={"100%"}>
+			<VStack gap={{ base: 4, md: 3 }} alignItems={"flex-start"}>
+				<VStack
+					gap={{ base: 4, md: 3 }}
+					alignItems={"flex-start"}
+					width={"100%"}
+				>
 					<Desktop css={{ width: "100%" }}>
 						<HStack justifyContent={"space-between"} gap={2} width={"100%"}>
 							<HStack gap={2} alignItems={"center"}>
@@ -91,7 +95,11 @@ export function DateStop({
 						</HStack>
 					</Desktop>
 					<Mobile css={{ width: "100%" }}>
-						<VStack gap={{base: 4, md: 3}} width={"100%"} alignItems='flex-start'>
+						<VStack
+							gap={{ base: 4, md: 3 }}
+							width={"100%"}
+							alignItems="flex-start"
+						>
 							<HStack gap={2} alignItems={"center"}>
 								<h3
 									className={css({
@@ -107,7 +115,7 @@ export function DateStop({
 									{stop.formattedEstimatedTime}
 								</span>
 							</HStack>
-							<HStack gap={2} width={'100%'} justifyContent={'space-between'}>
+							<HStack gap={2} width={"100%"} justifyContent={"space-between"}>
 								<Checkbox label="Selected" defaultChecked />
 								{showOptions && (
 									<HStack gap={2}>
@@ -183,7 +191,7 @@ const checkboxButton = cva({
 		display: "flex",
 		alignItems: "center",
 		justifyContent: "center",
-		width: '24px',
+		width: "24px",
 		height: "24px",
 		backgroundColor: "white",
 		border: "1px solid var(--colors-gray)",

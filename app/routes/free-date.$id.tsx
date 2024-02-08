@@ -246,18 +246,20 @@ function getStop(
 export default function FreeDateIdeaRoute() {
 	const { freeDate, showShareScreen } = useLoaderData<typeof loader>()
 	const { isLoggedIn } = useViewer()
-	const [selectedStops, setSelectedStops] = useState<Map<number, boolean>>(() => {
-		const map = new Map()
-		if (freeDate.__typename === "FreeDate") {
-			// get number of groups of stops
-			const numGroups = R.groupBy(freeDate.stops, (s) => s.order)
-			for (let i = 0; i < Object.keys(numGroups).length; i++) {
-				// check if the stop is optional. If it is, set to false. If it's not, set to true
-				map.set(i + 1, true)
+	const [selectedStops, setSelectedStops] = useState<Map<number, boolean>>(
+		() => {
+			const map = new Map()
+			if (freeDate.__typename === "FreeDate") {
+				// get number of groups of stops
+				const numGroups = R.groupBy(freeDate.stops, (s) => s.order)
+				for (let i = 0; i < Object.keys(numGroups).length; i++) {
+					// check if the stop is optional. If it is, set to false. If it's not, set to true
+					map.set(i + 1, true)
+				}
 			}
-		}
-		return map
-	})
+			return map
+		},
+	)
 	const [shownDateStops, setShownDateStops] = useState<DateStopItemFragment[]>(
 		[],
 	)
