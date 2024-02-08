@@ -28,9 +28,9 @@ mutation UpdateFreeDate($input: UpdateFreeDateInput!) {
 			tastemaker {
 				...TastemakerInfo
 			}
-			stops {
+			orderedStops {
 				id
-				...DateStopItem
+				...OrderedDateStop
 			}
       }
 		}

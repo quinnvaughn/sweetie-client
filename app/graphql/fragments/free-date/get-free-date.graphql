@@ -23,9 +23,8 @@ fragment GetFreeDate on FreeDate {
     tastemaker {
       ...TastemakerInfo
     }
-    stops {
-      id
-      ...DateStopItem
+    orderedStops {
+      ...OrderedDateStop 
     }
     exploreMore {
       ...FreeDateCard

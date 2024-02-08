@@ -6,21 +6,22 @@ import {
 	FaChevronRight,
 } from "react-icons/fa6/index.js"
 import { Desktop, Mobile } from "~/features/ui"
-import { DateStopItemFragment, TravelItemFragment } from "~/graphql/generated"
+import { DateStopOptionFragment, TravelItemFragment } from "~/graphql/generated"
 import { css, cva } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
 import { TravelTime } from ".."
 
 type Props = {
-	stop: DateStopItemFragment
+	stop: DateStopOptionFragment
 	travel?: TravelItemFragment
+	order: number
+	optional: boolean
+	formattedEstimatedTime: string
 	id?: string
-	nextStop: () => void
-	previousStop: () => void
-	hasNext: boolean
-	hasPrevious: boolean
-	optionNumber: number
-	showOptions: boolean
+	nextOption: () => void
+	previousOption: () => void
+	isChecked: boolean
+	setIsChecked: (checked: boolean) => void
 }
 
 const button = css({
@@ -35,12 +36,13 @@ const button = css({
 export function DateStop({
 	stop,
 	id,
-	hasNext,
-	hasPrevious,
-	nextStop,
-	previousStop,
-	optionNumber,
-	showOptions,
+	nextOption,
+	previousOption,
+	order,
+	formattedEstimatedTime,
+	isChecked,
+	setIsChecked,
+	optional,
 	travel,
 }: Props) {
 	return (
@@ -53,38 +55,42 @@ export function DateStop({
 				>
 					<Desktop css={{ width: "100%" }}>
 						<HStack justifyContent={"space-between"} gap={2} width={"100%"}>
-							<HStack gap={2} alignItems={"center"}>
+							<HStack gap={2} alignItems={"center"} flexWrap={"wrap"}>
 								<h3
 									className={css({
 										fontSize: { base: "20px", md: "20px" },
 										fontWeight: "bold",
 									})}
 								>
-									{stop.order}. {stop.title}
+									{order}. {optional && "(Optional)"} {stop.title}
 								</h3>
 								<span
 									className={css({ color: "grayText", fontWeight: "normal" })}
 								>
-									{stop.formattedEstimatedTime}
+									{formattedEstimatedTime}
 								</span>
 							</HStack>
 							<HStack gap={2}>
-								<Checkbox label="Selected" defaultChecked />
-								{showOptions && (
+								<Checkbox
+									label="Selected"
+									isChecked={isChecked}
+									setIsChecked={setIsChecked}
+								/>
+								{stop.showOptions && (
 									<HStack gap={2}>
 										<button
 											type="button"
-											disabled={!hasPrevious}
-											onClick={previousStop}
+											disabled={!stop.hasPreviousOption}
+											onClick={previousOption}
 											className={button}
 										>
 											<FaChevronLeft />
 										</button>
-										<span>Option {optionNumber}</span>
+										<span>Option {stop.optionOrder}</span>
 										<button
 											type="button"
-											disabled={!hasNext}
-											onClick={nextStop}
+											disabled={!stop.hasNextOption}
+											onClick={nextOption}
 											className={button}
 										>
 											<FaChevronRight />
@@ -100,38 +106,42 @@ export function DateStop({
 							width={"100%"}
 							alignItems="flex-start"
 						>
-							<HStack gap={2} alignItems={"center"}>
+							<HStack gap={2} alignItems={"center"} flexWrap={"wrap"}>
 								<h3
 									className={css({
 										fontSize: { base: "20px", md: "20px" },
 										fontWeight: "bold",
 									})}
 								>
-									{stop.order}. {stop.title}
+									{order}. {optional && "(Optional)"} {stop.title}
 								</h3>
 								<span
 									className={css({ color: "grayText", fontWeight: "normal" })}
 								>
-									{stop.formattedEstimatedTime}
+									{formattedEstimatedTime}
 								</span>
 							</HStack>
 							<HStack gap={2} width={"100%"} justifyContent={"space-between"}>
-								<Checkbox label="Selected" defaultChecked />
-								{showOptions && (
+								<Checkbox
+									label="Selected"
+									isChecked={isChecked}
+									setIsChecked={setIsChecked}
+								/>
+								{stop.showOptions && (
 									<HStack gap={2}>
 										<button
 											type="button"
-											disabled={!hasPrevious}
-											onClick={previousStop}
+											disabled={!stop.hasPreviousOption}
+											onClick={previousOption}
 											className={button}
 										>
 											<FaChevronLeft />
 										</button>
-										<span>Option {optionNumber}</span>
+										<span>Option {stop.optionOrder}</span>
 										<button
 											type="button"
-											disabled={!hasNext}
-											onClick={nextStop}
+											disabled={!stop.hasNextOption}
+											onClick={nextOption}
 											className={button}
 										>
 											<FaChevronRight />
@@ -209,11 +219,11 @@ const checkboxButton = cva({
 
 type CheckboxProps = {
 	label?: string
-	defaultChecked?: boolean
+	isChecked: boolean
+	setIsChecked: (checked: boolean) => void
 }
 
-function Checkbox({ label, defaultChecked = false }: CheckboxProps) {
-	const [checked, setChecked] = useState(defaultChecked)
+function Checkbox({ label, isChecked, setIsChecked }: CheckboxProps) {
 	return (
 		<div
 			className={css({
@@ -221,16 +231,17 @@ function Checkbox({ label, defaultChecked = false }: CheckboxProps) {
 				alignItems: "center",
 				gap: 1,
 			})}
-			onClick={() => setChecked(!checked)}
+			onClick={() => setIsChecked(!isChecked)}
 			onKeyDown={(e) => {
 				if (e.key === "Enter") {
-					setChecked(!checked)
+					setIsChecked(!isChecked)
 				}
 			}}
 		>
 			<input
 				type="checkbox"
-				checked={checked}
+				checked={isChecked}
+				readOnly
 				className={css({
 					clip: "rect(0 0 0 0)",
 					clipPath: "inset(50%)",
@@ -244,14 +255,14 @@ function Checkbox({ label, defaultChecked = false }: CheckboxProps) {
 			<button
 				type="button"
 				onClick={(e) => {
-					setChecked(!checked)
+					setIsChecked(!isChecked)
 					e.preventDefault()
 					e.stopPropagation()
 				}}
-				className={checkboxButton({ checked })}
+				className={checkboxButton({ checked: isChecked })}
 				aria-hidden="true"
 			>
-				{checked && (
+				{isChecked && (
 					<FaCheck
 						className={css({
 							color: "secondary",

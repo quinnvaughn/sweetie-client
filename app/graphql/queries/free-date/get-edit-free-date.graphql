@@ -15,9 +15,9 @@ query GetEditFreeDate($id: String!) {
         tastemaker {
           ...TastemakerInfo
         }
-        stops {
+        orderedStops {
           id
-          ...DateStopItem
+          ...OrderedDateStop
         }
       }
       ... on Error {

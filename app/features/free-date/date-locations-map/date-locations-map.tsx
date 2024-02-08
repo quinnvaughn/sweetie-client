@@ -1,10 +1,10 @@
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api"
 import { useEffect, useState } from "react"
-import { DateStopItemFragment } from "~/graphql/generated"
+import { DateStopOptionFragment } from "~/graphql/generated"
 import { css } from "~/styled-system/css"
 
 type Props = {
-	stops: DateStopItemFragment[]
+	stops: DateStopOptionFragment[]
 	scrollwheel?: boolean
 }
 

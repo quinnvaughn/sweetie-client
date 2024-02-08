@@ -1,0 +1,48 @@
+fragment OrderedDateStop on OrderedDateStop {
+    id 
+    order 
+    formattedEstimatedTime
+    optional
+    options {
+        ...DateStopOption
+      }
+}
+
+fragment TravelItem on Travel {
+    distance
+    duration
+    mode
+    destinationId
+  }
+
+fragment DateStopOption on DateStopOption {
+    id
+    optionOrder
+    title
+    content
+    hasNextOption
+    hasPreviousOption
+    nextOptionId 
+    previousOptionId
+    showOptions
+    travel {
+        ...TravelItem
+    }
+    location {
+        id
+        name
+        website
+        address {
+            id
+            formattedAddress
+            city {
+                id
+                name
+            }
+            coordinates {
+                lat
+                lng
+            }
+        }
+    }
+}

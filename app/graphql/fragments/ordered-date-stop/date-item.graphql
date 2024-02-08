@@ -28,9 +28,3 @@ fragment DateStopItem on DateStop {
     }
   }
 
-fragment TravelItem on Travel {
-    distance
-    duration
-    mode
-    destinationId
-  }

@@ -25,9 +25,11 @@ mutation CreateDateItinerary($input: CreateDateItineraryInput!) {
               username
             }
           }
-          stops {
-            location {
-              name
+          orderedStops {
+            options {
+              location {
+                name
+              }
             }
           }
           cities {

@@ -24,7 +24,9 @@ import { CheckboxAndInputs, DatePicker, Input, Modal } from "~/features/ui"
 import {
 	CreateDateItineraryDocument,
 	CreateDateItineraryInput,
+	DateStopOptionFragment,
 	GetFreeDateDocument,
+	OrderedDateStopFragment,
 	ViewerHasDefaultGuestDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
@@ -35,6 +37,7 @@ import {
 	mapFieldErrorToValidationError,
 	omit,
 } from "~/lib"
+import { freeDateStore } from "~/stores"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
@@ -91,6 +94,7 @@ const validator = withZod(
 			date: z.string(),
 			time: z.string(),
 			timeZone: z.string(),
+			selectedOptionIds: zfd.repeatableOfType(z.string()),
 		})
 		.refine((data) => DateTime.fromISO(data.date).isValid, {
 			path: ["date"],
@@ -126,7 +130,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	if (result.error) {
 		return validationError(result.error)
 	}
-	const { guest, date, time, timeZone, user } = result.data
+	const { guest, date, time, timeZone, user, selectedOptionIds } = result.data
 
 	const formattedTime = formatTime(time)
 
@@ -140,6 +144,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
 			.setZone(timeZone, { keepLocalTime: true })
 			.toISO() as string,
 		timeZone,
+		// hate that it does this, need to fix it.
+		selectedOptionIds: selectedOptionIds
+			.toString()
+			.split(",")
+			.map((id) => id.trim()),
 		guest:
 			guest?.sendToDefaultGuest && viewerData?.viewer?.defaultGuest
 				? omit(viewerData.viewer.defaultGuest, "__typename")
@@ -150,13 +159,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		user,
 	}
 
-	const { data, errors } = await gqlFetch(
-		request,
-		CreateDateItineraryDocument,
-		{
-			input,
-		},
-	)
+	const { data } = await gqlFetch(request, CreateDateItineraryDocument, {
+		input,
+	})
 
 	return match(data?.createDateItinerary)
 		.with({ __typename: "PlannedDate" }, () =>
@@ -186,7 +191,7 @@ export default function AddToCalendarPage() {
 	const { isLoggedIn } = useViewer()
 	const fetcher = useFetcher<typeof action>()
 	const track = useTrack()
-
+	const { selectedDateOptions, setSelectedDateOptions } = freeDateStore()
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		track("User Opened Add to Calendar Modal", {
@@ -194,6 +199,25 @@ export default function AddToCalendarPage() {
 			tastemaker_name: freeDate.tastemaker.user.name,
 			logged_in: isLoggedIn(),
 		})
+		if (selectedDateOptions.size === 0) {
+			// add the first option to the selected date options
+			const dateOptions = new Map<
+				number,
+				{
+					isSelected: boolean
+					option: DateStopOptionFragment
+					orderedStop: OrderedDateStopFragment
+				}
+			>()
+			for (const stop of freeDate.orderedStops) {
+				dateOptions.set(stop.order, {
+					isSelected: !stop.optional,
+					option: stop.options[0],
+					orderedStop: stop,
+				})
+			}
+			setSelectedDateOptions(dateOptions)
+		}
 	}, [])
 
 	useEffect(() => {
@@ -269,6 +293,17 @@ export default function AddToCalendarPage() {
 							)}
 							<DatePicker name="date" label="Date" required />
 							<RecommendedTimePicker required label="Start time" name="time" />
+							<input
+								type="hidden"
+								name="selectedOptionIds"
+								value={Array.from(
+									selectedDateOptions.size > 0
+										? selectedDateOptions.values()
+										: [],
+								)
+									.filter((option) => option.isSelected)
+									.map(({ option }) => option.id)}
+							/>
 							{defaultGuest !== null && defaultGuest !== undefined ? (
 								<SendToDefaultGuest
 									guest={{
