@@ -29,6 +29,6 @@ export const toastStore = create<State>((set) => ({
 		set((state) => ({
 			toasts: state.toasts.filter((toast) => toast.id !== id),
 		})),
-	position: "bottom-right",
+	position: "bottom-center",
 	setPosition: (position) => set(() => ({ position })),
 }))

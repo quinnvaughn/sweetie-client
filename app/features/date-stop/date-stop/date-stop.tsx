@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { FaExternalLinkAlt } from "react-icons/fa/index.js"
 import {
 	FaCheck,
@@ -7,12 +6,13 @@ import {
 } from "react-icons/fa6/index.js"
 import { Desktop, Mobile } from "~/features/ui"
 import { DateStopOptionFragment, TravelItemFragment } from "~/graphql/generated"
+import { useToast } from "~/hooks"
 import { css, cva } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
 import { TravelTime } from ".."
 
 type Props = {
-	stop: DateStopOptionFragment
+	option: DateStopOptionFragment
 	travel?: TravelItemFragment
 	order: number
 	optional: boolean
@@ -22,6 +22,7 @@ type Props = {
 	previousOption: () => void
 	isChecked: boolean
 	setIsChecked: (checked: boolean) => void
+	numSelected: number
 }
 
 const button = css({
@@ -34,7 +35,7 @@ const button = css({
 })
 
 export function DateStop({
-	stop,
+	option,
 	id,
 	nextOption,
 	previousOption,
@@ -43,10 +44,12 @@ export function DateStop({
 	isChecked,
 	setIsChecked,
 	optional,
+	numSelected,
 	travel,
 }: Props) {
+	const { error } = useToast()
 	return (
-		<VStack id={id} gap={stop.travel ? 4 : 0} alignItems={"flex-start"}>
+		<VStack id={id} gap={option.travel ? 4 : 0} alignItems={"flex-start"}>
 			<VStack gap={{ base: 4, md: 3 }} alignItems={"flex-start"}>
 				<VStack
 					gap={{ base: 4, md: 3 }}
@@ -62,7 +65,7 @@ export function DateStop({
 										fontWeight: "bold",
 									})}
 								>
-									{order}. {optional && "(Optional)"} {stop.title}
+									{order}. {optional && "(Optional)"} {option.title}
 								</h3>
 								<span
 									className={css({ color: "grayText", fontWeight: "normal" })}
@@ -74,22 +77,29 @@ export function DateStop({
 								<Checkbox
 									label="Selected"
 									isChecked={isChecked}
-									setIsChecked={setIsChecked}
+									setIsChecked={() => {
+										if (numSelected === 1 && isChecked) {
+											error("You must have at least one date option selected")
+											return
+										} else {
+											setIsChecked(!isChecked)
+										}
+									}}
 								/>
-								{stop.showOptions && (
+								{option.showOptions && (
 									<HStack gap={2}>
 										<button
 											type="button"
-											disabled={!stop.hasPreviousOption}
+											disabled={!option.hasPreviousOption}
 											onClick={previousOption}
 											className={button}
 										>
 											<FaChevronLeft />
 										</button>
-										<span>Option {stop.optionOrder}</span>
+										<span>Option {option.optionOrder}</span>
 										<button
 											type="button"
-											disabled={!stop.hasNextOption}
+											disabled={!option.hasNextOption}
 											onClick={nextOption}
 											className={button}
 										>
@@ -113,7 +123,7 @@ export function DateStop({
 										fontWeight: "bold",
 									})}
 								>
-									{order}. {optional && "(Optional)"} {stop.title}
+									{order}. {optional && "(Optional)"} {option.title}
 								</h3>
 								<span
 									className={css({ color: "grayText", fontWeight: "normal" })}
@@ -125,22 +135,29 @@ export function DateStop({
 								<Checkbox
 									label="Selected"
 									isChecked={isChecked}
-									setIsChecked={setIsChecked}
+									setIsChecked={() => {
+										if (numSelected === 1) {
+											error("You must select at least one date option")
+											return setIsChecked(true)
+										} else {
+											setIsChecked(!isChecked)
+										}
+									}}
 								/>
-								{stop.showOptions && (
+								{option.showOptions && (
 									<HStack gap={2}>
 										<button
 											type="button"
-											disabled={!stop.hasPreviousOption}
+											disabled={!option.hasPreviousOption}
 											onClick={previousOption}
 											className={button}
 										>
 											<FaChevronLeft />
 										</button>
-										<span>Option {stop.optionOrder}</span>
+										<span>Option {option.optionOrder}</span>
 										<button
 											type="button"
-											disabled={!stop.hasNextOption}
+											disabled={!option.hasNextOption}
 											onClick={nextOption}
 											className={button}
 										>
@@ -151,7 +168,7 @@ export function DateStop({
 							</HStack>
 						</VStack>
 					</Mobile>
-					{stop.location.website ? (
+					{option.location.website ? (
 						<div
 							className={css({ display: "flex", gap: 1, alignItems: "center" })}
 						>
@@ -163,11 +180,11 @@ export function DateStop({
 									fontWeight: "bold",
 									textDecoration: "underline",
 								})}
-								href={stop.location.website}
+								href={option.location.website}
 								target="_blank"
 								rel="noreferrer noopener external nofollow"
 							>
-								{stop.location.name}
+								{option.location.name}
 							</a>
 						</div>
 					) : (
@@ -175,7 +192,7 @@ export function DateStop({
 							className={css({ display: "flex", gap: 1, alignItems: "center" })}
 						>
 							<span className={css({ textStyle: "paragraph" })}>
-								{stop.location.name}
+								{option.location.name}
 							</span>
 						</div>
 					)}
@@ -187,7 +204,7 @@ export function DateStop({
 						wordBreak: "break-word",
 					})}
 				>
-					{stop.content}
+					{option.content}
 				</p>
 			</VStack>
 			{travel && <TravelTime travel={travel} />}

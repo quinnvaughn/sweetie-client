@@ -33,11 +33,13 @@ import { gqlFetch } from "~/graphql/graphql"
 import { useTrack, useViewer } from "~/hooks"
 import {
 	formatTime,
+	getDefaultSelectedOptions,
+	getSelectedDateOptions,
 	isTypeofFieldError,
 	mapFieldErrorToValidationError,
 	omit,
 } from "~/lib"
-import { freeDateStore } from "~/stores"
+import { freeDateStore, useStopsContext } from "~/stores"
 import { css } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
 
@@ -191,7 +193,7 @@ export default function AddToCalendarPage() {
 	const { isLoggedIn } = useViewer()
 	const fetcher = useFetcher<typeof action>()
 	const track = useTrack()
-	const { selectedDateOptions, setSelectedDateOptions } = freeDateStore()
+	const { state } = useStopsContext()
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		track("User Opened Add to Calendar Modal", {
@@ -199,25 +201,6 @@ export default function AddToCalendarPage() {
 			tastemaker_name: freeDate.tastemaker.user.name,
 			logged_in: isLoggedIn(),
 		})
-		if (selectedDateOptions.size === 0) {
-			// add the first option to the selected date options
-			const dateOptions = new Map<
-				number,
-				{
-					isSelected: boolean
-					option: DateStopOptionFragment
-					orderedStop: OrderedDateStopFragment
-				}
-			>()
-			for (const stop of freeDate.orderedStops) {
-				dateOptions.set(stop.order, {
-					isSelected: !stop.optional,
-					option: stop.options[0],
-					orderedStop: stop,
-				})
-			}
-			setSelectedDateOptions(dateOptions)
-		}
 	}, [])
 
 	useEffect(() => {
@@ -296,13 +279,13 @@ export default function AddToCalendarPage() {
 							<input
 								type="hidden"
 								name="selectedOptionIds"
-								value={Array.from(
-									selectedDateOptions.size > 0
-										? selectedDateOptions.values()
-										: [],
-								)
-									.filter((option) => option.isSelected)
-									.map(({ option }) => option.id)}
+								value={
+									state.orderedStops.size === 0
+										? getSelectedDateOptions(
+												getDefaultSelectedOptions(freeDate),
+										  )
+										: getSelectedDateOptions(state.orderedStops)
+								}
 							/>
 							{defaultGuest !== null && defaultGuest !== undefined ? (
 								<SendToDefaultGuest

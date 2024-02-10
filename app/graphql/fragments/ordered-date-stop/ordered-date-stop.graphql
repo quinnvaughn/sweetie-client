@@ -22,8 +22,6 @@ fragment DateStopOption on DateStopOption {
     content
     hasNextOption
     hasPreviousOption
-    nextOptionId 
-    previousOptionId
     showOptions
     travel {
         ...TravelItem

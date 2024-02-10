@@ -7,7 +7,7 @@ import {
 	useLoaderData,
 } from "@remix-run/react"
 import { DateTime } from "luxon"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import * as R from "remeda"
 import { $params, $path } from "remix-routes"
 import { ClientOnly } from "remix-utils/client-only"
@@ -44,8 +44,8 @@ import {
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { useViewer } from "~/hooks"
-import { singularOrPlural } from "~/lib"
-import { freeDateStore } from "~/stores"
+import { getDefaultSelectedOptions, singularOrPlural } from "~/lib"
+import { OrderedStop, StopsProvider, createStopsStore } from "~/stores"
 import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
 import { divider, flex } from "~/styled-system/patterns"
@@ -250,31 +250,11 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 export default function FreeDateIdeaRoute() {
 	const { freeDate, showShareScreen } = useLoaderData<typeof loader>()
 	const { isLoggedIn } = useViewer()
-	const { setSelectedDateOptions, selectedDateOptions } = freeDateStore()
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		if (freeDate.__typename === "FreeDate") {
-			const dateOptions = new Map<
-				number,
-				{
-					isSelected: boolean
-					option: DateStopOptionFragment
-					orderedStop: OrderedDateStopFragment
-				}
-			>()
-			for (const stop of freeDate.orderedStops) {
-				dateOptions.set(stop.order, {
-					isSelected: !stop.optional,
-					option: stop.options[0],
-					orderedStop: stop,
-				})
-			}
-			setSelectedDateOptions(dateOptions)
-		}
-	}, [])
-
-	useBeforeUnload(() => {
-		setSelectedDateOptions(new Map())
+	const stopsStore = createStopsStore({
+		orderedStops:
+			freeDate.__typename === "FreeDate"
+				? getDefaultSelectedOptions(freeDate)
+				: new Map<number, OrderedStop>(),
 	})
 
 	return showShareScreen && freeDate.__typename === "FreeDate" ? (
@@ -288,7 +268,9 @@ export default function FreeDateIdeaRoute() {
 				lg: "0px 0px 40px",
 			}}
 		>
-			<Outlet />
+			<StopsProvider value={stopsStore}>
+				<Outlet />
+			</StopsProvider>
 			<OnboardingTutorial />
 			{match(freeDate)
 				.with({ __typename: "Error" }, () => (
@@ -464,8 +446,10 @@ export default function FreeDateIdeaRoute() {
 									<ClientOnly>
 										{() => (
 											<DateLocationsMap
-												stops={Array.from(selectedDateOptions).map(
-													([_, { option }]) => option,
+												stops={Array.from(stopsStore.state.orderedStops).map(
+													([_, { options, selectedOptionOrder }]) =>
+														// biome-ignore lint/style/noNonNullAssertion: <explanation>
+														options.get(selectedOptionOrder)!,
 												)}
 											/>
 										)}
@@ -473,84 +457,72 @@ export default function FreeDateIdeaRoute() {
 									{!isLoggedIn() && (
 										<LoginBenefitsSection buttonSize={{ desktop: "sm" }} />
 									)}
-									{Array.from(selectedDateOptions).map(
-										([key, { orderedStop, option }]) => {
-											const nextStop = selectedDateOptions.get(key + 1)
+									{Array.from(stopsStore.state.orderedStops).map(
+										([key, { options, selectedOptionOrder, stop }]) => {
+											// biome-ignore lint/style/noNonNullAssertion: <explanation>
+											const option = options.get(selectedOptionOrder)!
+											const nextStop = stopsStore.state.orderedStops.get(
+												key + 1,
+											)
+											const numSelected = Array.from(
+												stopsStore.state.orderedStops,
+											).filter(([, { isSelected }]) => isSelected).length
 											return (
 												<DateStop
+													numSelected={numSelected}
 													travel={
 														nextStop
 															? option.travel?.find(
 																	(t) =>
 																		t.destinationId ===
-																		nextStop.option.location.id,
+																		nextStop.options.get(
+																			nextStop.selectedOptionOrder,
+																		)?.location.id,
 															  )
 															: undefined
 													}
-													optional={orderedStop.optional}
+													optional={stop.optional}
 													key={option.id}
-													stop={option}
-													order={key}
-													formattedEstimatedTime={
-														orderedStop.formattedEstimatedTime
-													}
+													option={option}
+													order={stop.order}
+													formattedEstimatedTime={stop.formattedEstimatedTime}
 													isChecked={
-														selectedDateOptions.get(key)?.isSelected ?? false
+														stopsStore.state.orderedStops.get(stop.order)
+															?.isSelected ?? false
 													}
 													setIsChecked={(isChecked) => {
-														setSelectedDateOptions(
-															new Map(
-																selectedDateOptions.set(key, {
-																	// biome-ignore lint/style/noNonNullAssertion: <explanation>
-																	...selectedDateOptions.get(key)!,
-																	isSelected: isChecked,
-																}),
-															),
-														)
+														stopsStore.dispatch({
+															type: "SET_ORDERED_STOP_SELECTED",
+															order: stop.order,
+															selected: isChecked,
+														})
 													}}
-													// travel={
-													// 	nextStop
-													// 		? stop.travel?.filter(
-													// 				(t) => t.destinationId === nextStop.location.id,
-													// 		  )[0] ?? undefined
-													// 		: undefined
-													// }
 													nextOption={() => {
-														// get next option based on nextOptionId
-														const nextOption = option.nextOptionId
-															? orderedStop.options.find(
-																	(o) => o.id === option.nextOptionId,
-															  )
-															: undefined
+														// get next option based on current option's optionOrder
+														const nextOption = options.get(
+															selectedOptionOrder + 1,
+														)
 														if (nextOption) {
-															setSelectedDateOptions(
-																new Map(
-																	selectedDateOptions.set(key, {
-																		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-																		...selectedDateOptions.get(key)!,
-																		option: nextOption,
-																	}),
-																),
-															)
+															// set option to next option
+															stopsStore.dispatch({
+																type: "SET_ORDERED_STOP_OPTION",
+																order: stop.order,
+																option: nextOption,
+															})
 														}
 													}}
 													previousOption={() => {
-														// get previous option based on previousOptionId
-														const previousOption = option.previousOptionId
-															? orderedStop.options.find(
-																	(o) => o.id === option.previousOptionId,
-															  )
-															: undefined
+														// get previous option based on current option's optionOrder
+														const previousOption = options.get(
+															selectedOptionOrder - 1,
+														)
 														if (previousOption) {
-															setSelectedDateOptions(
-																new Map(
-																	selectedDateOptions.set(key, {
-																		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-																		...selectedDateOptions.get(key)!,
-																		option: previousOption,
-																	}),
-																),
-															)
+															// set option to previous option
+															stopsStore.dispatch({
+																type: "SET_ORDERED_STOP_OPTION",
+																order: stop.order,
+																option: previousOption,
+															})
 														}
 													}}
 												/>
