@@ -1,11 +1,22 @@
-import { useFetcher } from "@remix-run/react"
-import { useState } from "react"
-import { $path } from "remix-routes"
-import { ValidatedForm } from "remix-validated-form"
+import { useFetcher, useParams } from "@remix-run/react"
+import { Form, useNavigate } from "@remix-run/react"
+import { useEffect } from "react"
+import { useController, useForm } from "react-hook-form"
+import {
+	RemixFormProvider,
+	useRemixForm,
+	useRemixFormContext,
+} from "remix-hook-form"
+import { $params, $path } from "remix-routes"
 import { match } from "ts-pattern"
 import { CreateLocationForm, SearchLocationForm } from "~/features/location"
 import { Modal, Tab } from "~/features/ui"
-import { action, createLocationValidator } from "~/routes/api.create-location"
+import {
+	AddLocationValues,
+	action,
+	addLocationResolver,
+} from "~/routes/api.create-location"
+import { FreeDateFormValues } from "~/routes/free-date.create"
 import { HStack, VStack } from "~/styled-system/jsx"
 
 type Props = {
@@ -14,14 +25,68 @@ type Props = {
 
 export function AddLocation({ redirectTo }: Props) {
 	const fetcher = useFetcher<typeof action>()
-	const [status, setStatus] = useState<"search" | "create">("search")
+	const { control } = useRemixFormContext<FreeDateFormValues>()
+
+	const methods = useRemixForm<AddLocationValues>({
+		defaultValues: {
+			address: {
+				city: "",
+				postalCode: "",
+				state: "",
+				street: "",
+			},
+			name: "",
+			website: "",
+			status: "search",
+		},
+		submitHandlers: {
+			onValid: async (data) => {
+				const formData = new FormData()
+				formData.append("name", data.name)
+				formData.append("website", data.website)
+				formData.append("address", JSON.stringify(data.address))
+				formData.append("status", data.status)
+				fetcher.submit(formData, {
+					method: "post",
+					action: $path("/api/create-location"),
+				})
+			},
+		},
+	})
+	const params = useParams()
+	const { stop, option } = $params(
+		"/free-date/create/add-location/:stop/:option",
+		params,
+	)
+	const { field: locationIdField } = useController({
+		control,
+		name: `orderedStops.${parseInt(stop) - 1}.options.${
+			parseInt(option) - 1
+		}.location.id`,
+	})
+	const { field: locationNameField } = useController({
+		control,
+		name: `orderedStops.${parseInt(stop) - 1}.options.${
+			parseInt(option) - 1
+		}.location.name`,
+	})
+	const navigate = useNavigate()
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		if (fetcher.data) {
+			match(fetcher.data)
+				.with({ type: "success" }, ({ id, name }) => {
+					locationIdField.onChange(id)
+					locationNameField.onChange(name)
+					navigate(redirectTo)
+				})
+				.otherwise(() => {})
+		}
+	}, [fetcher.data])
+
 	return (
-		<ValidatedForm
-			validator={createLocationValidator}
-			action={$path("/api/create-location")}
-			method="post"
-			fetcher={fetcher}
-		>
+		<Form onSubmit={methods.handleSubmit}>
 			<Modal>
 				<Modal.Header
 					type="link"
@@ -29,28 +94,25 @@ export function AddLocation({ redirectTo }: Props) {
 					to={$path("/free-date/create")}
 				/>
 				<Modal.Body>
-					<input type="hidden" name="type" value={status} />
 					<VStack gap={6}>
 						<HStack gap={4}>
 							<Tab
 								title="Search"
-								active={status === "search"}
-								onClick={() => setStatus("search")}
+								active={methods.getValues().status === "search"}
+								onClick={() => methods.setValue("status", "search")}
 							/>
 							<Tab
 								title="Create"
-								active={status === "create"}
-								onClick={() => setStatus("create")}
+								active={methods.getValues().status === "create"}
+								onClick={() => methods.setValue("status", "create")}
 							/>
 						</HStack>
-						{match(status)
-							.with("search", () => (
-								<SearchLocationForm redirectTo={redirectTo} />
-							))
-							.with("create", () => (
-								<CreateLocationForm redirectTo={redirectTo} />
-							))
-							.exhaustive()}
+						<RemixFormProvider {...methods}>
+							{match(methods.getValues().status)
+								.with("search", () => <SearchLocationForm />)
+								.with("create", () => <CreateLocationForm />)
+								.exhaustive()}
+						</RemixFormProvider>
 					</VStack>
 				</Modal.Body>
 				<Modal.Footer
@@ -60,6 +122,6 @@ export function AddLocation({ redirectTo }: Props) {
 					}}
 				/>
 			</Modal>
-		</ValidatedForm>
+		</Form>
 	)
 }

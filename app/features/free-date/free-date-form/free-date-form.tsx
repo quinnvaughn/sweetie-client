@@ -1,126 +1,59 @@
-import { useFetcher } from "@remix-run/react"
-import { withZod } from "@remix-validated-form/with-zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Form, useFetcher, useParams } from "@remix-run/react"
+import { FormProvider, useController, useFieldArray } from "react-hook-form"
 import { FiPlus } from "react-icons/fi/index.js"
-import {
-	ValidatedForm,
-	useControlField,
-	useFieldArray,
-} from "remix-validated-form"
-import { z } from "zod"
+import { RemixFormProvider, useRemixFormContext } from "remix-hook-form"
+import { $params } from "remix-routes"
 import { SaveDraftButton } from "~/features/drafts"
 import {
-	BulletPointsInput,
 	Button,
-	ImageUpload,
-	Input,
-	RadioGroup,
-	TagsInput,
-	Textarea,
+	HookBulletPointsInput,
+	HookImageUpload,
+	HookInput,
+	HookRadioGroup,
+	HookTagsInput,
+	HookTextarea,
 } from "~/features/ui"
+import { CreateFreeDateFormValues, UpdateFreeDateFormValues } from "~/forms"
 import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
-import { DateStopForm, RecommendedTimePicker } from ".."
-
-const schema = z.object({
-	id: z.string().optional(),
-	thumbnail: z
-		.string({
-			invalid_type_error: "Must be a url",
-			required_error: "Thumbnail is required.",
-		})
-		.url("Thumbnail is required."),
-	nsfw: z.union([z.literal("true"), z.literal("false")], {
-		required_error: "NSFW is required.",
-	}),
-	prepText: z.string().optional(),
-	prep: z
-		.array(z.string())
-		.or(z.string())
-		.optional()
-		.transform((data) => {
-			if (typeof data === "string") return [data]
-			return data
-		}),
-	tagText: z.string().optional(),
-	title: z
-		.string()
-		.min(5, "Title must be at least 5 characters.")
-		.max(500, "Title must be no more than 500 characters."),
-	description: z
-		.string()
-		.min(10, "Description must be at least 10 characters.")
-		.max(10000, "Description must be no more than 10,000 characters."),
-	recommendedTime: z.string(),
-	tags: z
-		.array(z.string())
-		.or(z.string())
-		.optional()
-		.transform((data) => {
-			if (typeof data === "string") return [data]
-			return data
-		}),
-	stops: z.array(
-		z.object({
-			title: z
-				.string()
-				.min(5, "Title must be at least 5 characters.")
-				.max(500, "Title must be no more than 500 characters."),
-			estimatedTime: z.string({
-				invalid_type_error: "Must be a time",
-				required_error: "Estimated time is required.",
-			}),
-			content: z
-				.string()
-				.min(100, "Content must be at least 100 characters.")
-				.max(100000, "Content must be no more than 100,000 characters."),
-			location: z.object({
-				id: z.string(),
-				name: z.string().min(1, "Must select a location."),
-			}),
-		}),
-	),
-})
-
-export const freeDateValidator = withZod(schema)
-
-type Stop = {
-	title: string
-	content: string
-	estimatedTime: string
-	location: {
-		id: string
-		name: string
-	}
-}
-
-export type FreeDateFormValues = z.infer<typeof schema>
+import { HookRecommendedTimePicker } from ".."
+import { OrderedDateStopForm } from "../ordered-date-stop-form"
 
 type Props = {
-	formId: string
-	page: "create" | "edit" | "draft"
-	error?: string
-	locationPath: string
 	fetcher: ReturnType<typeof useFetcher>
+	page: "create" | "edit" | "draft"
 }
 
-export function FreeDateForm({
-	formId,
-	page,
-	error,
-	locationPath,
-	fetcher,
-}: Props) {
-	const [stops, { push, remove, move }] = useFieldArray<Stop>("stops", {
-		formId,
+export function FreeDateForm({ page, fetcher }: Props) {
+	// get id from url params
+	const params = useParams()
+	const idParams =
+		page === "edit"
+			? $params("/free-date/edit/:id", params)
+			: $params("/free-date/draft/:id", params)
+	type Values = CreateFreeDateFormValues | UpdateFreeDateFormValues
+	const methods = useRemixFormContext<Values>()
+	const { append, fields: orderedStops } = useFieldArray({
+		control: methods.control,
+		name: "orderedStops",
 	})
-	const [id] = useControlField<string>("id", formId)
+	const {
+		append: prepAppend,
+		remove: prepRemove,
+		move: prepMove,
+		fields: prepFields,
+	} = useFieldArray({
+		control: methods.control,
+		name: "prep",
+	})
+	const { field: formError } = useController({
+		control: methods.control,
+		name: "formError",
+	})
+
 	return (
-		<ValidatedForm
-			fetcher={fetcher}
-			id={formId}
-			validator={freeDateValidator}
-			method="post"
-		>
+		<Form onSubmit={methods.handleSubmit}>
 			<VStack gap={4} alignItems="flex-start">
 				<HStack
 					gap={1}
@@ -140,49 +73,50 @@ export function FreeDateForm({
 							? "Edit free date"
 							: "Edit draft"}
 					</h1>
-					{page !== "edit" && <SaveDraftButton formId={formId} />}
+					{page !== "edit" && (
+						<RemixFormProvider {...methods}>
+							<SaveDraftButton />
+						</RemixFormProvider>
+					)}
 				</HStack>
-				{page !== "create" && (
-					<input
-						type="hidden"
-						name="id"
-						value={id?.length > 0 ? id : undefined}
-					/>
-				)}
-				<ImageUpload
+				<HookImageUpload
+					required
+					control={methods.control}
 					folder="free-dates"
 					name="thumbnail"
-					label="Thumbnail (We strongly recommend landscape images)"
-					required
+					label="Thumbnail"
 				/>
-				<Input
-					required
-					name="title"
+				<HookInput
 					label="Title"
 					placeholder="Enter a title that is sure to grab attention"
-				/>
-				<Textarea
 					required
-					name="description"
+					control={methods.control}
+					name="title"
+				/>
+				<HookTextarea
 					label="Description"
 					placeholder="Provide a brief synopsis of your date idea that will entice users to keep reading"
+					required
+					control={methods.control}
+					name="description"
 				/>
 				<VStack gap={4} alignItems="flex-start">
 					<p className={css({ textStyle: "paragraph", fontWeight: "bold" })}>
 						Add some tags. These will help users find your date. They can be
 						whatever you want.
 					</p>
-					<TagsInput label="Tags" tagsName="tags" textName="tagText" />
+					<HookTagsInput label="Tags" />
 				</VStack>
 				<VStack gap={4} alignItems="flex-start">
 					<p className={css({ textStyle: "paragraph", fontWeight: "bold" })}>
 						When is the best time to go on this date? We automatically add times
 						both half an hour before and after the time you select.
 					</p>
-					<RecommendedTimePicker
+					<HookRecommendedTimePicker
 						label="Recommended time"
 						name="recommendedTime"
 						required
+						control={methods.control}
 						defaultDisplayedTimes={[
 							{ tab: 0, text: "5:30 PM", value: "5:30 PM" },
 							{ tab: 1, text: "6:00 PM", value: "6:00 PM" },
@@ -194,7 +128,9 @@ export function FreeDateForm({
 					<p className={css({ textStyle: "paragraph", fontWeight: "bold" })}>
 						Is this date not safe for work (NSFW)?
 					</p>
-					<RadioGroup
+					<HookRadioGroup
+						name="nsfw"
+						control={methods.control}
 						required
 						label="NSFW"
 						options={[
@@ -205,10 +141,8 @@ export function FreeDateForm({
 							{
 								label: "No",
 								value: "false",
-								defaultChecked: true,
 							},
 						]}
-						name="nsfw"
 					/>
 				</VStack>
 				<VStack gap={4} alignItems="flex-start" width={"100%"}>
@@ -218,49 +152,55 @@ export function FreeDateForm({
 						reserving an Uber, buying tickets or flowers, or bringing a picnic
 						blanket.
 					</p>
-					<BulletPointsInput
-						label="Preparation step"
-						prepName="prep"
+					<HookBulletPointsInput
+						label="Preparation steps"
+						placeholder="Enter a preparation step"
+						control={methods.control}
 						textName="prepText"
+						values={prepFields.map((field) => field)}
+						onAdd={(value) => {
+							prepAppend({ text: value, id: new Date().getTime().toString() })
+							methods.setValue("prepText", "")
+						}}
+						onRemove={(index) => prepRemove(index)}
+						onMove={(from, to) => prepMove(from, to)}
 					/>
 				</VStack>
 				<VStack gap={4} paddingBottom={"40px"} alignItems="flex-start">
 					<p className={css({ textStyle: "paragraph", fontWeight: "bold" })}>
-						We strongly encourage you to have at least three date stops. While
-						not required, we believe that having more stops will make your date
-						more fun and interesting.
+						Feel free to add at least 3 stops to your date itinerary below. Each
+						stop can be tailored with different options to choose from. For
+						example, if there are a couple restaurants in the area, you can add
+						both and let the user decide which one they want to go to. If you
+						only have one option, that's fine too. Just add it and move on to
+						the next stop.
 					</p>
-					{stops.map((stop, index) => (
-						<DateStopForm
-							locationPath={locationPath}
-							index={index}
-							isFirst={index === 0}
-							isLast={index === stops.length - 1}
-							isLengthMoreThanOne={stops.length > 1}
-							remove={() => remove(index)}
-							onMoveDown={() => move(index, index + 1)}
-							onMoveUp={() => move(index, index - 1)}
-							key={stop.key}
-							fields={{
-								content: `stops[${index}].content`,
-								title: `stops[${index}].title`,
-								estimatedTime: `stops[${index}].estimatedTime`,
-								location: {
-									id: `stops[${index}].location.id`,
-									name: `stops[${index}].location.name`,
-								},
-							}}
-						/>
-					))}
+					<RemixFormProvider {...methods}>
+						{orderedStops.map((stop, index) => (
+							<OrderedDateStopForm
+								id={idParams.id}
+								key={stop.id}
+								order={index + 1}
+								page={page}
+							/>
+						))}
+					</RemixFormProvider>
 					<Button
 						variant="black"
 						size="md"
 						icon={<FiPlus className={css({ color: "white" })} />}
 						onClick={() =>
-							push({
-								title: "",
-								content: "",
-								location: { id: "", name: "" },
+							append({
+								optional: "false",
+								options: [
+									{
+										content: "",
+										title: "",
+										optionOrder: 1,
+										location: { id: "", name: "" },
+									},
+								],
+								order: orderedStops.length + 1,
 								estimatedTime: "1:00",
 							})
 						}
@@ -279,15 +219,19 @@ export function FreeDateForm({
 						type="submit"
 						size="xl"
 						variant="primary"
-						disabled={fetcher.state === "submitting"}
+						disabled={
+							fetcher.state === "submitting" || !methods.formState.isValid
+						}
 					>
 						{page === "create" || page === "draft"
 							? "Create new date"
 							: "Edit date"}
 					</Button>
 				</div>
-				{error && <p className={css({ textStyle: "error" })}>{error}</p>}
+				{formError.value && (
+					<p className={css({ textStyle: "error" })}>{formError.value}</p>
+				)}
 			</VStack>
-		</ValidatedForm>
+		</Form>
 	)
 }

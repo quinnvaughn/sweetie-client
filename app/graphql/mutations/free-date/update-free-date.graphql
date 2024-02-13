@@ -23,7 +23,7 @@ mutation UpdateFreeDate($input: UpdateFreeDateInput!) {
 			prep
 			tags {
 				id 
-				name
+				text
 			}
 			tastemaker {
 				...TastemakerInfo

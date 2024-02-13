@@ -18,16 +18,9 @@ query GetFreeDateDraft($id: String!) {
 					...Tags
 				}
                 recommendedTime
-                stops {
+                orderedStops {
                     id
-                    order
-                    title
-                    estimatedTime
-                    location {
-                        id
-                        name
-                    }
-                    content
+                    ...OrderedDateStopDraft
                 }
             }
         }

@@ -1,14 +1,9 @@
-import { $path } from "remix-routes"
 import { SingleCityCombobox } from "~/features/city"
 import { Input } from "~/features/ui"
 import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
 
-type Props = {
-	redirectTo: string
-}
-
-export function CreateLocationForm({ redirectTo }: Props) {
+export function CreateLocationForm() {
 	return (
 		<VStack gap={2} alignItems="flex-start">
 			<p className={css({ textStyle: "paragraph" })}>
@@ -55,7 +50,6 @@ export function CreateLocationForm({ redirectTo }: Props) {
 				name="website"
 				placeholder="Enter the website"
 			/>
-			<input type="hidden" name="redirectTo" value={redirectTo} />
 		</VStack>
 	)
 }

@@ -1,10 +1,11 @@
 import { useCombobox } from "downshift"
-import { useState } from "react"
+import { useController } from "react-hook-form"
+import { useRemixFormContext } from "remix-hook-form"
 import { $path } from "remix-routes"
-import { useField } from "remix-validated-form"
 import { useSpinDelay } from "spin-delay"
 import { Spinner } from "~/features/ui"
 import { useCustomFetcher } from "~/hooks"
+import { AddLocationValues } from "~/routes/api.create-location"
 import { loader } from "~/routes/api.google-locations"
 import { css, cva } from "~/styled-system/css"
 import { VStack } from "~/styled-system/jsx"
@@ -72,10 +73,20 @@ function splitUpAddress(address: string) {
 export function GoogleLocationCombobox({ label, required }: Props) {
 	const fetcher = useCustomFetcher<typeof loader>()
 	const showSpinner = useSpinDelay(fetcher.state === "loading", { delay: 300 })
-	const { getInputProps: getFieldProps } = useField("address.cityText")
-	const { error, clearError } = useField("name")
-	const [selectedValue, setSelectedValue] = useState(defaultValues)
 	const locations = fetcher.data?.locations ?? []
+	const { control } = useRemixFormContext<AddLocationValues>()
+	const { field: addressField } = useController({
+		control,
+		name: "address",
+	})
+	const { field: nameField } = useController({
+		control,
+		name: "name",
+	})
+	const { field: websiteField } = useController({
+		control,
+		name: "website",
+	})
 	type Location = typeof locations[number]
 
 	const { isOpen, getLabelProps, getMenuProps, getInputProps, getItemProps } =
@@ -88,20 +99,14 @@ export function GoogleLocationCombobox({ label, required }: Props) {
 					const { city, postalCode, state, street } = splitUpAddress(
 						selectedItem.formattedAddress,
 					)
-					setSelectedValue({
-						address: {
-							city,
-							postalCode,
-							state,
-							street,
-						},
-						name: selectedItem.name,
-						website: selectedItem.website ?? "",
-					})
+					addressField.onChange({ city, postalCode, state, street })
+					nameField.onChange(selectedItem.name)
+					websiteField.onChange(selectedItem.website)
 				} else {
-					setSelectedValue(defaultValues)
+					addressField.onChange(defaultValues.address)
+					nameField.onChange(defaultValues.name)
+					websiteField.onChange(defaultValues.website)
 				}
-				clearError()
 			},
 			onInputValueChange({ inputValue }) {
 				if (inputValue?.length === 0) {
@@ -149,43 +154,11 @@ export function GoogleLocationCombobox({ label, required }: Props) {
 				>
 					<div className={css({ display: "flex", gap: 0.5, flexGrow: 1 })}>
 						<input
+							{...getInputProps()}
 							placeholder="Search for a location"
 							className={css({ width: "100%", outline: "none" })}
-							{...getFieldProps({
-								...getInputProps(),
-							})}
 						/>
 						{showSpinner && <Spinner />}
-						<input
-							type="hidden"
-							name={"name"}
-							value={selectedValue.name ?? ""}
-						/>
-						<input
-							type="hidden"
-							name={"website"}
-							value={selectedValue.website ?? ""}
-						/>
-						<input
-							type="hidden"
-							name={"address.postalCode"}
-							value={selectedValue.address.postalCode ?? ""}
-						/>
-						<input
-							type="hidden"
-							name={"address.city"}
-							value={selectedValue.address.city ?? ""}
-						/>
-						<input
-							type="hidden"
-							name={"address.state"}
-							value={selectedValue.address.state ?? ""}
-						/>
-						<input
-							type="hidden"
-							name={"address.street"}
-							value={selectedValue.address.street ?? ""}
-						/>
 					</div>
 				</div>
 			</div>
@@ -214,7 +187,6 @@ export function GoogleLocationCombobox({ label, required }: Props) {
 						</li>
 					))}
 			</ul>
-			{error ? <p className={css({ textStyle: "error" })}>{error}</p> : null}
 		</div>
 	)
 }

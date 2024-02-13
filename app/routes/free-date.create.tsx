@@ -5,61 +5,80 @@ import {
 	redirect,
 } from "@remix-run/node"
 import { Outlet, useFetcher } from "@remix-run/react"
+import {
+	RemixFormProvider,
+	getValidatedFormData,
+	useRemixForm,
+} from "remix-hook-form"
 import { $path } from "remix-routes"
-import { setFormDefaults, validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { showShareScreen } from "~/cookies.server"
-import {
-	FreeDateForm,
-	FreeDateFormValues,
-	freeDateValidator,
-} from "~/features/free-date"
+import { FreeDateForm } from "~/features/free-date"
 import { PageContainer } from "~/features/ui"
+import { CreateFreeDateFormValues, createFreeDateResolver } from "~/forms"
 import {
 	CreateFreeDateDocument,
 	ViewerIsLoggedInDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import {
-	getMinutes,
-	isTypeofFieldError,
-	mapFieldErrorToValidationError,
-	omit,
-} from "~/lib"
+import { getMinutes, mapFieldErrors, omit } from "~/lib"
 
 export async function action({ request }: DataFunctionArgs) {
-	const formData = await request.formData()
-	const result = await freeDateValidator.validate(formData)
-	if (result.error) {
-		return validationError(result.error)
+	const {
+		errors,
+		data: validatedData,
+		receivedValues: defaultValues,
+	} = await getValidatedFormData<CreateFreeDateFormValues>(
+		request,
+		createFreeDateResolver,
+	)
+	if (errors) {
+		// The keys "errors" and "defaultValue" are picked up automatically by useRemixForm
+		return json({ errors, defaultValues })
 	}
 	const { data } = await gqlFetch(request, CreateFreeDateDocument, {
 		input: {
 			...omit(
-				result.data,
+				validatedData,
 				"tagText",
 				"tags",
 				"nsfw",
-				"stops",
+				"orderedStops",
 				"prepText",
 				"prep",
+				"formError",
 			),
-			nsfw: result.data.nsfw === "true",
-			stops: result.data.stops.map((stop, i) => ({
+			nsfw: validatedData.nsfw === "true",
+			orderedStops: validatedData.orderedStops.map((stop) => ({
 				...stop,
+				optional: stop.optional === "true",
 				estimatedTime: getMinutes(stop.estimatedTime),
-				order: i + 1,
+				order: stop.order,
+				options: stop.options.map((option) => ({
+					...option,
+					location: {
+						id: option.location.id,
+					},
+				})),
 			})),
-			prep: result.data.prep?.filter((v) => v.length > 0) ?? [],
-			tags: result.data.tags?.filter((v) => v.length > 0) ?? [],
+			prep:
+				validatedData.prep
+					?.filter((v) => v.text.length > 0)
+					.map((v) => v.text) ?? [],
+			tags:
+				validatedData.tags
+					?.filter((v) => v.text.length > 0)
+					.map((t) => t.text) ?? [],
 		},
 	})
 	return match(data?.createFreeDate)
 		.with({ __typename: "AuthError" }, () => redirect($path("/login")))
 		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) =>
-			validationError(mapFieldErrorToValidationError(fieldErrors)),
+			json({ errors: mapFieldErrors(fieldErrors), defaultValues }),
 		)
-		.with({ __typename: "Error" }, ({ message }) => json({ error: message }))
+		.with({ __typename: "Error" }, ({ message }) =>
+			json({ errors: { formError: message }, defaultValues }),
+		)
 		.with({ __typename: "FreeDate" }, async (date) => {
 			const cookieHeader = request.headers.get("Cookie")
 			const cookie = (await showShareScreen.parse(cookieHeader)) || {}
@@ -70,7 +89,12 @@ export async function action({ request }: DataFunctionArgs) {
 				},
 			})
 		})
-		.otherwise(() => json({ error: "Unknown error." }))
+		.otherwise(() =>
+			json({
+				errors: { formError: "An unknown error occurred." },
+				defaultValues,
+			}),
+		)
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -80,19 +104,32 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	if (!data?.viewer) {
 		return redirect($path("/login"))
 	}
+	return null
+}
 
-	return json(
-		setFormDefaults<FreeDateFormValues>("create-free-date-form", {
+export default function CreateFreeDateRoute() {
+	const fetcher = useFetcher<typeof action>()
+	const methods = useRemixForm<CreateFreeDateFormValues>({
+		mode: "onTouched",
+		defaultValues: {
+			formError: "",
 			thumbnail: "",
 			description: "",
 			nsfw: "false",
 			recommendedTime: "6:00 PM",
-			stops: [
+			orderedStops: [
 				{
-					content: "",
-					title: "",
-					location: { id: "", name: "" },
+					order: 1,
+					optional: "false",
 					estimatedTime: "1:00",
+					options: [
+						{
+							optionOrder: 1,
+							content: "",
+							title: "",
+							location: { id: "", name: "" },
+						},
+					],
 				},
 			],
 			title: "",
@@ -100,28 +137,19 @@ export async function loader({ request }: LoaderFunctionArgs) {
 			prep: [],
 			prepText: "",
 			tagText: "",
-		}),
-	)
-}
-
-export default function CreateFreeDateRoute() {
-	const fetcher = useFetcher<typeof action>()
+		},
+		resolver: createFreeDateResolver,
+	})
 	return (
 		<PageContainer
 			tastemaker
 			width={{ base: "100%", md: 780, lg: 1024 }}
 			padding={{ base: "20px", xl: "20px 0px" }}
 		>
-			<Outlet />
-			<FreeDateForm
-				fetcher={fetcher}
-				formId="create-free-date-form"
-				page="create"
-				error={
-					!isTypeofFieldError(fetcher.data) ? fetcher.data?.error ?? "" : ""
-				}
-				locationPath={$path("/free-date/create/add-location")}
-			/>
+			<RemixFormProvider {...methods}>
+				<Outlet />
+				<FreeDateForm fetcher={fetcher} page="create" />
+			</RemixFormProvider>
 		</PageContainer>
 	)
 }

@@ -3,7 +3,6 @@ import { FiPlus, FiX } from "react-icons/fi/index.js"
 import { useControlField, useField } from "remix-validated-form"
 import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
-import { Button } from ".."
 
 type Props = {
 	textName: string

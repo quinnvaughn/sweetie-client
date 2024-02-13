@@ -1,59 +1,54 @@
+import { zodResolver } from "@hookform/resolvers/zod"
 import { DataFunctionArgs, json, redirect } from "@remix-run/node"
 import { withZod } from "@remix-validated-form/with-zod"
+import { getValidatedFormData } from "remix-hook-form"
 import { $path } from "remix-routes"
-import { validationError } from "remix-validated-form"
 import { match } from "ts-pattern"
 import { z } from "zod"
 import { CreateLocationDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import { mapFieldErrorToValidationError, omit } from "~/lib"
+import { mapFieldErrors } from "~/lib"
 
-export const createLocationValidator = withZod(
-	z.object({
-		redirectTo: z.string(),
-		name: z
-			.string()
-			.min(1, "Name must be at least one character.")
-			.max(1000, "Name must be no more than 1000 characters."),
-		website: z.union([
-			z.literal(""),
-			z.string().trim().url("Must be a valid URL."),
-		]),
-		address: z.object({
-			street: z.string().min(1, "Must be a valid street"),
-			city: z
-				.string({ invalid_type_error: "Must be a valid city" })
-				.min(1, "Must be a valid city"),
-			cityText: z.string().min(1, "Must be a valid city"),
-			state: z
-				.string()
-				.min(2, "Must be a valid state")
-				.max(2, "Must be a valid state"),
-			postalCode: z.string().length(5, "Must be a valid postal code"),
-		}),
-		type: z.enum(["create", "search"]),
+const addLocationSchema = z.object({
+	status: z.enum(["search", "create"]),
+	website: z.string().url("Website must be a valid URL."),
+	name: z.string(),
+	address: z.object({
+		postalCode: z.string(),
+		city: z.string(),
+		state: z.string(),
+		street: z.string(),
 	}),
-)
+})
+
+export type AddLocationValues = z.infer<typeof addLocationSchema>
+
+export const addLocationResolver = zodResolver(addLocationSchema)
 
 export async function action({ request }: DataFunctionArgs) {
-	const formData = await request.formData()
-
-	const result = await createLocationValidator.validate(formData)
-
-	if (result.error) {
-		return validationError(result.error)
+	const {
+		errors,
+		data: validatedData,
+		receivedValues: defaultValues,
+	} = await getValidatedFormData<AddLocationValues>(
+		request,
+		addLocationResolver,
+	)
+	if (errors) {
+		// The keys "errors" and "defaultValue" are picked up automatically by useRemixForm
+		return json({ errors, defaultValues })
 	}
 
 	const input = {
-		name: result.data.name,
-		website: result.data.website,
+		name: validatedData.name,
+		website: validatedData.website,
 		address: {
-			street: result.data.address.street,
-			city: result.data.address.city,
-			state: result.data.address.state,
-			postalCode: result.data.address.postalCode,
+			street: validatedData.address.street,
+			city: validatedData.address.city,
+			state: validatedData.address.state,
+			postalCode: validatedData.address.postalCode,
 		},
-		type: result.data.type,
+		type: validatedData.status,
 	}
 
 	const { data } = await gqlFetch(request, CreateLocationDocument, {
@@ -62,10 +57,35 @@ export async function action({ request }: DataFunctionArgs) {
 
 	return match(data?.createLocation)
 		.with({ __typename: "AuthError" }, () => redirect($path("/login")))
-		.with({ __typename: "Error" }, ({ message }) => json({ error: message }))
-		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) =>
-			validationError(mapFieldErrorToValidationError(fieldErrors)),
+		.with({ __typename: "Error" }, ({ message }) =>
+			json({
+				error: message,
+				defaultValues,
+				type: "error",
+				id: null,
+				name: null,
+			}),
 		)
-		.with({ __typename: "Location" }, () => redirect(result.data.redirectTo))
-		.otherwise(() => json({ error: "Unknown error" }))
+		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) => {
+			const errors = mapFieldErrors(fieldErrors)
+			return json({
+				errors,
+				defaultValues,
+				type: "fieldErrors",
+				id: null,
+				name: null,
+			})
+		})
+		.with({ __typename: "Location" }, ({ id, name }) =>
+			json({ id, name, error: null, type: "success" }),
+		)
+		.otherwise(() =>
+			json({
+				error: "Unknown error",
+				defaultValues,
+				type: "error",
+				id: null,
+				name: null,
+			}),
+		)
 }

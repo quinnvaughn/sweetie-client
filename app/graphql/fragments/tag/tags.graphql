@@ -1,4 +1,4 @@
 fragment Tags on Tag {
     id 
-    name
+    text
 }

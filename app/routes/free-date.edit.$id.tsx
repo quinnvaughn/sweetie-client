@@ -4,16 +4,21 @@ import {
 	json,
 	redirect,
 } from "@remix-run/node"
-import { Outlet, useFetcher, useLoaderData, useParams } from "@remix-run/react"
-import { $params, $path } from "remix-routes"
-import { setFormDefaults, validationError } from "remix-validated-form"
-import { P, match } from "ts-pattern"
+import { Outlet, useFetcher, useLoaderData } from "@remix-run/react"
 import {
-	FreeDateForm,
-	FreeDateFormValues,
-	freeDateValidator,
-} from "~/features/free-date"
+	RemixFormProvider,
+	getValidatedFormData,
+	useRemixForm,
+} from "remix-hook-form"
+import { $params, $path } from "remix-routes"
+import { P, match } from "ts-pattern"
+import { FreeDateForm } from "~/features/free-date"
 import { PageContainer } from "~/features/ui"
+import {
+	UpdateFreeDateFormValues,
+	createFreeDateResolver,
+	updateFreeDateResolver,
+} from "~/forms"
 import {
 	GetEditFreeDateDocument,
 	UpdateDateStopInput,
@@ -21,56 +26,71 @@ import {
 	ViewerIsLoggedInDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import {
-	getHourAndMinutes,
-	getMinutes,
-	isTypeofFieldError,
-	mapFieldErrorToValidationError,
-	omit,
-} from "~/lib"
+import { getHourAndMinutes, getMinutes, mapFieldErrors, omit } from "~/lib"
 import { css } from "~/styled-system/css"
 
-export async function action({ request, params }: DataFunctionArgs) {
-	const { id } = $params("/free-date/edit/:id", params)
-	const formData = await request.formData()
-	const result = await freeDateValidator.validate(formData)
-	if (result.error) {
-		return validationError(result.error)
+export async function action({ request }: DataFunctionArgs) {
+	const {
+		errors,
+		data: validatedData,
+		receivedValues: defaultValues,
+	} = await getValidatedFormData<UpdateFreeDateFormValues>(
+		request,
+		updateFreeDateResolver,
+	)
+	if (errors) {
+		// The keys "errors" and "defaultValue" are picked up automatically by useRemixForm
+		return json({ errors, defaultValues })
 	}
-
 	const { data } = await gqlFetch(request, UpdateFreeDateDocument, {
 		input: {
-			id,
 			...omit(
-				result.data,
+				validatedData,
 				"tagText",
 				"tags",
-				"stops",
 				"nsfw",
-				"id",
-				"prep",
+				"orderedStops",
 				"prepText",
+				"prep",
+				"formError",
 			),
-			nsfw: result.data.nsfw === "true",
-			stops: result.data.stops.map<UpdateDateStopInput>((stop, i) => ({
+			nsfw: validatedData.nsfw === "true",
+			orderedStops: validatedData.orderedStops.map((stop, i) => ({
 				...stop,
-				order: i + 1,
+				optional: stop.optional === "true",
 				estimatedTime: getMinutes(stop.estimatedTime),
+				order: i + 1,
+				options: stop.options.map((option, j) => ({
+					...option,
+					location: {
+						id: option.location.id,
+					},
+				})),
 			})),
-			prep: result.data.prep?.filter((v) => v.length > 0) ?? [],
-			tags: result.data.tags?.filter((v) => v.length > 0) ?? [],
+			prep:
+				validatedData.prep
+					?.filter((v) => v.text.length > 0)
+					.map((v) => v.text) ?? [],
+			tags: validatedData.tags?.filter((v) => v.text.length > 0) ?? [],
 		},
 	})
 	return match(data?.updateFreeDate)
 		.with({ __typename: "AuthError" }, () => redirect($path("/login")))
-		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) =>
-			validationError(mapFieldErrorToValidationError(fieldErrors)),
+		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) => {
+			return json({ errors: mapFieldErrors(fieldErrors), defaultValues })
+		})
+		.with({ __typename: "Error" }, ({ message }) =>
+			json({ errors: { formError: message }, defaultValues }),
 		)
-		.with({ __typename: "FreeDate" }, () =>
-			redirect($path("/free-date/:id", { id })),
+		.with({ __typename: "FreeDate" }, async (date) => {
+			return redirect($path("/free-date/:id", { id: date.id }))
+		})
+		.otherwise(() =>
+			json({
+				errors: { formError: "An unknown error occurred." },
+				defaultValues,
+			}),
 		)
-		.with({ __typename: "Error" }, ({ message }) => json({ error: message }))
-		.otherwise(() => json({ error: "Something went wrong." }))
 }
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
@@ -86,70 +106,104 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 	})
 
 	return match(data?.getEditFreeDate)
-		.with(P.nullish, () => json({ error: "Free date not found." }))
-		.with({ __typename: "AuthError" }, () => redirect($path("/login")))
-		.with({ __typename: "Error" }, ({ message }) => json({ error: message }))
-		.with(
-			{ __typename: "FreeDate" },
-			({
-				description,
-				nsfw,
-				stops,
-				tags,
-				thumbnail,
-				title,
-				recommendedTime,
-				prep,
-			}) => json({
-					error: null,
-					...setFormDefaults<FreeDateFormValues>("edit-free-date-form", {
-						description,
-						thumbnail,
-						nsfw: nsfw ? "true" : "false",
-						recommendedTime,
-						stops: stops.map(({ title, content, location, estimatedTime }) => ({
-							title,
-							content,
-							estimatedTime: getHourAndMinutes(estimatedTime),
-							location: {
-								id: location.id,
-								name: location.name,
-							},
-						})),
-						prep,
-						prepText: "",
-						tags: tags.map(({ name }) => name),
-						tagText: "",
-						title,
-					}),
-				}),
+		.with(P.nullish, () =>
+			json({ error: "Free date not found.", freeDate: null }),
 		)
-		.otherwise(() => json({ error: "Something went wrong." }))
+		.with({ __typename: "AuthError" }, () => redirect($path("/login")))
+		.with({ __typename: "Error" }, ({ message }) =>
+			json({ error: message, freeDate: null }),
+		)
+		.with({ __typename: "FreeDate" }, (freeDate) =>
+			json({
+				error: "",
+				freeDate,
+			}),
+		)
+		.otherwise(() => json({ error: "Something went wrong.", freeDate: null }))
 }
 
 export default function EditFreeDateRoute() {
 	const loaderData = useLoaderData<typeof loader>()
-	const params = useParams()
-	const { id } = $params("/free-date/edit/:id", params)
 	const fetcher = useFetcher<typeof action>()
+	const methods = useRemixForm<UpdateFreeDateFormValues>({
+		mode: "onTouched",
+		defaultValues: loaderData.freeDate
+			? {
+					formError: "",
+					description: loaderData.freeDate.description,
+					thumbnail: loaderData.freeDate.thumbnail,
+					nsfw: loaderData.freeDate.nsfw ? "true" : "false",
+					recommendedTime: loaderData.freeDate.recommendedTime,
+					id: loaderData.freeDate.id,
+					prep: loaderData.freeDate.prep.map((text, i) => ({
+						id: i.toString(),
+						text,
+					})),
+					prepText: "",
+					tags: loaderData.freeDate.tags.map((t) => t),
+					tagText: "",
+					title: loaderData.freeDate.title,
+					orderedStops: loaderData.freeDate.orderedStops.map((stop) => ({
+						estimatedTime: stop.estimatedTimeHoursMinutes,
+						id: stop.id,
+						optional: stop.optional ? "true" : "false",
+						order: stop.order,
+						options: stop.options.map((option) => ({
+							content: option.content,
+							id: option.id,
+							location: {
+								id: option.location.id,
+								name: option.location.name,
+							},
+							optionOrder: option.optionOrder,
+							title: option.title,
+						})),
+					})),
+			  }
+			: {
+					id: "",
+					formError: "",
+					thumbnail: "",
+					description: "",
+					nsfw: "false",
+					recommendedTime: "6:00 PM",
+					orderedStops: [
+						{
+							order: 1,
+							optional: "false",
+							estimatedTime: "1:00",
+							options: [
+								{
+									optionOrder: 1,
+									content: "",
+									title: "",
+									location: { id: "", name: "" },
+								},
+							],
+						},
+					],
+					title: "",
+					tags: [],
+					prep: [],
+					prepText: "",
+					tagText: "",
+			  },
+		resolver: updateFreeDateResolver,
+	})
 	return (
 		<PageContainer
 			tastemaker
 			width={{ base: "100%", md: 780, lg: 1024 }}
 			padding={{ base: "20px", xl: "20px 0px" }}
 		>
-			<Outlet />
-			{loaderData.error ? (
-				<p className={css({ textStyle: "error" })}>{loaderData.error}</p>
-			) : (
-				<FreeDateForm
-					fetcher={fetcher}
-					locationPath={$path("/free-date/edit/:id/add-location", { id })}
-					formId="edit-free-date-form"
-					page="edit"
-					error={!isTypeofFieldError(fetcher.data) ? fetcher.data?.error : ""}
-				/>
-			)}
+			<RemixFormProvider {...methods}>
+				<Outlet />
+				{loaderData.error ? (
+					<p className={css({ textStyle: "error" })}>{loaderData.error}</p>
+				) : (
+					<FreeDateForm fetcher={fetcher} page="edit" />
+				)}
+			</RemixFormProvider>
 		</PageContainer>
 	)
 }

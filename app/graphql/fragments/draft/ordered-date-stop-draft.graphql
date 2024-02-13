@@ -1,0 +1,21 @@
+fragment OrderedDateStopDraft on OrderedDateStopDraft {
+    id 
+    order 
+    estimatedTime
+    optional
+    options {
+        ...DateStopOptionDraft
+      }
+}
+
+
+fragment DateStopOptionDraft on DateStopOptionDraft {
+    id
+    optionOrder
+    title
+    content
+    location {
+        id
+        name
+    }
+}

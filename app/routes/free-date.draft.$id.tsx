@@ -4,78 +4,104 @@ import {
 	json,
 	redirect,
 } from "@remix-run/node"
+import { Outlet, useFetcher, useLoaderData } from "@remix-run/react"
 import {
-	Outlet,
-	useActionData,
-	useFetcher,
-	useLoaderData,
-	useParams,
-} from "@remix-run/react"
+	RemixFormProvider,
+	getValidatedFormData,
+	useRemixForm,
+} from "remix-hook-form"
 import { $params, $path } from "remix-routes"
-import { setFormDefaults, validationError } from "remix-validated-form"
 import { P, match } from "ts-pattern"
-import {
-	FreeDateForm,
-	FreeDateFormValues,
-	freeDateValidator,
-} from "~/features/free-date"
+import { showShareScreen } from "~/cookies.server"
+import { FreeDateForm } from "~/features/free-date"
 import { PageContainer } from "~/features/ui"
+import { CreateFreeDateFormValues, createFreeDateResolver } from "~/forms"
 import {
-	CreateDateStopInput,
 	CreateFreeDateDocument,
 	GetFreeDateDraftDocument,
 	ViewerIsLoggedInDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
-import {
-	getHourAndMinutes,
-	getMinutes,
-	isTypeofFieldError,
-	mapFieldErrorToValidationError,
-	omit,
-} from "~/lib"
+import { getHourAndMinutes, getMinutes, mapFieldErrors, omit } from "~/lib"
 import { css } from "~/styled-system/css"
 
 export async function action({ request }: DataFunctionArgs) {
-	const formData = await request.formData()
-	const result = await freeDateValidator.validate(formData)
-	if (result.error) {
-		return validationError(result.error)
+	const {
+		errors,
+		data: validatedData,
+		receivedValues: defaultValues,
+	} = await getValidatedFormData<CreateFreeDateFormValues>(
+		request,
+		createFreeDateResolver,
+	)
+	if (errors) {
+		// The keys "errors" and "defaultValue" are picked up automatically by useRemixForm
+		return json({ errors, defaultValues })
 	}
-
-	const { data } = await gqlFetch(request, CreateFreeDateDocument, {
-		input: {
-			...omit(
-				result.data,
-				"tagText",
-				"tags",
-				"stops",
-				"nsfw",
-				"id",
-				"prepText",
-				"prep",
-			),
-			nsfw: result.data.nsfw === "true",
-			stops: result.data.stops.map<CreateDateStopInput>((stop, i) => ({
-				...stop,
-				estimatedTime: getMinutes(stop.estimatedTime),
-				order: i + 1,
-			})),
-			prep: result.data.prep?.filter((v) => v.length > 0) ?? [],
-			tags: result.data.tags?.filter((v) => v.length > 0) ?? [],
+	const { data, errors: serverErrors } = await gqlFetch(
+		request,
+		CreateFreeDateDocument,
+		{
+			input: {
+				...omit(
+					validatedData,
+					"tagText",
+					"tags",
+					"nsfw",
+					"orderedStops",
+					"prepText",
+					"prep",
+					"formError",
+				),
+				nsfw: validatedData.nsfw === "true",
+				orderedStops: validatedData.orderedStops.map((stop, i) => ({
+					...omit(stop, "id", "options"),
+					optional: stop.optional === "true",
+					estimatedTime: getMinutes(stop.estimatedTime),
+					order: i + 1,
+					options: stop.options.map((option) => ({
+						...omit(option, "id"),
+						location: {
+							id: option.location.id,
+						},
+					})),
+				})),
+				prep:
+					validatedData.prep
+						?.filter((v) => v.text.length > 0)
+						.map((v) => v.text) ?? [],
+				tags:
+					validatedData.tags
+						?.filter((v) => v.text.length > 0)
+						.map((t) => t.text) ?? [],
+			},
 		},
-	})
-
+	)
+	console.log({ data, serverErrors })
 	return match(data?.createFreeDate)
 		.with({ __typename: "AuthError" }, () => redirect($path("/login")))
 		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) =>
-			validationError(mapFieldErrorToValidationError(fieldErrors)),
+			json({ errors: mapFieldErrors(fieldErrors), defaultValues }),
 		)
-		.with({ __typename: "FreeDate" }, ({ id }) =>
-			redirect($path("/free-date/:id", { id })),
+		.with({ __typename: "Error" }, ({ message }) =>
+			json({ errors: { formError: message }, defaultValues }),
 		)
-		.with({ __typename: "Error" }, ({ message }) => json({ error: message }))
-		.otherwise(() => json({ error: "Something went wrong." }))
+		.with({ __typename: "FreeDate" }, async (date) => {
+			const cookieHeader = request.headers.get("Cookie")
+			const cookie = (await showShareScreen.parse(cookieHeader)) || {}
+			cookie.showShareScreen = true
+			return redirect($path("/free-date/:id", { id: date.id }), {
+				headers: {
+					"Set-Cookie": await showShareScreen.serialize(cookie),
+				},
+			})
+		})
+		.otherwise(() =>
+			json({
+				errors: { formError: "An unknown error occurred." },
+				defaultValues,
+			}),
+		)
 }
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
@@ -91,84 +117,99 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 	})
 
 	return match(data?.freeDateDraft)
-		.with(P.nullish, () => json({ error: "Free date not found." }))
+		.with(P.nullish, () => json({ error: "Free date not found.", draft: null }))
 		.with({ __typename: "AuthError" }, () => redirect($path("/login")))
-		.with({ __typename: "Error" }, ({ message }) => json({ error: message }))
-		.otherwise(
-			({
-				id,
-				nsfw,
-				stops,
-				tags,
-				description,
-				thumbnail,
-				title,
-				recommendedTime,
-				prep,
-			}) => json({
-					error: null,
-					id,
-					...setFormDefaults<FreeDateFormValues>("draft-free-date-form", {
-						id,
-						description: description ?? "",
-						thumbnail: thumbnail ?? "",
-						recommendedTime: recommendedTime ?? "6:00 PM",
-						nsfw: nsfw ? "true" : "false",
-						stops:
-							stops.length > 0
-								? stops.map(({ title, content, location, estimatedTime }) => ({
-										title: title ?? "",
-										content: content ?? "",
-										estimatedTime: getHourAndMinutes(estimatedTime) ?? "1:00",
-										location: {
-											id: location?.id ?? "",
-											name: location?.name ?? "",
-										},
-								  }))
-								: [
-										{
-											content: "",
-											location: { id: "", name: "" },
-											title: "",
-											estimatedTime: "1:00",
-										},
-								  ],
-						tags: tags.map(({ name }) => name),
-						prep: prep,
-						prepText: "",
-						tagText: "",
-						title: title ?? "",
-					}),
-				}),
+		.with({ __typename: "Error" }, ({ message }) =>
+			json({ error: message, draft: null }),
 		)
+		.with({ __typename: "FreeDateDraft" }, (draft) =>
+			json({ draft, error: null }),
+		)
+		.otherwise(() => json({ error: "An unknown error occurred.", draft: null }))
 }
 
 export default function DraftRoute() {
 	const loaderData = useLoaderData<typeof loader>()
-	const actionData = useActionData<typeof action>()
-	const params = useParams()
-	const { id } = $params("/free-date/draft/:id", params)
 	const fetcher = useFetcher<typeof action>()
+	const methods = useRemixForm<CreateFreeDateFormValues>({
+		mode: "onTouched",
+		defaultValues: loaderData.draft
+			? {
+					draftId: loaderData.draft.id,
+					formError: "",
+					description: loaderData.draft.description ?? "",
+					thumbnail: loaderData.draft.thumbnail ?? "",
+					nsfw: loaderData.draft.nsfw ? "true" : "false",
+					recommendedTime: loaderData.draft.recommendedTime ?? "6:00 PM",
+					prep: loaderData.draft.prep.map((text, i) => ({
+						id: i.toString(),
+						text,
+					})),
+					prepText: "",
+					tags: loaderData.draft.tags.map((t) => t),
+					tagText: "",
+					title: loaderData.draft.title ?? "",
+					orderedStops: loaderData.draft.orderedStops.map((stop) => ({
+						estimatedTime: getHourAndMinutes(stop.estimatedTime),
+						id: stop.id,
+						optional: stop.optional ? "true" : "false",
+						order: stop.order,
+						options: stop.options.map((option) => ({
+							content: option.content ?? "",
+							id: option.id,
+							location: {
+								id: option.location?.id ?? "",
+								name: option.location?.name ?? "",
+							},
+							optionOrder: option.optionOrder,
+							title: option.title ?? "",
+						})),
+					})),
+			  }
+			: {
+					draftId: "",
+					formError: "",
+					thumbnail: "",
+					description: "",
+					nsfw: "false",
+					recommendedTime: "6:00 PM",
+					orderedStops: [
+						{
+							order: 1,
+							optional: "false",
+							estimatedTime: "1:00",
+							options: [
+								{
+									optionOrder: 1,
+									content: "",
+									title: "",
+									location: { id: "", name: "" },
+								},
+							],
+						},
+					],
+					title: "",
+					tags: [],
+					prep: [],
+					prepText: "",
+					tagText: "",
+			  },
+		resolver: createFreeDateResolver,
+	})
 	return (
 		<PageContainer
 			tastemaker
 			width={{ base: "100%", md: 780, lg: 1024 }}
 			padding={{ base: "20px", xl: "20px 0px" }}
 		>
-			<Outlet />
-			{!isTypeofFieldError(loaderData) && loaderData.error ? (
-				<p className={css({ textStyle: "error" })}>{loaderData.error}</p>
-			) : (
-				<FreeDateForm
-					fetcher={fetcher}
-					locationPath={$path("/free-date/draft/:id/add-location", {
-						id,
-					})}
-					formId="draft-free-date-form"
-					page="draft"
-					error={!isTypeofFieldError(actionData) ? actionData?.error : ""}
-				/>
-			)}
+			<RemixFormProvider {...methods}>
+				<Outlet />
+				{loaderData.error ? (
+					<p className={css({ textStyle: "error" })}>{loaderData.error}</p>
+				) : (
+					<FreeDateForm fetcher={fetcher} page="draft" />
+				)}
+			</RemixFormProvider>
 		</PageContainer>
 	)
 }

@@ -40,10 +40,10 @@ export function Tags({ tags }: TagsProps) {
 							},
 							tagStyles,
 						)}
-						to={$path("/search", { query: tag.name })}
+						to={$path("/search", { query: tag.text })}
 						key={tag.id}
 					>
-						#{tag.name}
+						#{tag.text}
 					</Link>
 				)
 			})}

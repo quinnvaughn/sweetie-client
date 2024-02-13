@@ -2,6 +2,7 @@ fragment OrderedDateStop on OrderedDateStop {
     id 
     order 
     formattedEstimatedTime
+    estimatedTimeHoursMinutes
     optional
     options {
         ...DateStopOption
