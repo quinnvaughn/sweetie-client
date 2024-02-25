@@ -28,20 +28,6 @@ fragment DateStopOption on DateStopOption {
         ...TravelItem
     }
     location {
-        id
-        name
-        website
-        address {
-            id
-            formattedAddress
-            city {
-                id
-                name
-            }
-            coordinates {
-                lat
-                lng
-            }
-        }
+       ...LocationInfo
     }
 }

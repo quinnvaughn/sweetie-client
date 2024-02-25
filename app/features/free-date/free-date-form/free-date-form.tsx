@@ -1,6 +1,5 @@
-import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, useFetcher, useParams } from "@remix-run/react"
-import { FormProvider, useController, useFieldArray } from "react-hook-form"
+import { useController, useFieldArray } from "react-hook-form"
 import { FiPlus } from "react-icons/fi/index.js"
 import { RemixFormProvider, useRemixFormContext } from "remix-hook-form"
 import { $params } from "remix-routes"
@@ -14,7 +13,7 @@ import {
 	HookTagsInput,
 	HookTextarea,
 } from "~/features/ui"
-import { CreateFreeDateFormValues, UpdateFreeDateFormValues } from "~/forms"
+import { FreeDateFormValues } from "~/forms"
 import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
 import { HookRecommendedTimePicker } from ".."
@@ -32,9 +31,8 @@ export function FreeDateForm({ page, fetcher }: Props) {
 		page === "edit"
 			? $params("/free-date/edit/:id", params)
 			: $params("/free-date/draft/:id", params)
-	type Values = CreateFreeDateFormValues | UpdateFreeDateFormValues
-	const methods = useRemixFormContext<Values>()
-	const { append, fields: orderedStops } = useFieldArray({
+	const methods = useRemixFormContext<FreeDateFormValues>()
+	const { append, fields: orderedStops } = useFieldArray<FreeDateFormValues>({
 		control: methods.control,
 		name: "orderedStops",
 	})

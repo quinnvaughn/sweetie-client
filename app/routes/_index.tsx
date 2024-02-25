@@ -2,12 +2,14 @@ import { DataFunctionArgs, json } from "@remix-run/node"
 import { useLoaderData } from "@remix-run/react"
 import { useRef } from "react"
 import { LoginBenefitsSection } from "~/features/auth"
+import { UpcomingEventList } from "~/features/event"
 import { CategorizedDateLists } from "~/features/free-date"
 import { SearchBar } from "~/features/search"
 import { SpecialOffer } from "~/features/special-offer"
 import { PageContainer } from "~/features/ui/page-container"
 import {
 	CategorizedDateListsDocument,
+	GetEventsDocument,
 	GetSpecialOfferDocument,
 } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
@@ -24,9 +26,11 @@ export async function loader({ request }: DataFunctionArgs) {
 		request,
 		GetSpecialOfferDocument,
 	)
+	const { data: eventData } = await gqlFetch(request, GetEventsDocument)
 	const newData = {
 		...data,
 		specialOffer: specialOfferData,
+		events: eventData,
 	}
 	return json(newData, {
 		headers: { "Set-Cookie": response?.headers.get("Set-Cookie") ?? "" },
@@ -55,6 +59,9 @@ export default function HomeRoute() {
 				)}
 				{!isLoggedIn() && <LoginBenefitsSection />}
 				<VStack gap={6} width={"100%"}>
+					{data.events?.events.length && data.events.events.length > 0 ? (
+						<UpcomingEventList eventList={data.events.events} />
+					) : null}
 					<CategorizedDateLists
 						categorizedDateLists={data.categorizedDateLists ?? []}
 					/>

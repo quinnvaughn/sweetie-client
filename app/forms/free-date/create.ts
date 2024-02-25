@@ -118,3 +118,7 @@ export type CreateFreeDateFormValues = z.infer<typeof createFreeDateSchema>
 export const updateFreeDateResolver = zodResolver(updateFreeDateSchema)
 
 export const createFreeDateResolver = zodResolver(createFreeDateSchema)
+
+export type FreeDateFormValues =
+	| CreateFreeDateFormValues
+	| UpdateFreeDateFormValues

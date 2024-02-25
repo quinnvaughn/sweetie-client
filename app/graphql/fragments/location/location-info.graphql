@@ -1,0 +1,17 @@
+fragment LocationInfo on Location {
+    id
+    name
+    website
+    address {
+        id
+        formattedAddress
+        city {
+            id
+            name
+        }
+        coordinates {
+            lat
+            lng
+        }
+    }
+}

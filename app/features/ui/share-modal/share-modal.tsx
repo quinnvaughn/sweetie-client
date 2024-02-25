@@ -15,6 +15,7 @@ type Props = {
 	title?: string
 	aboveText?: string
 	campaign?: string
+	shareUrl?: string
 }
 
 export function ShareModal({
@@ -22,6 +23,7 @@ export function ShareModal({
 	title = "Share",
 	aboveText,
 	campaign = "free date share modal",
+	shareUrl,
 }: Props) {
 	return (
 		<Modal>
@@ -48,12 +50,12 @@ export function ShareModal({
 							},
 						})}
 					>
-						<CopyLinkShareButton campaign={campaign} />
-						<FacebookShareButton campaign={campaign} />
-						<TwitterShareButton campaign={campaign} />
-						<EmailShareButton campaign={campaign} />
-						<MessagesShareButton campaign={campaign} />
-						<WhatsAppShareButton campaign={campaign} />
+						<CopyLinkShareButton link={shareUrl} campaign={campaign} />
+						<FacebookShareButton link={shareUrl} campaign={campaign} />
+						<TwitterShareButton link={shareUrl} campaign={campaign} />
+						<EmailShareButton link={shareUrl} campaign={campaign} />
+						<MessagesShareButton link={shareUrl} campaign={campaign} />
+						<WhatsAppShareButton link={shareUrl} campaign={campaign} />
 					</div>
 				</VStack>
 			</Modal.Body>

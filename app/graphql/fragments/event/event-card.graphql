@@ -1,0 +1,13 @@
+fragment EventCard on Event {
+    title
+    image
+    description
+    id
+    tastemaker {
+      ...TastemakerInfo
+    }
+    cities {
+      id
+	    nameAndState
+    }
+}

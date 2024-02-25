@@ -1,23 +1,9 @@
-import {
-	ArrayPath,
-	Control,
-	FieldValues,
-	Path,
-	useController,
-	useFieldArray,
-	useFormContext,
-} from "react-hook-form"
+import { useController, useFieldArray, useFormContext } from "react-hook-form"
 import { FaArrowDown, FaArrowUp, FaTrash } from "react-icons/fa/index.js"
 import { $path } from "remix-routes"
-import { LocationCombobox } from "~/features/location"
-import {
-	Button,
-	HookRadioGroup,
-	HookTimePicker,
-	TimePicker,
-} from "~/features/ui"
+import { Button, HookRadioGroup, HookTimePicker } from "~/features/ui"
+import { FreeDateFormValues } from "~/forms"
 import { generateTimeIntervals } from "~/lib"
-import { FreeDateFormValues } from "~/routes/free-date.create"
 import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
 import { DateStopOptionForm } from "../date-stop-option-form"

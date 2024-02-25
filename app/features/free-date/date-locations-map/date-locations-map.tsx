@@ -1,14 +1,19 @@
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api"
 import { useEffect, useState } from "react"
-import { DateStopOptionFragment } from "~/graphql/generated"
+import {
+	DateStopOptionFragment,
+	LocationInfoFragment,
+} from "~/graphql/generated"
 import { css } from "~/styled-system/css"
 
+// change the type for stops to only require the fields we need.
+
 type Props = {
-	stops: DateStopOptionFragment[]
+	locations: LocationInfoFragment[]
 	scrollwheel?: boolean
 }
 
-export function DateLocationsMap({ stops, scrollwheel = false }: Props) {
+export function DateLocationsMap({ locations, scrollwheel = false }: Props) {
 	const { isLoaded } = useJsApiLoader({
 		// will always be window.
 		googleMapsApiKey: window.ENV.GOOGLE_MAPS_API_KEY,
@@ -23,18 +28,19 @@ export function DateLocationsMap({ stops, scrollwheel = false }: Props) {
 			setMarkers([])
 		}
 		const bounds = new window.google.maps.LatLngBounds()
-		for (let i = 0; i < stops.length; i++) {
+		for (let i = 0; i < locations.length; i++) {
+			const location = locations[i]
 			const infoWindow = new window.google.maps.InfoWindow({
 				content: `<div><h2 style="font-weight: bold;">${i + 1}. ${
-					stops[i].location.name
-				}</h2><p>${stops[i].location.address.formattedAddress}</p></div>`,
+					location.name
+				}</h2><p>${location.address.formattedAddress}</p></div>`,
 			})
 			const marker = new window.google.maps.Marker({
 				position: new google.maps.LatLng(
-					stops[i].location.address.coordinates.lat,
-					stops[i].location.address.coordinates.lng,
+					location.address.coordinates.lat,
+					location.address.coordinates.lng,
 				),
-				title: stops[i].location.name,
+				title: location.name,
 				label: `${i + 1}`,
 			})
 			marker.setMap(map)
@@ -54,7 +60,7 @@ export function DateLocationsMap({ stops, scrollwheel = false }: Props) {
 		if (isLoaded && map) {
 			setBounds(map)
 		}
-	}, [stops, isLoaded, map])
+	}, [locations, isLoaded, map])
 
 	return isLoaded ? (
 		<div className={css({ width: "100%", height: "auto" })}>

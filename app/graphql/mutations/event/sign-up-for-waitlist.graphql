@@ -1,0 +1,18 @@
+mutation SignUpForWaitlist($input: SignUpForWaitlistInput!) {
+  signUpForWaitlist(input: $input) {
+    ... on AuthError {
+      message
+    }
+    ... on Error {
+      message
+    }
+    ... on EventWaitlistGroup {
+      code
+      id
+      users {
+        id
+        name
+      }
+    }
+  }
+}

@@ -3,12 +3,9 @@ import {
 	Link,
 	Outlet,
 	ShouldRevalidateFunction,
-	useBeforeUnload,
 	useLoaderData,
 } from "@remix-run/react"
 import { DateTime } from "luxon"
-import { useEffect, useRef, useState } from "react"
-import * as R from "remeda"
 import { $params, $path } from "remix-routes"
 import { ClientOnly } from "remix-utils/client-only"
 import { match } from "ts-pattern"
@@ -36,12 +33,7 @@ import {
 	PageContainer,
 	Tags,
 } from "~/features/ui"
-import {
-	DateStopItemFragment,
-	DateStopOptionFragment,
-	GetFreeDateDocument,
-	OrderedDateStopFragment,
-} from "~/graphql/generated"
+import { GetFreeDateDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { useViewer } from "~/hooks"
 import { getDefaultSelectedOptions, singularOrPlural } from "~/lib"
@@ -115,7 +107,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 					{
 						name: "keywords",
 						content: [
-							...tags.map((t) => t.name),
+							...tags.map((t) => t.text),
 							"dating",
 							"date ideas",
 							"free date ideas",
@@ -186,7 +178,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 					{
 						property: "article:tag",
 						content: [
-							...tags.map((t) => `${t.name} date idea`),
+							...tags.map((t) => `${t.text} date idea`),
 							"dating",
 							"date ideas",
 							cities.map((c) => `${c.name} date idea`),
@@ -239,8 +231,6 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 						property: "og:author",
 						content: tastemaker.user.name,
 					},
-					// TODO: twitter:creator
-					// we don't currently know the twitter handle of the tastemaker
 				],
 			)
 			.otherwise(() => [{ title: "Not Found" }, { status: "404" }])
@@ -446,10 +436,12 @@ export default function FreeDateIdeaRoute() {
 									<ClientOnly>
 										{() => (
 											<DateLocationsMap
-												stops={Array.from(stopsStore.state.orderedStops).map(
+												locations={Array.from(
+													stopsStore.state.orderedStops,
+												).map(
 													([_, { options, selectedOptionOrder }]) =>
 														// biome-ignore lint/style/noNonNullAssertion: <explanation>
-														options.get(selectedOptionOrder)!,
+														options.get(selectedOptionOrder)!.location,
 												)}
 											/>
 										)}

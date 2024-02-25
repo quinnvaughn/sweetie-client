@@ -6,6 +6,7 @@ import { ShareModal } from "~/features/ui"
 import { GetFreeDateDocument } from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
 import { useTrack } from "~/hooks"
+import { getEnv } from "~/lib"
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
 	const { id } = $params("/free-date/:id/add-to-calendar", params)
@@ -46,6 +47,7 @@ export default function ShareFreeDateRoute() {
 	return (
 		<ShareModal
 			to={$path("/free-date/:id", { id })}
+			shareUrl={`${getEnv().FRONTEND_URL}${$path("/free-date/:id", { id })}`}
 			title="Share this date"
 			aboveText="Share with your date or your friends!"
 			campaign="free date share modal"
