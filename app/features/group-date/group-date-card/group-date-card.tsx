@@ -13,7 +13,7 @@ type Props = {
 
 export function GroupDateCard({ groupDate }: Props) {
 	return (
-		<Link to={$path('/group-date/:id', {id: groupDate.id})} target="_blank">
+		<Link to={$path("/group-date/:id", { id: groupDate.id })} target="_blank">
 			<VStack gap="4" width={"100%"} alignItems="flex-start">
 				<div className={css({ position: "relative", width: "100%" })}>
 					<Image

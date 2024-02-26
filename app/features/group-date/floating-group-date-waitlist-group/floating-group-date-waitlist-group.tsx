@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 // @ts-ignore
-import {QRCode} from "react-qr-code"
+import { QRCode } from "react-qr-code"
 import { $path } from "remix-routes"
 import { Modal } from "~/features/ui"
 import { GroupDateWaitlistGroupFragment } from "~/graphql/generated"
@@ -142,7 +142,7 @@ export function FloatingGroupDateWaitlistGroup(props: Props) {
 						onClick={() => setIsModalOpen(false)}
 					/>
 					<Modal.Body>
-						<WaitlistGroupInfo  {...props} />
+						<WaitlistGroupInfo {...props} />
 					</Modal.Body>
 				</Modal>
 			)}
