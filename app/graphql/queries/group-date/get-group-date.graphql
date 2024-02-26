@@ -1,0 +1,37 @@
+query GetGroupDate($groupDateId: String!) {
+  groupDate(id: $groupDateId) {
+    __typename
+    ... on Error {
+      message
+    }
+    ... on GroupDate {
+      description
+      cities {
+        nameAndState
+        name
+        id
+      }
+      tastemaker {
+        ...TastemakerInfo
+      }
+      title
+      image
+      id
+      numSpots
+      minimumPrice
+      maximumPrice
+      userWaitlistGroup {
+        ...GroupDateWaitlistGroup
+      }
+      stops {
+        ...GroupDateOrderedStop
+      }
+      products {
+        ...GroupDateProduct
+      }
+      addOns {
+        ...GroupDateAddOn
+      }
+    }
+  }
+}

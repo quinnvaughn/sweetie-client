@@ -7,7 +7,7 @@ import { gqlFetch } from "~/graphql/graphql"
 
 const signUpForWaitlist = z.object({
 	code: z.string().length(6).optional(),
-	eventId: z.string(),
+	groupDateId: z.string(),
 })
 
 export type FormData = z.infer<typeof signUpForWaitlist>

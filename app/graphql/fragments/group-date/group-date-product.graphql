@@ -1,0 +1,7 @@
+fragment GroupDateProduct on GroupDateProduct {
+    description
+    id
+    name
+    order
+    image
+}

@@ -1,4 +1,5 @@
 import { Control, FieldValues, Path, useController } from "react-hook-form"
+import { useFieldTimeout } from "~/hooks"
 import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
 
@@ -15,10 +16,12 @@ export function CodeInput<T extends FieldValues>({
 	numDigits,
 	label = "Enter code",
 }: Props<T>) {
+	const [error, setError] = useFieldTimeout(false)
 	const { field } = useController({
 		name,
 		control,
 	})
+
 	// map over numDigits to create input fields
 	return (
 		<VStack gap={2}>
@@ -30,6 +33,18 @@ export function CodeInput<T extends FieldValues>({
 					<input
 						value={field.value[i] || ""}
 						key={`${name}[${i}]`}
+						onPaste={(e) => {
+							const getValue = e.clipboardData.getData("text")
+							if (getValue.length !== numDigits) {
+								setError(true)
+								e.preventDefault()
+								return false
+							}
+							const newValue = getValue.split("")
+							field.onChange(newValue.join(""))
+							// blur input
+							e.currentTarget.blur()
+						}}
 						onChange={(e) => {
 							// set digit in state ie _ _ B _ _
 							const value = e.target.value
@@ -54,7 +69,8 @@ export function CodeInput<T extends FieldValues>({
 						className={css({
 							borderBottom: "1px solid",
 							borderBottomColor: "gray",
-							width: "2em",
+							maxWidth: "2em",
+							width: "100%",
 							textAlign: "center",
 							textTransform: "uppercase",
 							height: "2em",
@@ -62,6 +78,11 @@ export function CodeInput<T extends FieldValues>({
 					/>
 				))}
 			</HStack>
+			{error && (
+				<p className={css({ color: "red" })}>
+					Please paste a {numDigits} digit number.
+				</p>
+			)}
 		</VStack>
 	)
 }

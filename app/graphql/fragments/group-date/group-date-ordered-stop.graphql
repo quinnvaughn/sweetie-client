@@ -1,0 +1,13 @@
+fragment GroupDateOrderedStop on GroupDateOrderedStop {
+    id
+    description
+    order
+    formattedEstimatedTime
+    travel {
+        ...TravelItem
+    }
+    location {
+        ...LocationInfo
+        images
+    }
+}

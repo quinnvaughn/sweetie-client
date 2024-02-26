@@ -1,0 +1,9 @@
+fragment GroupDateAddOn on GroupDateAddOn {
+    description
+    id
+    name
+    order
+    image
+    minimumPrice
+    maximumPrice
+}

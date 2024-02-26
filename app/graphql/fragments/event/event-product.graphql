@@ -1,7 +1,0 @@
-fragment EventProduct on EventProduct {
-    description
-    id
-    name
-    order
-    image
-}

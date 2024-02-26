@@ -1,4 +1,0 @@
-fragment EventWaitlistGroup on EventWaitlistGroup {
-    code 
-    position
-}

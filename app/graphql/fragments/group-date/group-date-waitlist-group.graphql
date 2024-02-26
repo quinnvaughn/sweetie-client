@@ -1,0 +1,4 @@
+fragment GroupDateWaitlistGroup on GroupDateWaitlistGroup {
+    code 
+    position
+}

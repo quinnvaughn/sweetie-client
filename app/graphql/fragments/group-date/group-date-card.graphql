@@ -1,0 +1,13 @@
+fragment GroupDateCard on GroupDate {
+    title
+    image
+    description
+    id
+    tastemaker {
+      ...TastemakerInfo
+    }
+    cities {
+      id
+	    nameAndState
+    }
+}
