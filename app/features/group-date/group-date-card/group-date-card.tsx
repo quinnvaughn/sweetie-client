@@ -28,7 +28,7 @@ export function GroupDateCard({ groupDate }: Props) {
 							width: "100%",
 						}}
 					/>
-					<VStack
+					{/* <VStack
 						gap={0}
 						className={css({
 							position: "absolute",
@@ -51,7 +51,7 @@ export function GroupDateCard({ groupDate }: Props) {
 						>
 							TBD
 						</span>
-					</VStack>
+					</VStack> */}
 				</div>
 				<VStack gap={1.5} alignItems={"flex-start"} width={"100%"}>
 					<p className={css({ lineHeight: 1, fontWeight: "600" })}>
