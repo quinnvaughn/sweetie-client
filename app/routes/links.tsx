@@ -104,6 +104,12 @@ export default function LinksRoute() {
 					Sweetie is a marketplace to help plan date nights, starting in Los
 					Angeles. Think of us as your personal date concierge.
 				</p>
+				<Link
+					to={$path("/group-date/:id", { id: "clt3pbbzl0006b979en1xbp79" })}
+					className={otherLinkStyles}
+				>
+					Two Bit Circus Group Date Night
+				</Link>
 				<Link to={$path("/")} className={otherLinkStyles}>
 					Visit Website
 				</Link>
