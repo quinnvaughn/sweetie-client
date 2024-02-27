@@ -41,7 +41,7 @@ export function DateLocationsMap({ locations, scrollwheel = false }: Props) {
 					location.address.coordinates.lng,
 				),
 				title: location.name,
-				label: `${i + 1}`,
+				label: locations.length === 1 ? undefined : `${i + 1}`,
 			})
 			marker.setMap(map)
 			setMarkers((prev) => [...prev, marker])
