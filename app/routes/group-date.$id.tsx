@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { MetaFunction } from "@remix-run/node"
 import { Link, Outlet, useLoaderData, useSearchParams } from "@remix-run/react"
 import { LoaderFunctionArgs, json } from "@remix-run/server-runtime"
+import { DateTime } from "luxon"
 import { useEffect } from "react"
 import { useRemixForm } from "remix-hook-form"
 import { $params, $path } from "remix-routes"
@@ -59,14 +60,95 @@ const searchParamsSchema = z.object({
 export type SearchParams = z.infer<typeof searchParamsSchema>
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	if (!data?.groupDate || data.groupDate.__typename === "Error") {
-		return [{ title: "Not Found" }]
-	}
-	const groupDate = data.groupDate
-	return [
-		{ title: groupDate.title },
-		{ name: "description", content: groupDate.description },
-	]
+	return match(data?.groupDate)
+		.with({ __typename: "Error" }, () => {
+			return [{ title: "Not Found" }]
+		})
+		.with(
+			{ __typename: "GroupDate" },
+			({ description, image, title, createdAt, updatedAt, tastemaker, id }) => {
+				return [
+					{ title: title },
+					{ name: "description", content: description },
+					{ property: "og:description", content: description },
+					{ property: "og:image", content: image },
+					{
+						property: "og:url",
+						content: `https://trysweetie.com/group-date/${id}`,
+					},
+					{
+						property: "og:site_name",
+						content: "Sweetie",
+					},
+					{
+						property: "og:type",
+						content: "article",
+					},
+					{
+						property: "article:published_time",
+						content: createdAt,
+					},
+					{
+						property: "article:modified_time",
+						content: updatedAt,
+					},
+					{
+						property: "article:tag",
+						content: ["dating", "date ideas", "group date"],
+					},
+					{
+						property: "article:section",
+						content: "Dating",
+					},
+					{
+						property: "article:published_time",
+						content: DateTime.fromISO(createdAt).toFormat("yyyy-MM-dd"),
+					},
+					{
+						name: "publish_date",
+						property: "og:publish_date",
+						content: DateTime.fromISO(createdAt).toFormat(
+							"yyyy-MM-ddTHH:mm:ssZ",
+						),
+					},
+					{ property: "article:author", content: tastemaker.user.name },
+					{
+						property: "twitter:card",
+						content: "summary_large_image",
+					},
+					{
+						property: "twitter:site",
+						content: "@sweetie_dates",
+					},
+					{
+						property: "twitter:title",
+						content: `${title.trim()} by ${
+							tastemaker.user.name
+						} - Sweetie date idea`,
+					},
+					{
+						property: "twitter:url",
+						content: $path("/group-date/:id", { id }),
+					},
+					{
+						property: "twitter:description",
+						content: description,
+					},
+					{
+						property: "twitter:image",
+						content: image,
+					},
+					{
+						name: "author",
+						property: "og:author",
+						content: tastemaker.user.name,
+					},
+				]
+			},
+		)
+		.otherwise(() => {
+			return [{ title: "Not Found" }]
+		})
 }
 
 export default function GroupDateRoute() {

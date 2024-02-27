@@ -16,6 +16,8 @@ query GetGroupDate($groupDateId: String!) {
       }
       title
       image
+      createdAt
+      updatedAt
       id
       numSpots
       minimumPrice
