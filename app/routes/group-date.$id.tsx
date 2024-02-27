@@ -265,7 +265,7 @@ export default function GroupDateRoute() {
 													fontSize: "18px",
 												})}
 											>
-												Base price:
+												Base price per couple:
 											</span>
 											<span className={css({ textStyle: "paragraph" })}>
 												{convertCentsToDollars(groupDate.minimumPrice)} -{" "}
