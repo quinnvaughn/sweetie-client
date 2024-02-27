@@ -12,7 +12,7 @@ export function GroupDateAddOns({ addOns }: Props) {
 	return (
 		<VStack width={"100%"} alignItems={"flex-start"}>
 			<h3 className={css({ textStyle: "h3" })}>
-				Optional add ons you can purchase:
+				Optional add-ons you can purchase:
 			</h3>
 			<p>
 				If approved for a spot, we'll email you and provide an additional
