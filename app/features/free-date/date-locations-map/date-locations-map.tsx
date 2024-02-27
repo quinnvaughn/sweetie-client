@@ -52,7 +52,10 @@ export function DateLocationsMap({ locations, scrollwheel = false }: Props) {
 			})
 			map.setCenter(bounds.getCenter())
 		}
-		map.fitBounds(bounds)
+		// if there's only one location, zoom in to it
+		// Just setting bounds would zoom in too much.
+		locations.length > 1 && map.fitBounds(bounds)
+		locations.length === 1 && map.setZoom(16)
 	}
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
