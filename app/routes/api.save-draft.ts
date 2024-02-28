@@ -86,8 +86,6 @@ export async function action({ request }: DataFunctionArgs) {
 		},
 	)
 
-	console.log({ data, serverErrors })
-
 	return match(data?.saveFreeDateDraft)
 		.with({ __typename: "AuthError" }, () => redirect($path("/login")))
 		.with({ __typename: "FieldErrors" }, ({ fieldErrors }) =>

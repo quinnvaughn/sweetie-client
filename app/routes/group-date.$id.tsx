@@ -1,10 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { MetaFunction } from "@remix-run/node"
 import { Link, Outlet, useLoaderData, useSearchParams } from "@remix-run/react"
-import { LoaderFunctionArgs, json } from "@remix-run/server-runtime"
+import {
+	ActionFunctionArgs,
+	LoaderFunctionArgs,
+	json,
+} from "@remix-run/server-runtime"
 import { DateTime } from "luxon"
 import { useEffect } from "react"
-import { useRemixForm } from "remix-hook-form"
+import { getValidatedFormData, useRemixForm } from "remix-hook-form"
 import { $params, $path } from "remix-routes"
 import { ClientOnly } from "remix-utils/client-only"
 import { match } from "ts-pattern"
@@ -27,8 +31,13 @@ import {
 	OpenShareModalLink,
 	PageContainer,
 } from "~/features/ui"
-import { GetGroupDateDocument } from "~/graphql/generated"
+import { SignUpForWaitlistValues, signUpForWaitlistResolver } from "~/forms"
+import {
+	GetGroupDateDocument,
+	SignUpForWaitlistDocument,
+} from "~/graphql/generated"
 import { gqlFetch } from "~/graphql/graphql"
+import { useToast } from "~/hooks"
 import { convertCentsToDollars, singularOrPlural } from "~/lib"
 import { css } from "~/styled-system/css"
 import { HStack, VStack } from "~/styled-system/jsx"
@@ -151,17 +160,57 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 		})
 }
 
+export async function action({ request, params }: ActionFunctionArgs) {
+	const {
+		errors,
+		data,
+		receivedValues: defaultValues,
+	} = await getValidatedFormData<SignUpForWaitlistValues>(
+		request,
+		signUpForWaitlistResolver,
+	)
+	if (errors) {
+		return json({ errors, defaultValues })
+	}
+
+	const { id } = $params("/group-date/:id", params)
+	const input = {
+		...data,
+		groupDateId: id,
+	}
+
+	const { data: signupData } = await gqlFetch(
+		request,
+		SignUpForWaitlistDocument,
+		{
+			input,
+		},
+	)
+
+	// TODO: Add error handling for signupData
+	return json({ signupData })
+}
+
 export default function GroupDateRoute() {
 	const { groupDate } = useLoaderData<typeof loader>()
-	const { control, setValue } = useRemixForm<Waitlist>({
-		mode: "onTouched",
-		defaultValues: {
-			code: "",
-		},
-		resolver: waitlistResolver,
-	})
+	const { control, setValue, handleSubmit, formState } =
+		useRemixForm<SignUpForWaitlistValues>({
+			mode: "onTouched",
+			defaultValues: {
+				code: "",
+			},
+			resolver: waitlistResolver,
+		})
 
 	const [searchParams] = useSearchParams()
+	const { success } = useToast()
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		if (formState.isSubmitSuccessful) {
+			success("You've been added to the waitlist!")
+		}
+	}, [formState.isSubmitSuccessful])
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -251,12 +300,13 @@ export default function GroupDateRoute() {
 											Date TBD
 										</h2>
 										<p>
-											If there's sufficient interest, we'll host this group date
-											multiple times to accommodate everyone. If selected, we'll
-											notify you with the date and payment details via email.
-											Please note that increasing the number of people in your
-											group improves your waitlist priority. Availability is
-											first-come, first-served.
+											If there's sufficient interest, we'll organize this group
+											date opportunity multiple times to accommodate everyone
+											interested in attending with their partner. If selected,
+											we'll notify you with the date and payment details via
+											email. Please note that increasing the number of people in
+											your group improves your waitlist priority. Availability
+											is first-come, first-served.
 										</p>
 										<VStack gap={2} alignItems="flex-start">
 											<span
@@ -430,9 +480,9 @@ export default function GroupDateRoute() {
 										/>
 									) : (
 										<SignupForWaitlist
-											groupDateId={groupDate.id}
 											control={control}
 											fields={{ code: "code" }}
+											onSubmit={handleSubmit}
 										/>
 									)}
 								</Desktop>
@@ -449,6 +499,7 @@ export default function GroupDateRoute() {
 									groupDateId={groupDate.id}
 									control={control}
 									fields={{ code: "code" }}
+									onSubmit={handleSubmit}
 								/>
 							)}
 						</Mobile>

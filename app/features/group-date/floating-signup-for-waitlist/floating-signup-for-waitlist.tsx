@@ -1,11 +1,11 @@
-import { useFetcher } from "@remix-run/react"
+import { Form } from "@remix-run/react"
 import { useEffect, useState } from "react"
-import { Control, FieldValues, Path, useController } from "react-hook-form"
-import { $path } from "remix-routes"
-import { CodeInput, GetUserToSignUpModal, Modal } from "~/features/ui"
+import { Control, FieldValues, Path } from "react-hook-form"
+import { match } from "ts-pattern"
+import { GetUserToSignUpModal } from "~/features/ui"
 import { useViewer } from "~/hooks"
 import { css, cva } from "~/styled-system/css"
-import { VStack } from "~/styled-system/jsx"
+import { SignupForTheWaitlistModal } from ".."
 
 const container = cva({
 	base: {
@@ -42,36 +42,16 @@ type Props<T extends FieldValues> = {
 	fields: {
 		code: Path<T>
 	}
+	onSubmit: () => void
 }
 
 export function FloatingSignupForWaitlist<T extends FieldValues>({
 	groupDateId,
 	control,
 	fields,
+	onSubmit,
 }: Props<T>) {
 	const { isLoggedIn } = useViewer()
-	const fetcher = useFetcher()
-	const { field } = useController({
-		name: fields.code,
-		control,
-	})
-	function signupForWaitlist() {
-		fetcher.submit(
-			field.value.length === 6
-				? {
-						code: field.value,
-						groupDateId,
-				  }
-				: {
-						groupDateId,
-				  },
-			{
-				method: "post",
-				action: $path("/api/signup-for-waitlist"),
-			},
-		)
-	}
-	const [open, setIsOpen] = useState(false)
 	const [openModal, setOpenModal] = useState(false)
 
 	const [scrollY, setScrollY] = useState(0)
@@ -115,107 +95,59 @@ export function FloatingSignupForWaitlist<T extends FieldValues>({
 	}, [scrollY])
 
 	return (
-		<div
-			className={container({
-				visible: showFloatingButton,
-			})}
-		>
-			{!isLoggedIn() && (
-				// add a pop up to login
-				<>
-					<p>
-						<button
-							type="button"
-							className={css({
-								color: "secondary",
-								fontWeight: "bold",
-								cursor: "pointer",
-							})}
-							onClick={() => setIsOpen(true)}
-						>
-							Login
-						</button>{" "}
-						to sign up for the wailist
-					</p>
-					{open && (
-						<GetUserToSignUpModal
-							onClose={() => setIsOpen(false)}
-							onSuccess={() => setIsOpen(false)}
-							headingText="Sign up for the waitlist"
-							bodyText="You need to be logged in to sign up for the waitlist. If you don't have an account, you can create one for free."
-						/>
-					)}
-				</>
-			)}
-			<button
-				className={css({
-					width: "100%",
-					padding: "16px 8px",
-					borderRadius: "8px",
-					backgroundColor: "primary",
-					color: "white",
-					fontWeight: "bold",
-					cursor: "pointer",
-					_disabled: {
-						opacity: 0.5,
-						cursor: "not-allowed",
-					},
-					_hover: {
-						filter: "brightness(110%)",
-					},
+		<Form onSubmit={onSubmit}>
+			<div
+				className={container({
+					visible: showFloatingButton,
 				})}
-				type="button"
-				onClick={() => setOpenModal(true)}
-				disabled={!isLoggedIn()}
 			>
-				Signup for the waitlist
-			</button>
-			{openModal && (
-				<Modal>
-					<Modal.Header
-						type="button"
-						onClick={() => setOpenModal(false)}
-						title="Sign up for the waitlist"
-					/>
-					<Modal.Body>
-						<VStack
-							gap={6}
-							alignContent={"flex-start"}
-							justifyContent={"flex-start"}
-							width={"100%"}
-						>
-							<button
-								className={css({
-									width: "100%",
-									padding: "16px 8px",
-									borderRadius: "8px",
-									backgroundColor: "primary",
-									color: "white",
-									fontWeight: "bold",
-									cursor: "pointer",
-									_disabled: {
-										opacity: 0.5,
-										cursor: "not-allowed",
-									},
-									_hover: {
-										filter: "brightness(110%)",
-									},
-								})}
-								type="button"
-								onClick={signupForWaitlist}
-								disabled={!isLoggedIn()}
-							>
-								Signup for the waitlist
-							</button>
-							<p className={css({ textAlign: "center" })}>
-								If you have a group code, enter it here. If you don't have a
-								group code, leave this field blank.
-							</p>
-							<CodeInput control={control} name={fields.code} numDigits={6} />
-						</VStack>
-					</Modal.Body>
-				</Modal>
-			)}
-		</div>
+				{!isLoggedIn() && (
+					<p className={css({ textAlign: "center" })}>
+						You will be asked to sign up or in before you can be added to the
+						waitlist.
+					</p>
+				)}
+				<button
+					className={css({
+						width: "100%",
+						padding: "16px 8px",
+						borderRadius: "8px",
+						backgroundColor: "primary",
+						color: "white",
+						fontWeight: "bold",
+						cursor: "pointer",
+						_disabled: {
+							opacity: 0.5,
+							cursor: "not-allowed",
+						},
+						_hover: {
+							filter: "brightness(110%)",
+						},
+					})}
+					type="button"
+					onClick={() => setOpenModal(true)}
+				>
+					Signup for the waitlist
+				</button>
+				{openModal &&
+					match(isLoggedIn())
+						.with(true, () => (
+							<SignupForTheWaitlistModal
+								onClose={() => setOpenModal(false)}
+								control={control}
+								fields={fields}
+							/>
+						))
+						.with(false, () => (
+							<GetUserToSignUpModal
+								onClose={() => setOpenModal(false)}
+								headingText="Sign up to join the waitlist"
+								onSuccess={() => {}}
+								bodyText="You need to be logged in to sign up for the waitlist. If you don't have an account, you can create one for free."
+							/>
+						))
+						.exhaustive()}
+			</div>
+		</Form>
 	)
 }
