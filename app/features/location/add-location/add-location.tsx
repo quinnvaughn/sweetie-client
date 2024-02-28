@@ -1,7 +1,7 @@
 import { useFetcher, useParams } from "@remix-run/react"
 import { Form, useNavigate } from "@remix-run/react"
 import { useEffect } from "react"
-import { useController, useForm } from "react-hook-form"
+import { useController } from "react-hook-form"
 import {
 	RemixFormProvider,
 	useRemixForm,
@@ -11,12 +11,8 @@ import { $params, $path } from "remix-routes"
 import { match } from "ts-pattern"
 import { CreateLocationForm, SearchLocationForm } from "~/features/location"
 import { Modal, Tab } from "~/features/ui"
-import {
-	AddLocationValues,
-	action,
-	addLocationResolver,
-} from "~/routes/api.create-location"
-import { FreeDateFormValues } from "~/routes/free-date.create"
+import { FreeDateFormValues } from "~/forms"
+import { AddLocationValues, action } from "~/routes/api.create-location"
 import { HStack, VStack } from "~/styled-system/jsx"
 
 type Props = {
