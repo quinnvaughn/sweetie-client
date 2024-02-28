@@ -20,6 +20,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		data,
 		receivedValues: defaultValues,
 	} = await getValidatedFormData<FormData>(request, resolver)
+	console.log({ errors, data, defaultValues })
 	if (errors) {
 		return json({ errors, defaultValues })
 	}

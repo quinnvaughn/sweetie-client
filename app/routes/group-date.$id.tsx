@@ -445,7 +445,11 @@ export default function GroupDateRoute() {
 									waitlistGroup={groupDate.userWaitlistGroup}
 								/>
 							) : (
-								<FloatingSignupForWaitlist />
+								<FloatingSignupForWaitlist
+									groupDateId={groupDate.id}
+									control={control}
+									fields={{ code: "code" }}
+								/>
 							)}
 						</Mobile>
 					</VStack>

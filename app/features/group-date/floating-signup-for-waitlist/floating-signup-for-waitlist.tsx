@@ -1,7 +1,11 @@
+import { useFetcher } from "@remix-run/react"
 import { useEffect, useState } from "react"
-import { GetUserToSignUpModal } from "~/features/ui"
+import { Control, FieldValues, Path, useController } from "react-hook-form"
+import { $path } from "remix-routes"
+import { CodeInput, GetUserToSignUpModal, Modal } from "~/features/ui"
 import { useViewer } from "~/hooks"
 import { css, cva } from "~/styled-system/css"
+import { VStack } from "~/styled-system/jsx"
 
 const container = cva({
 	base: {
@@ -32,8 +36,41 @@ const container = cva({
 	},
 })
 
-export function FloatingSignupForWaitlist() {
+type Props<T extends FieldValues> = {
+	groupDateId: string
+	control: Control<T>
+	fields: {
+		code: Path<T>
+	}
+}
+
+export function FloatingSignupForWaitlist<T extends FieldValues>({
+	groupDateId,
+	control,
+	fields,
+}: Props<T>) {
 	const { isLoggedIn } = useViewer()
+	const fetcher = useFetcher()
+	const { field } = useController({
+		name: fields.code,
+		control,
+	})
+	function signupForWaitlist() {
+		fetcher.submit(
+			field.value.length === 6
+				? {
+						code: field.value,
+						groupDateId,
+				  }
+				: {
+						groupDateId,
+				  },
+			{
+				method: "post",
+				action: $path("/api/signup-for-waitlist"),
+			},
+		)
+	}
 	const [open, setIsOpen] = useState(false)
 	const [openModal, setOpenModal] = useState(false)
 
@@ -128,11 +165,57 @@ export function FloatingSignupForWaitlist() {
 					},
 				})}
 				type="button"
-				onClick={() => {}}
+				onClick={() => setOpenModal(true)}
 				disabled={!isLoggedIn()}
 			>
 				Signup for the waitlist
 			</button>
+			{openModal && (
+				<Modal>
+					<Modal.Header
+						type="button"
+						onClick={() => setOpenModal(false)}
+						title="Sign up for the waitlist"
+					/>
+					<Modal.Body>
+						<VStack
+							gap={6}
+							alignContent={"flex-start"}
+							justifyContent={"flex-start"}
+							width={"100%"}
+						>
+							<button
+								className={css({
+									width: "100%",
+									padding: "16px 8px",
+									borderRadius: "8px",
+									backgroundColor: "primary",
+									color: "white",
+									fontWeight: "bold",
+									cursor: "pointer",
+									_disabled: {
+										opacity: 0.5,
+										cursor: "not-allowed",
+									},
+									_hover: {
+										filter: "brightness(110%)",
+									},
+								})}
+								type="button"
+								onClick={signupForWaitlist}
+								disabled={!isLoggedIn()}
+							>
+								Signup for the waitlist
+							</button>
+							<p className={css({ textAlign: "center" })}>
+								If you have a group code, enter it here. If you don't have a
+								group code, leave this field blank.
+							</p>
+							<CodeInput control={control} name={fields.code} numDigits={6} />
+						</VStack>
+					</Modal.Body>
+				</Modal>
+			)}
 		</div>
 	)
 }
