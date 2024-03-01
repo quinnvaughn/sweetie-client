@@ -1,0 +1,24 @@
+query GetAdminGroupDate($groupDateId: String!) {
+  groupDate(id: $groupDateId) {
+    __typename
+    ... on Error {
+      message
+    }
+    ... on GroupDate {
+      title
+      image
+      numSpots
+      startDate
+      numUsersSignedUp
+      waitlistGroups {
+        id 
+        code 
+        users {
+            id 
+            name 
+            email
+        }
+      }
+    }
+  }
+}

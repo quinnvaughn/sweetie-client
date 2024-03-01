@@ -1,8 +1,8 @@
+import { useRouteLoaderData } from "@remix-run/react"
 import { $path } from "remix-routes"
 import { useViewer } from "~/hooks"
-import { Navbar } from "."
 import { loader } from "~/root"
-import { useRouteLoaderData } from "@remix-run/react"
+import { Navbar } from "."
 
 export function LoggedInActions() {
 	const { isLoggedIn } = useViewer()
@@ -17,10 +17,8 @@ export function LoggedInActions() {
 						: "Become a Tastemaker"
 				}
 			/>
-			{isLoggedIn("admin") && (
-				<Navbar.Link to={"/admin/dashboard/free-dates"} text="Admin" />
-			)}
-			<Navbar.Link to={"/account-settings"} text="Account" />
+			{isLoggedIn("admin") && <Navbar.Link to={$path("/admin")} text="Admin" />}
+			<Navbar.Link to={$path("/account-settings")} text="Account" />
 			<Navbar.Link to={$path("/dates")} text="Dates" />
 			<Navbar.Link to={$path("/favorites")} text="Favorites" />
 			<Navbar.ButtonAsLink action={$path("/api/logout")} text="Log out" />

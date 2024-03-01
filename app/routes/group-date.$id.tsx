@@ -59,8 +59,6 @@ const waitlistSchema = z.object({
 	code: z.string(),
 })
 
-type Waitlist = z.infer<typeof waitlistSchema>
-
 const waitlistResolver = zodResolver(waitlistSchema)
 
 const searchParamsSchema = z.object({
