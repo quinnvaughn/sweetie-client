@@ -5,6 +5,8 @@ fragment GroupDateCard on GroupDate {
     id
     startDate
     lastSignupDate
+    numSpots
+    numUsersSignedUp
     tastemaker {
       ...TastemakerInfo
     }

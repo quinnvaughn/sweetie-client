@@ -25,6 +25,7 @@ export function SignupProgressBar({ numSpots, numSpotsFilled }: Props) {
 					})}
 					style={{
 						width: `${(numSpotsFilled / numSpots) * 100}%`,
+						maxWidth: "100%",
 					}}
 				/>
 			</div>

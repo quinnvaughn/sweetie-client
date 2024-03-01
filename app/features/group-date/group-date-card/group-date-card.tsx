@@ -29,6 +29,19 @@ export function GroupDateCard({ groupDate }: Props) {
 							width: "100%",
 						}}
 					/>
+					<div
+						className={css({
+							borderRadius: "8px",
+							backgroundColor: "primary",
+							height: "12px",
+						})}
+						style={{
+							width: `${
+								(groupDate.numUsersSignedUp / groupDate.numSpots) * 100
+							}%`,
+							maxWidth: "100%",
+						}}
+					/>
 					<VStack
 						gap={0}
 						className={css({
