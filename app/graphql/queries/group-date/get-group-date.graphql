@@ -20,6 +20,10 @@ query GetGroupDate($groupDateId: String!) {
       updatedAt
       id
       numSpots
+      startDate
+      lastSignupDate
+      canStillSignup
+      numUsersSignedUp
       minimumPrice
       maximumPrice
       userWaitlistGroup {

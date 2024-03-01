@@ -22,6 +22,7 @@ import {
 	GroupDateWaitlistGroup,
 	IncludedWithPurchase,
 	SignupForWaitlist,
+	SignupProgressBar,
 } from "~/features/group-date"
 import { TastemakerInfo } from "~/features/tastemaker"
 import {
@@ -294,20 +295,40 @@ export default function GroupDateRoute() {
 										/>
 									</VStack>
 									<VStack gap={4} alignItems="flex-start" width={"100%"}>
-										<h2
-											className={css({ fontSize: "24px", fontWeight: "600" })}
-										>
-											Date TBD
-										</h2>
-										<p>
-											If there's sufficient interest, we'll organize this group
-											date opportunity multiple times to accommodate everyone
-											interested in attending with their partner. If selected,
-											we'll notify you with the date and payment details via
-											email. Please note that increasing the number of people in
-											your group improves your waitlist priority. Availability
-											is first-come, first-served.
-										</p>
+										<SignupProgressBar
+											numSpots={groupDate.numSpots}
+											numSpotsFilled={groupDate.numUsersSignedUp}
+										/>
+										<VStack gap={2} alignItems="flex-start">
+											<span
+												className={css({
+													fontWeight: "bold",
+													fontSize: "18px",
+												})}
+											>
+												Date starts:
+											</span>
+											<span className={css({ textStyle: "paragraph" })}>
+												{DateTime.fromISO(groupDate.startDate).toFormat(
+													"cccc, LLLL d h:mm a",
+												)}
+											</span>
+										</VStack>
+										<VStack gap={2} alignItems="flex-start">
+											<span
+												className={css({
+													fontWeight: "bold",
+													fontSize: "18px",
+												})}
+											>
+												Last day to sign up:
+											</span>
+											<span className={css({ textStyle: "paragraph" })}>
+												{DateTime.fromISO(groupDate.lastSignupDate).toFormat(
+													"cccc, LLLL d h:mm a",
+												)}
+											</span>
+										</VStack>
 										<VStack gap={2} alignItems="flex-start">
 											<span
 												className={css({
@@ -320,19 +341,6 @@ export default function GroupDateRoute() {
 											<span className={css({ textStyle: "paragraph" })}>
 												{convertCentsToDollars(groupDate.minimumPrice)} -{" "}
 												{convertCentsToDollars(groupDate.maximumPrice)}
-											</span>
-										</VStack>
-										<VStack gap={2} alignItems="flex-start">
-											<span
-												className={css({
-													fontWeight: "bold",
-													fontSize: "18px",
-												})}
-											>
-												Number of spots for couples:
-											</span>
-											<span className={css({ textStyle: "paragraph" })}>
-												{groupDate.numSpots}
 											</span>
 										</VStack>
 										<div
@@ -480,6 +488,7 @@ export default function GroupDateRoute() {
 										/>
 									) : (
 										<SignupForWaitlist
+											canStillSignup={groupDate.canStillSignup}
 											control={control}
 											fields={{ code: "code" }}
 											onSubmit={handleSubmit}
@@ -496,7 +505,7 @@ export default function GroupDateRoute() {
 								/>
 							) : (
 								<FloatingSignupForWaitlist
-									groupDateId={groupDate.id}
+									canStillSignup={groupDate.canStillSignup}
 									control={control}
 									fields={{ code: "code" }}
 									onSubmit={handleSubmit}

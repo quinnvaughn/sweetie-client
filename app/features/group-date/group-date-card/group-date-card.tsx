@@ -1,4 +1,5 @@
 import { Link } from "@remix-run/react"
+import { DateTime } from "luxon"
 import { $path } from "remix-routes"
 import { Image } from "~/features/ui"
 import { UserAvatar } from "~/features/user"
@@ -28,7 +29,7 @@ export function GroupDateCard({ groupDate }: Props) {
 							width: "100%",
 						}}
 					/>
-					{/* <VStack
+					<VStack
 						gap={0}
 						className={css({
 							position: "absolute",
@@ -49,9 +50,20 @@ export function GroupDateCard({ groupDate }: Props) {
 								fontWeight: "bold",
 							})}
 						>
-							TBD
+							{/* day */}
+							{DateTime.fromISO(groupDate.startDate).toFormat("d")}
 						</span>
-					</VStack> */}
+						<span
+							className={css({
+								fontFamily: "roboto",
+								textTransform: "uppercase",
+								fontWeight: "bold",
+							})}
+						>
+							{/* month */}
+							{DateTime.fromISO(groupDate.startDate).toFormat("LLL")}
+						</span>
+					</VStack>
 				</div>
 				<VStack gap={1.5} alignItems={"flex-start"} width={"100%"}>
 					<p className={css({ lineHeight: 1, fontWeight: "600" })}>

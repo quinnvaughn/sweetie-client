@@ -70,7 +70,7 @@ export function WaitlistGroupInfo({ waitlistGroup, groupDateId }: Props) {
 						textAlign: "center",
 					})}
 				>
-					Your waitlist group spot:
+					Your waitlist group position:
 				</h3>
 				<p
 					className={css({

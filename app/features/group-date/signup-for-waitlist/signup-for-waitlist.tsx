@@ -14,12 +14,14 @@ type Props<T extends FieldValues> = {
 		code: Path<T>
 	}
 	onSubmit: () => void
+	canStillSignup: boolean
 }
 
 export function SignupForWaitlist<T extends FieldValues>({
 	control,
 	fields,
 	onSubmit,
+	canStillSignup,
 }: Props<T>) {
 	const { isLoggedIn } = useViewer()
 	const [openModal, setOpenModal] = useState(false)
@@ -64,6 +66,7 @@ export function SignupForWaitlist<T extends FieldValues>({
 					})}
 					type="button"
 					onClick={() => setOpenModal(true)}
+					disabled={!canStillSignup}
 				>
 					Signup for the waitlist
 				</button>
